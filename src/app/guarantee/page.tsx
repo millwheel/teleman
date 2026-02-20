@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { getPublicImageUrl } from "@/lib/storage";
+import Image from "next/image";
 
 function shuffle<T>(arr: T[]): T[] {
   const result = [...arr];
@@ -61,41 +62,15 @@ export default async function GuaranteePage() {
       </section>
       </div>
 
-      {/* 하단 Static 프로모 배너 (full-width) */}
-      <BottomGuaranteeBanner />
-    </div>
-  );
-}
-
-function BottomGuaranteeBanner() {
-  return (
-    <div
-      className="w-full mt-4"
-      style={{
-        background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #0f172a 100%)",
-      }}
-    >
-      <div className="mx-auto max-w-7xl px-4 py-8 flex items-center justify-between gap-8">
-        <div className="flex-1">
-          <p className="text-2xl font-extrabold mb-1">
-            <span className="text-secondary">텔레맨</span>{" "}
-            <span className="text-white">보증업체 리스트</span>
-          </p>
-          <p className="text-yellow-400 font-semibold text-sm mb-4">
-            검증은 기본 · 보상은 확실 · 믿고 배팅하라
-          </p>
-          <ul className="space-y-1.5 text-white/80 text-sm">
-            <li>1. 운영자 신원·운영 정식·출금 안정성 직접 확인</li>
-            <li>2. 출금 시간·인증 절차·회원 후기 신뢰도 검증</li>
-            <li>3. 최대 1억원 실제 보증금 예치 및 즉시 보상</li>
-            <li>4. 24시간 365일 고객센터 즉시 문제 해결 지원</li>
-          </ul>
-        </div>
-        <div className="hidden md:flex h-24 w-24 items-center justify-center rounded-full bg-primary/30 border-2 border-secondary/40 shrink-0">
-          <svg viewBox="0 0 24 24" fill="none" className="h-12 w-12">
-            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
+      {/* 하단 보증 이미지 */}
+      <div className="mx-auto max-w-7xl px-4 mt-4">
+        <Image
+          src="/images/guarantee-bottom.jpg"
+          alt="텔레맨 보증업체"
+          className="w-full"
+          width={400}
+          height={300}
+        />
       </div>
     </div>
   );
