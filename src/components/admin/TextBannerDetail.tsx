@@ -136,7 +136,7 @@ export default function TextBannerDetail({ category, banners }: Props) {
           onClick={openAdd}
           disabled={atLimit}
           title={atLimit ? "최대 10개까지 등록 가능합니다." : ""}
-          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           배너 추가
@@ -180,26 +180,26 @@ export default function TextBannerDetail({ category, banners }: Props) {
                     <button
                       onClick={() => handleReorder(b.id, "up")}
                       disabled={idx === 0 || loading !== null}
-                      className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 transition-colors cursor-pointer"
                     >
                       <ChevronUp className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleReorder(b.id, "down")}
                       disabled={idx === banners.length - 1 || loading !== null}
-                      className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                      className="p-1.5 rounded hover:bg-gray-100 disabled:opacity-30 transition-colors cursor-pointer"
                     >
                       <ChevronDown className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => openEdit(b)}
-                      className="p-1.5 rounded hover:bg-blue-50 text-primary transition-colors"
+                      className="p-1.5 rounded hover:bg-primary/10 text-primary transition-colors cursor-pointer"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => openDelete(b)}
-                      className="p-1.5 rounded hover:bg-red-50 text-eliminate transition-colors"
+                      className="p-1.5 rounded hover:bg-red-50 text-eliminate transition-colors cursor-pointer"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -259,14 +259,14 @@ export default function TextBannerDetail({ category, banners }: Props) {
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => setModal(null)}
-                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 취소
               </button>
               <button
                 onClick={handleDelete}
                 disabled={loading === "delete"}
-                className="rounded-lg bg-eliminate px-4 py-2 text-sm font-semibold text-white hover:bg-eliminate-light disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-eliminate px-4 py-2 text-sm font-semibold text-white hover:bg-eliminate-light disabled:opacity-60 transition-colors cursor-pointer"
               >
                 {loading === "delete" ? "삭제 중..." : "삭제"}
               </button>
@@ -325,7 +325,7 @@ function BannerForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer"
         >
           취소
         </button>
@@ -333,7 +333,7 @@ function BannerForm({
           type="button"
           onClick={onSubmit}
           disabled={loading}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors cursor-pointer"
         >
           {loading ? "처리 중..." : submitLabel}
         </button>

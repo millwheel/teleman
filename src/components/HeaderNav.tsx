@@ -72,7 +72,7 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
 
         {/* 햄버거 버튼 — 모바일만 표시 */}
         <button
-          className="md:hidden flex flex-col justify-center gap-1.5 p-2"
+          className="md:hidden flex flex-col justify-center gap-1.5 p-2 cursor-pointer"
           onClick={() => setMenuOpen((v) => !v)}
           aria-label="메뉴 열기"
         >
@@ -127,7 +127,7 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity"
+                  className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity cursor-pointer"
                 >
                   로그아웃
                 </button>
@@ -207,7 +207,7 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
                   <span className="text-sm text-primary font-medium">{userName}</span>
                   <button
                     onClick={() => { setMenuOpen(false); void handleLogout(); }}
-                    className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity"
+                    className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity cursor-pointer"
                   >
                     로그아웃
                   </button>

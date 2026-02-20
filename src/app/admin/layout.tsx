@@ -14,20 +14,14 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await getSession();
-  if (!session || session.role !== "admin") redirect("/");
+  if (!session) redirect("/login?redirect=/admin");
+  if (session.role !== "admin") redirect("/");
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 관리자 서브 네비게이션 */}
-      <div className="bg-secondary text-white text-sm">
-        <div className="mx-auto max-w-7xl px-4 flex items-center gap-1 h-10">
-          <Link
-            href="/admin"
-            className="px-3 py-1.5 rounded font-bold hover:bg-white/10 transition-colors"
-          >
-            관리자
-          </Link>
-          <span className="text-white/30">|</span>
+      <div className="bg-primary text-white text-sm">
+        <div className="flex items-center justify-center gap-1 h-10 px-4">
           {ADMIN_NAV.map(({ label, href }) => (
             <Link
               key={href}

@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const { data } = await supabase
       .from("users")
       .select("id")
-      .eq("name", nickname)
+      .eq("nickname", nickname)
       .maybeSingle();
     return NextResponse.json({ taken: !!data });
   }

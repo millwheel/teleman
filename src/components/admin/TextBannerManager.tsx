@@ -42,7 +42,7 @@ export default function TextBannerManager({ categories, bannersByCategory }: Pro
               className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
             >
               {/* 카테고리 헤더 */}
-              <div className="flex items-center justify-between bg-secondary px-3 py-2">
+              <div className="flex items-center justify-between bg-primary px-3 py-2">
                 <span className="text-xs font-bold text-white truncate">{cat.name}</span>
                 <Link
                   href={`/admin/text-banner?categoryId=${cat.id}`}

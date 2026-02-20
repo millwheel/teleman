@@ -9,10 +9,10 @@ export default async function Header() {
   if (session) {
     const { data } = await supabase
       .from("users")
-      .select("name")
+      .select("nickname")
       .eq("id", session.userId)
       .single();
-    userName = data?.name ?? session.userId.toString();
+    userName = data?.nickname ?? session.userId.toString();
   }
 
   return <HeaderNav isLoggedIn={!!session} userName={userName} />;

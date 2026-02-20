@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   const { data: existingNickname } = await supabase
     .from("users")
     .select("id")
-    .eq("name", nickname)
+    .eq("nickname", nickname)
     .maybeSingle();
 
   if (existingNickname) {
@@ -44,13 +44,14 @@ export async function POST(request: NextRequest) {
 
   const { error } = await supabase.from("users").insert({
     username,
-    name: nickname,
+    nickname,
     password_hash,
     role: "member",
     is_active: true,
   });
 
   if (error) {
+    console.error("[register] supabase insert error:", error);
     return NextResponse.json(
       { message: "회원가입 중 오류가 발생했습니다." },
       { status: 500 }
