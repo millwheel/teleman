@@ -19,17 +19,18 @@ export default async function GuaranteePage() {
 
   return (
     <div className="bg-white">
+      <div className="mx-auto max-w-7xl px-4">
       {/* 이미지 배너 4열 그리드 */}
-      <section className="mx-auto max-w-7xl px-4 py-4">
+      <section className="py-4">
         {banners.length > 0 ? (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {banners.map((banner) => (
               <a
                 key={banner.id}
                 href={banner.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative block overflow-hidden border border-[var(--secondary)] bg-[var(--secondary)]"
+                className="group relative block overflow-hidden border border-secondary bg-primary"
                 style={{ aspectRatio: "1 / 1" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -45,11 +46,11 @@ export default async function GuaranteePage() {
           </div>
         ) : (
           /* 데이터 없을 때 placeholder 그리드 */
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
-                className="flex items-center justify-center bg-[var(--secondary)] text-white text-sm font-medium"
+                className="flex items-center justify-center bg-primary text-white text-sm font-medium"
                 style={{ aspectRatio: "1 / 1" }}
               >
                 [ 배너 ]
@@ -58,8 +59,9 @@ export default async function GuaranteePage() {
           </div>
         )}
       </section>
+      </div>
 
-      {/* 하단 Static 프로모 배너 */}
+      {/* 하단 Static 프로모 배너 (full-width) */}
       <BottomGuaranteeBanner />
     </div>
   );
@@ -76,7 +78,7 @@ function BottomGuaranteeBanner() {
       <div className="mx-auto max-w-7xl px-4 py-8 flex items-center justify-between gap-8">
         <div className="flex-1">
           <p className="text-2xl font-extrabold mb-1">
-            <span className="text-[var(--primary-light)]">텔레맨</span>{" "}
+            <span className="text-secondary">텔레맨</span>{" "}
             <span className="text-white">보증업체 리스트</span>
           </p>
           <p className="text-yellow-400 font-semibold text-sm mb-4">
@@ -89,7 +91,7 @@ function BottomGuaranteeBanner() {
             <li>4. 24시간 365일 고객센터 즉시 문제 해결 지원</li>
           </ul>
         </div>
-        <div className="hidden md:flex h-24 w-24 items-center justify-center rounded-full bg-[var(--primary)]/30 border-2 border-[var(--primary-light)]/40 shrink-0">
+        <div className="hidden md:flex h-24 w-24 items-center justify-center rounded-full bg-primary/30 border-2 border-secondary/40 shrink-0">
           <svg viewBox="0 0 24 24" fill="none" className="h-12 w-12">
             <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke="#60a5fa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

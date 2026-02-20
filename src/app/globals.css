@@ -4,10 +4,9 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  --primary: #1e40af;
-  --primary-light: #2563eb;
+  --primary: #000726;
 
-  --secondary: #1e3a8a;
+  --secondary: #0070c0;
 
   --eliminate: #dc2626;
   --eliminate-light: #ef4444;
@@ -19,7 +18,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
-  --color-primary-light: var(--primary-light);
   --color-secondary: var(--secondary);
   --color-eliminate: var(--eliminate);
   --color-eliminate-light: var(--eliminate-light);

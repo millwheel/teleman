@@ -27,7 +27,7 @@ export default function TextBannerManager({ categories, bannersByCategory }: Pro
         <h1 className="text-2xl font-bold">링크모음 관리</h1>
         <Link
           href="/admin/text-banner-categories"
-          className="rounded-lg border border-[var(--primary)] px-4 py-2 text-sm font-semibold text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-colors"
+          className="rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
         >
           카테고리 관리
         </Link>
@@ -42,7 +42,7 @@ export default function TextBannerManager({ categories, bannersByCategory }: Pro
               className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
             >
               {/* 카테고리 헤더 */}
-              <div className="flex items-center justify-between bg-[var(--secondary)] px-3 py-2">
+              <div className="flex items-center justify-between bg-secondary px-3 py-2">
                 <span className="text-xs font-bold text-white truncate">{cat.name}</span>
                 <Link
                   href={`/admin/text-banner?categoryId=${cat.id}`}
@@ -80,7 +80,7 @@ export default function TextBannerManager({ categories, bannersByCategory }: Pro
           <p>카테고리가 없습니다.</p>
           <Link
             href="/admin/text-banner-categories"
-            className="mt-2 inline-block text-sm text-[var(--primary)] hover:underline"
+            className="mt-2 inline-block text-sm text-primary hover:underline"
           >
             카테고리 관리에서 추가하기
           </Link>

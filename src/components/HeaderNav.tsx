@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Send } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface HeaderNavProps {
@@ -21,6 +22,7 @@ const NAV_LINKS = [
 export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -33,68 +35,99 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* 로고 */}
         <Link href="/links" className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[var(--primary)]">
-            <Send className="h-6 w-6 text-white" strokeWidth={1.5} />
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="텔레맨 로고"
+            width={48}
+            height={48}
+            className="rounded-lg"
+            priority
+          />
           <div className="flex flex-col">
-            <span className="text-2xl font-extrabold tracking-tight text-[var(--foreground)]">
+            <span className="text-2xl font-extrabold tracking-tight text-primary">
               텔레맨
             </span>
-            <span className="text-xs text-gray-500 leading-tight">
+            <span className="text-xs text-primary leading-tight">
               텔레그램 홍보방&nbsp;안전거래
             </span>
           </div>
         </Link>
 
-        {/* 고객센터 버튼 */}
+        {/* 고객센터 버튼 — 데스크탑만 표시 */}
         <a
           href="https://t.me/"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-lg bg-[var(--primary)] px-4 py-2 text-white hover:bg-[var(--primary-light)] transition-colors"
+          className="hidden md:block overflow-hidden rounded-lg hover:opacity-90 transition-opacity"
         >
-          <Send className="h-4 w-4" strokeWidth={1.5} />
-          <div className="flex flex-col leading-tight text-right">
-            <span className="text-sm font-bold">텔레맨 고객센터</span>
-            <span className="text-xs opacity-90">텔레그램 메신저 바로가기</span>
-          </div>
+          <Image
+            src="/images/contact.jpg"
+            alt="텔레맨 고객센터 텔레그램 메신저 바로가기"
+            width={300}
+            height={75}
+            className="h-14 w-auto"
+            priority
+          />
         </a>
+
+        {/* 햄버거 버튼 — 모바일만 표시 */}
+        <button
+          className="md:hidden flex flex-col justify-center gap-1.5 p-2"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label="메뉴 열기"
+        >
+          <span
+            className={cn(
+              "block h-0.5 w-6 bg-primary transition-transform duration-200",
+              menuOpen && "translate-y-2 rotate-45"
+            )}
+          />
+          <span
+            className={cn(
+              "block h-0.5 w-6 bg-primary transition-opacity duration-200",
+              menuOpen && "opacity-0"
+            )}
+          />
+          <span
+            className={cn(
+              "block h-0.5 w-6 bg-primary transition-transform duration-200",
+              menuOpen && "-translate-y-2 -rotate-45"
+            )}
+          />
+        </button>
       </div>
 
-      {/* 하단 레이어: 내비게이션 메뉴 */}
-      <div className="border-t border-gray-100">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4">
-          {/* 주요 메뉴 */}
-          <nav className="flex items-center">
-            {NAV_LINKS.map(({ label, href }) => {
-              const isActive = pathname === href || pathname.startsWith(href + "/");
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={cn(
-                    "px-5 py-3 text-sm font-semibold transition-colors hover:text-[var(--active)]",
-                    isActive
-                      ? "text-[var(--active)] border-b-2 border-[var(--active)]"
-                      : "text-gray-700"
-                  )}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </nav>
+      {/* 하단 레이어: 내비게이션 메뉴 — 데스크탑 */}
+      <div className="hidden md:block border-t border-secondary">
+        <div className="mx-auto flex max-w-7xl items-center justify-center px-4">
+          {NAV_LINKS.map(({ label, href }) => {
+            const isActive = pathname === href || pathname.startsWith(href + "/");
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "px-5 py-3 text-base font-semibold transition-colors hover:text-active",
+                  isActive
+                    ? "text-active border-b-2 border-active"
+                    : "text-primary"
+                )}
+              >
+                {label}
+              </Link>
+            );
+          })}
 
           {/* 인증 버튼 */}
-          <div className="flex items-center gap-2 py-2">
+          <div className="ml-8 flex items-center gap-3 py-2">
             {isLoggedIn ? (
               <>
-                <span className="text-sm text-gray-600 font-medium px-2">
+                <span className="text-sm text-primary font-medium">
                   {userName}
                 </span>
                 <button
                   onClick={handleLogout}
-                  className="rounded border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+                  className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity"
                 >
                   로그아웃
                 </button>
@@ -104,10 +137,10 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
                 <Link
                   href="/login"
                   className={cn(
-                    "rounded border px-3 py-1.5 text-sm font-medium transition-colors",
+                    "rounded border px-4 py-1.5 text-sm font-semibold transition-opacity hover:opacity-80",
                     pathname === "/login"
-                      ? "border-[var(--active)] text-[var(--active)]"
-                      : "border-gray-300 text-gray-600 hover:bg-gray-50"
+                      ? "border-active bg-active text-white"
+                      : "border-primary bg-primary text-white"
                   )}
                 >
                   로그인
@@ -115,10 +148,10 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
                 <Link
                   href="/register"
                   className={cn(
-                    "rounded border px-3 py-1.5 text-sm font-medium transition-colors",
+                    "rounded border px-4 py-1.5 text-sm font-semibold transition-opacity hover:opacity-80",
                     pathname === "/register"
-                      ? "border-[var(--active)] bg-[var(--active)] text-white"
-                      : "border-[var(--primary)] bg-[var(--primary)] text-white hover:bg-[var(--primary-light)]"
+                      ? "border-active bg-active text-white"
+                      : "border-primary bg-primary text-white"
                   )}
                 >
                   회원가입
@@ -128,6 +161,89 @@ export default function HeaderNav({ isLoggedIn, userName }: HeaderNavProps) {
           </div>
         </div>
       </div>
+
+      {/* 모바일 드롭다운 메뉴 */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-secondary bg-white">
+          <nav className="flex flex-col">
+            {NAV_LINKS.map(({ label, href }) => {
+              const isActive = pathname === href || pathname.startsWith(href + "/");
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={cn(
+                    "px-6 py-3 text-base font-semibold border-b border-gray-100 transition-colors",
+                    isActive ? "text-active bg-active/5" : "text-primary hover:bg-gray-50"
+                  )}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+
+            {/* 고객센터 */}
+            <a
+              href="https://t.me/"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMenuOpen(false)}
+              className="flex justify-center border-b border-gray-100 px-6 py-4 hover:opacity-90 transition-opacity"
+            >
+              <Image
+                src="/images/contact.jpg"
+                alt="텔레맨 고객센터 텔레그램 메신저 바로가기"
+                width={300}
+                height={75}
+                className="h-14 w-auto rounded-lg"
+              />
+            </a>
+
+            {/* 인증 버튼 */}
+            <div className="flex items-center gap-3 px-6 py-4">
+              {isLoggedIn ? (
+                <>
+                  <span className="text-sm text-primary font-medium">{userName}</span>
+                  <button
+                    onClick={() => { setMenuOpen(false); void handleLogout(); }}
+                    className="rounded border border-primary px-3 py-1.5 text-sm font-medium text-primary hover:opacity-70 transition-opacity"
+                  >
+                    로그아웃
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      "rounded border px-4 py-1.5 text-sm font-semibold transition-opacity hover:opacity-80",
+                      pathname === "/login"
+                        ? "border-active bg-active text-white"
+                        : "border-primary bg-primary text-white"
+                    )}
+                  >
+                    로그인
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setMenuOpen(false)}
+                    className={cn(
+                      "rounded border px-4 py-1.5 text-sm font-semibold transition-opacity hover:opacity-80",
+                      pathname === "/register"
+                        ? "border-active bg-active text-white"
+                        : "border-primary bg-primary text-white"
+                    )}
+                  >
+                    회원가입
+                  </Link>
+                </>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

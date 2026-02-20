@@ -132,7 +132,7 @@ export default function CategoryManager({ categories }: Props) {
         <h1 className="text-2xl font-bold">링크 카테고리 관리</h1>
         <button
           onClick={openAdd}
-          className="flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 transition-colors"
         >
           <Plus className="h-4 w-4" />
           카테고리 추가
@@ -153,7 +153,7 @@ export default function CategoryManager({ categories }: Props) {
             {categories.map((cat, idx) => (
               <tr key={cat.id} className="hover:bg-gray-50 transition-colors">
                 <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
-                <td className="px-4 py-3 font-mono text-[var(--primary)]">{cat.code}</td>
+                <td className="px-4 py-3 font-mono text-primary">{cat.code}</td>
                 <td className="px-4 py-3 font-medium">{cat.name}</td>
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-1">
@@ -173,13 +173,13 @@ export default function CategoryManager({ categories }: Props) {
                     </button>
                     <button
                       onClick={() => openEdit(cat)}
-                      className="p-1.5 rounded hover:bg-blue-50 text-[var(--primary)] transition-colors"
+                      className="p-1.5 rounded hover:bg-blue-50 text-primary transition-colors"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => openDelete(cat)}
-                      className="p-1.5 rounded hover:bg-red-50 text-[var(--eliminate)] transition-colors"
+                      className="p-1.5 rounded hover:bg-red-50 text-eliminate transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -233,19 +233,19 @@ export default function CategoryManager({ categories }: Props) {
         <Modal title="카테고리 삭제" onClose={() => setModal(null)}>
           <div className="space-y-4">
             <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3">
-              <p className="text-sm font-semibold text-[var(--eliminate)] mb-1">
+              <p className="text-sm font-semibold text-eliminate mb-1">
                 ⚠️ 주의
               </p>
               <p className="text-sm text-gray-700">
                 하위에 링크모음이 모두 삭제됩니다. 정말로 삭제합니까?
               </p>
               <p className="text-sm font-medium text-gray-800 mt-2">
-                대상: <span className="text-[var(--primary)]">{selected.name}</span>{" "}
+                대상: <span className="text-primary">{selected.name}</span>{" "}
                 (<span className="font-mono">{selected.code}</span>)
               </p>
             </div>
             {deleteError && (
-              <p className="text-sm text-[var(--eliminate)]">{deleteError}</p>
+              <p className="text-sm text-eliminate">{deleteError}</p>
             )}
             <div className="flex gap-2 justify-end">
               <button
@@ -257,7 +257,7 @@ export default function CategoryManager({ categories }: Props) {
               <button
                 onClick={handleDelete}
                 disabled={loading === "delete"}
-                className="rounded-lg bg-[var(--eliminate)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--eliminate-light)] disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-eliminate px-4 py-2 text-sm font-semibold text-white hover:bg-eliminate-light disabled:opacity-60 transition-colors"
               >
                 {loading === "delete" ? "삭제 중..." : "삭제"}
               </button>
@@ -287,7 +287,7 @@ function CategoryForm({
   submitLabel: string;
 }) {
   const inputClass =
-    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition";
+    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
   return (
     <div className="space-y-4">
@@ -313,7 +313,7 @@ function CategoryForm({
           className={inputClass}
         />
       </div>
-      {error && <p className="text-sm text-[var(--eliminate)]">{error}</p>}
+      {error && <p className="text-sm text-eliminate">{error}</p>}
       <div className="flex gap-2 justify-end pt-1">
         <button
           type="button"
@@ -326,7 +326,7 @@ function CategoryForm({
           type="button"
           onClick={onSubmit}
           disabled={loading}
-          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-60 transition-colors"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
         >
           {loading ? "처리 중..." : submitLabel}
         </button>

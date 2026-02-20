@@ -9,21 +9,21 @@ const MENU = [
 export default function AdminPage() {
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-8">관리자 메뉴</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-8">관리자 메뉴</h1>
       <div className="flex flex-col gap-3 max-w-md">
         {MENU.map(({ label, href, desc }) => (
           <Link
             key={href}
             href={href}
-            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-6 py-4 hover:border-[var(--primary)] hover:shadow-sm transition-all group"
+            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-6 py-4 hover:border-primary hover:shadow-sm transition-all group"
           >
             <div>
-              <p className="font-semibold text-[var(--foreground)] group-hover:text-[var(--primary)]">
+              <p className="font-semibold text-foreground group-hover:text-primary">
                 {label}
               </p>
               <p className="text-sm text-gray-400 mt-0.5">{desc}</p>
             </div>
-            <span className="text-gray-300 group-hover:text-[var(--primary)] text-lg">→</span>
+            <span className="text-gray-300 group-hover:text-primary text-lg">→</span>
           </Link>
         ))}
       </div>

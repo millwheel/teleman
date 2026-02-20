@@ -37,7 +37,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-center text-2xl font-bold text-[var(--foreground)]">
+        <h1 className="mb-8 text-center text-2xl font-bold text-foreground">
           로그인
         </h1>
 
@@ -57,7 +57,7 @@ export default function LoginPage() {
               placeholder="아이디를 입력하세요"
               required
               autoComplete="username"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
 
@@ -76,12 +76,12 @@ export default function LoginPage() {
               placeholder="비밀번호를 입력하세요"
               required
               autoComplete="current-password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-[var(--eliminate)]">
+            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-eliminate">
               {error}
             </p>
           )}
@@ -89,7 +89,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-60 transition-colors"
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
           >
             {loading ? "로그인 중..." : "로그인"}
           </button>
@@ -99,7 +99,7 @@ export default function LoginPage() {
           계정이 없으신가요?{" "}
           <Link
             href="/register"
-            className="font-medium text-[var(--primary)] hover:text-[var(--primary-light)]"
+            className="font-medium text-primary hover:text-secondary"
           >
             회원가입
           </Link>

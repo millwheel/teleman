@@ -19,7 +19,7 @@ export default async function AdminLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* 관리자 서브 네비게이션 */}
-      <div className="bg-[var(--secondary)] text-white text-sm">
+      <div className="bg-secondary text-white text-sm">
         <div className="mx-auto max-w-7xl px-4 flex items-center gap-1 h-10">
           <Link
             href="/admin"

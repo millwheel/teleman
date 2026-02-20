@@ -129,14 +129,14 @@ export default function TextBannerDetail({ category, banners }: Props) {
             링크모음 관리
           </Link>
           <span className="text-gray-300">/</span>
-          <h1 className="text-xl font-bold text-[var(--foreground)]">{category.name}</h1>
+          <h1 className="text-xl font-bold text-foreground">{category.name}</h1>
           <span className="text-sm text-gray-400">({banners.length}/10)</span>
         </div>
         <button
           onClick={openAdd}
           disabled={atLimit}
           title={atLimit ? "최대 10개까지 등록 가능합니다." : ""}
-          className="flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
           <Plus className="h-4 w-4" />
           배너 추가
@@ -170,7 +170,7 @@ export default function TextBannerDetail({ category, banners }: Props) {
                     href={b.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="truncate block text-[var(--primary)] hover:underline text-xs"
+                    className="truncate block text-primary hover:underline text-xs"
                   >
                     {b.link}
                   </a>
@@ -193,13 +193,13 @@ export default function TextBannerDetail({ category, banners }: Props) {
                     </button>
                     <button
                       onClick={() => openEdit(b)}
-                      className="p-1.5 rounded hover:bg-blue-50 text-[var(--primary)] transition-colors"
+                      className="p-1.5 rounded hover:bg-blue-50 text-primary transition-colors"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => openDelete(b)}
-                      className="p-1.5 rounded hover:bg-red-50 text-[var(--eliminate)] transition-colors"
+                      className="p-1.5 rounded hover:bg-red-50 text-eliminate transition-colors"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -253,7 +253,7 @@ export default function TextBannerDetail({ category, banners }: Props) {
         <Modal title="배너 삭제" onClose={() => setModal(null)}>
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
-              <span className="font-semibold text-[var(--foreground)]">{selected.name}</span>{" "}
+              <span className="font-semibold text-foreground">{selected.name}</span>{" "}
               배너를 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2 justify-end">
@@ -266,7 +266,7 @@ export default function TextBannerDetail({ category, banners }: Props) {
               <button
                 onClick={handleDelete}
                 disabled={loading === "delete"}
-                className="rounded-lg bg-[var(--eliminate)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--eliminate-light)] disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-eliminate px-4 py-2 text-sm font-semibold text-white hover:bg-eliminate-light disabled:opacity-60 transition-colors"
               >
                 {loading === "delete" ? "삭제 중..." : "삭제"}
               </button>
@@ -296,7 +296,7 @@ function BannerForm({
   submitLabel: string;
 }) {
   const inputClass =
-    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition";
+    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
   return (
     <div className="space-y-4">
@@ -320,7 +320,7 @@ function BannerForm({
           className={inputClass}
         />
       </div>
-      {error && <p className="text-sm text-[var(--eliminate)]">{error}</p>}
+      {error && <p className="text-sm text-eliminate">{error}</p>}
       <div className="flex gap-2 justify-end pt-1">
         <button
           type="button"
@@ -333,7 +333,7 @@ function BannerForm({
           type="button"
           onClick={onSubmit}
           disabled={loading}
-          className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-60 transition-colors"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
         >
           {loading ? "처리 중..." : submitLabel}
         </button>

@@ -42,7 +42,7 @@ function FieldHint({ status, okMsg, takenMsg }: {
 }) {
   if (status === "checking") return <p className="mt-1 text-xs text-gray-400">확인 중...</p>;
   if (status === "ok") return <p className="mt-1 text-xs text-green-600">{okMsg}</p>;
-  if (status === "taken") return <p className="mt-1 text-xs text-[var(--eliminate)]">{takenMsg}</p>;
+  if (status === "taken") return <p className="mt-1 text-xs text-eliminate">{takenMsg}</p>;
   return null;
 }
 
@@ -97,7 +97,7 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-center text-2xl font-bold text-[var(--foreground)]">
+        <h1 className="mb-8 text-center text-2xl font-bold text-foreground">
           회원가입
         </h1>
 
@@ -121,10 +121,10 @@ export default function RegisterPage() {
               className={cn(
                 "w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 transition",
                 usernameStatus === "taken"
-                  ? "border-[var(--eliminate)] focus:border-[var(--eliminate)] focus:ring-[var(--eliminate)]/20"
+                  ? "border-eliminate focus:border-eliminate focus:ring-eliminate/20"
                   : usernameStatus === "ok"
                   ? "border-green-500 focus:border-green-500 focus:ring-green-500/20"
-                  : "border-gray-300 focus:border-[var(--primary)] focus:ring-[var(--primary)]/20"
+                  : "border-gray-300 focus:border-primary focus:ring-primary/20"
               )}
             />
             <FieldHint
@@ -152,10 +152,10 @@ export default function RegisterPage() {
               className={cn(
                 "w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 transition",
                 nicknameStatus === "taken"
-                  ? "border-[var(--eliminate)] focus:border-[var(--eliminate)] focus:ring-[var(--eliminate)]/20"
+                  ? "border-eliminate focus:border-eliminate focus:ring-eliminate/20"
                   : nicknameStatus === "ok"
                   ? "border-green-500 focus:border-green-500 focus:ring-green-500/20"
-                  : "border-gray-300 focus:border-[var(--primary)] focus:ring-[var(--primary)]/20"
+                  : "border-gray-300 focus:border-primary focus:ring-primary/20"
               )}
             />
             <FieldHint
@@ -181,12 +181,12 @@ export default function RegisterPage() {
               placeholder="4자 이상"
               required
               autoComplete="new-password"
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition"
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
           </div>
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-[var(--eliminate)]">
+            <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-eliminate">
               {error}
             </p>
           )}
@@ -194,7 +194,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="w-full rounded-lg bg-[var(--primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "처리 중..." : "가입하기"}
           </button>
@@ -204,7 +204,7 @@ export default function RegisterPage() {
           이미 계정이 있으신가요?{" "}
           <Link
             href="/login"
-            className="font-medium text-[var(--primary)] hover:text-[var(--primary-light)]"
+            className="font-medium text-primary hover:text-secondary"
           >
             로그인
           </Link>

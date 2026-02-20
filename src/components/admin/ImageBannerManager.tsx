@@ -120,7 +120,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
   }
 
   const inputClass =
-    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--primary)]/20 transition";
+    "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
   return (
     <div>
@@ -128,7 +128,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
         <h1 className="text-2xl font-bold">{title}</h1>
         <button
           onClick={openAdd}
-          className="flex items-center gap-1.5 rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] transition-colors"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 transition-colors"
         >
           <Plus className="h-4 w-4" />
           배너 추가
@@ -144,7 +144,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
             >
               {/* 이미지 */}
-              <div className="relative bg-[var(--secondary)]" style={{ aspectRatio: "1 / 1" }}>
+              <div className="relative bg-secondary" style={{ aspectRatio: "1 / 1" }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={getPublicImageUrl(b.image_url)}
@@ -159,7 +159,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
                   href={b.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-[var(--primary)] truncate block hover:underline"
+                  className="text-xs text-primary truncate block hover:underline"
                 >
                   {b.link}
                 </a>
@@ -168,7 +168,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <div className="flex border-t border-gray-100">
                 <button
                   onClick={() => openEdit(b)}
-                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-[var(--primary)] hover:bg-blue-50 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-primary hover:bg-blue-50 transition-colors"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                   수정
@@ -176,7 +176,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
                 <div className="w-px bg-gray-100" />
                 <button
                   onClick={() => openDelete(b)}
-                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-[var(--eliminate)] hover:bg-red-50 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-eliminate hover:bg-red-50 transition-colors"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   삭제
@@ -227,7 +227,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full rounded-lg border-2 border-dashed border-gray-300 px-4 py-6 text-sm text-gray-500 hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+                className="w-full rounded-lg border-2 border-dashed border-gray-300 px-4 py-6 text-sm text-gray-500 hover:border-primary hover:text-primary transition-colors"
               >
                 {addFile ? addFile.name : "클릭하여 이미지 선택"}
               </button>
@@ -238,7 +238,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
                 </div>
               )}
             </div>
-            {addError && <p className="text-sm text-[var(--eliminate)]">{addError}</p>}
+            {addError && <p className="text-sm text-eliminate">{addError}</p>}
             <div className="flex gap-2 justify-end pt-1">
               <button
                 onClick={() => setModal(null)}
@@ -249,7 +249,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <button
                 onClick={handleAdd}
                 disabled={loading === "add"}
-                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
               >
                 {loading === "add" ? "업로드 중..." : "추가"}
               </button>
@@ -281,7 +281,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               />
             </div>
             <p className="text-xs text-gray-400">이미지는 변경할 수 없습니다.</p>
-            {editError && <p className="text-sm text-[var(--eliminate)]">{editError}</p>}
+            {editError && <p className="text-sm text-eliminate">{editError}</p>}
             <div className="flex gap-2 justify-end pt-1">
               <button
                 onClick={() => setModal(null)}
@@ -292,7 +292,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <button
                 onClick={handleEdit}
                 disabled={loading === "edit"}
-                className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--primary-light)] disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-colors"
               >
                 {loading === "edit" ? "저장 중..." : "저장"}
               </button>
@@ -319,7 +319,7 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <button
                 onClick={handleDelete}
                 disabled={loading === "delete"}
-                className="rounded-lg bg-[var(--eliminate)] px-4 py-2 text-sm font-semibold text-white hover:bg-[var(--eliminate-light)] disabled:opacity-60 transition-colors"
+                className="rounded-lg bg-eliminate px-4 py-2 text-sm font-semibold text-white hover:bg-eliminate-light disabled:opacity-60 transition-colors"
               >
                 {loading === "delete" ? "삭제 중..." : "삭제"}
               </button>
