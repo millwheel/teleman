@@ -54,7 +54,7 @@ export default async function GuaranteePage() {
                 className="flex items-center justify-center bg-primary text-white text-sm font-medium"
                 style={{ aspectRatio: "1 / 1" }}
               >
-                [ 배너 ]
+                [ 빈 배너 ]
               </div>
             ))}
           </div>

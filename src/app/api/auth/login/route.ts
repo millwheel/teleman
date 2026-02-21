@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
   const { data: user } = await supabase
     .from("users")
-    .select("id, password_hash, role, is_active")
+    .select("id, password_hash, role, is_active, nickname, image_path")
     .eq("username", username)
     .single();
 
@@ -41,7 +41,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const token = await signJwt({ userId: Number(user.id), role: user.role });
+  const token = await signJwt({
+    userId: Number(user.id),
+    role: user.role,
+    nickname: user.nickname,
+    imagePath: user.image_path ?? null,
+  });
   await setSessionCookie(token);
 
   return NextResponse.json({ ok: true });

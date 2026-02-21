@@ -7,6 +7,8 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 export interface JwtPayload {
   userId: number;
   role: "admin" | "member";
+  nickname: string;
+  imagePath: string | null;
 }
 
 export async function signJwt(payload: JwtPayload): Promise<string> {

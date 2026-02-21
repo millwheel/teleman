@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 interface HamburgerMenuProps {
   isLoggedIn: boolean;
   userName?: string;
+  imageUrl: string | null;
 }
 
 const NAV_LINKS = [
@@ -19,7 +20,7 @@ const NAV_LINKS = [
   { label: "공지사항", href: "/notice" },
 ];
 
-export default function HamburgerMenu({ isLoggedIn, userName }: HamburgerMenuProps) {
+export default function HamburgerMenu({ isLoggedIn, userName, imageUrl }: HamburgerMenuProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,7 +60,7 @@ export default function HamburgerMenu({ isLoggedIn, userName }: HamburgerMenuPro
 
       {/* 모바일 드롭다운 메뉴 */}
       {menuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 border-t border-secondary bg-white z-50">
+        <div className="sm:hidden absolute top-full left-0 right-0 border-t border-secondary bg-white z-50">
           <nav className="flex flex-col">
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = pathname === href || pathname.startsWith(href + "/");
@@ -99,7 +100,28 @@ export default function HamburgerMenu({ isLoggedIn, userName }: HamburgerMenuPro
             <div className="flex items-center gap-3 px-6 py-4">
               {isLoggedIn ? (
                 <>
-                  <span className="text-sm text-primary font-medium">{userName}</span>
+                  <Link
+                    href="/profile"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                  >
+                    {imageUrl ? (
+                      <Image
+                        src={imageUrl}
+                        alt="프로필 사진"
+                        width={32}
+                        height={32}
+                        className="rounded-full object-cover w-8 h-8"
+                      />
+                    ) : (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                        </svg>
+                      </span>
+                    )}
+                    <span className="text-sm text-primary font-medium">{userName}</span>
+                  </Link>
                   <button
                     onClick={() => { setMenuOpen(false); void handleLogout(); }}
                     className="rounded border border-primary bg-primary px-4 py-1.5 text-sm font-semibold text-white hover:opacity-80 transition-opacity cursor-pointer"

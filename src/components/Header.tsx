@@ -1,22 +1,17 @@
 import { getSession } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import Image from "next/image";
 import HeaderNav from "./HeaderNav";
 import HamburgerMenu from "./HamburgerMenu";
 
+const STORAGE_BASE = `${process.env.SUPABASE_URL}/storage/v1/object/public/public-media`;
+
 export default async function Header() {
   const session = await getSession();
 
-  let userName: string | undefined;
-  if (session) {
-    const { data } = await supabase
-      .from("users")
-      .select("nickname")
-      .eq("id", session.userId)
-      .single();
-    userName = data?.nickname ?? session.userId.toString();
-  }
+  const imageUrl = session?.imagePath
+    ? `${STORAGE_BASE}/${session.imagePath}`
+    : null;
 
   return (
     <header className="relative w-full border-b border-gray-200 bg-white">
@@ -60,11 +55,19 @@ export default async function Header() {
         </a>
 
         {/* 햄버거 메뉴 — 모바일만 표시 */}
-        <HamburgerMenu isLoggedIn={!!session} userName={userName} />
+        <HamburgerMenu
+          isLoggedIn={!!session}
+          userName={session?.nickname}
+          imageUrl={imageUrl}
+        />
       </div>
 
       {/* 하단 레이어: 내비게이션 메뉴 — 데스크탑 */}
-      <HeaderNav isLoggedIn={!!session} userName={userName} />
+      <HeaderNav
+        isLoggedIn={!!session}
+        userName={session?.nickname}
+        imageUrl={imageUrl}
+      />
     </header>
   );
 }

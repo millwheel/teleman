@@ -75,7 +75,7 @@ export default async function LinksPage() {
                   className="flex items-center justify-center bg-primary text-white text-sm font-medium"
                   style={{ aspectRatio: "3 / 1" }}
                 >
-                  [ 배너 ]
+                  [ 빈 배너 ]
                 </div>
               )
           )}
