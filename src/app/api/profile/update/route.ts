@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 import { getSession, signJwt, setSessionCookie } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
@@ -13,9 +14,14 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const nickname = (formData.get("nickname") as string)?.trim();
   const imageFile = formData.get("image") as File | null;
+  const newPassword = (formData.get("password") as string) || null;
 
   if (!nickname) {
     return NextResponse.json({ message: "닉네임을 입력하세요." }, { status: 400 });
+  }
+
+  if (newPassword !== null && newPassword.length < 8) {
+    return NextResponse.json({ message: "비밀번호는 8자 이상이어야 합니다." }, { status: 400 });
   }
 
   // 닉네임 중복 확인 (본인 제외)
@@ -56,9 +62,14 @@ export async function POST(request: NextRequest) {
   }
 
   // DB 업데이트
+  const updatePayload: Record<string, unknown> = { nickname, image_path: imagePath };
+  if (newPassword) {
+    updatePayload.password_hash = await bcrypt.hash(newPassword, 12);
+  }
+
   const { error: dbError } = await supabase
     .from("users")
-    .update({ nickname, image_path: imagePath })
+    .update(updatePayload)
     .eq("id", session.userId);
 
   if (dbError) {

@@ -26,6 +26,10 @@ export default function ProfileForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -56,13 +60,26 @@ export default function ProfileForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setError("");
     setSuccess("");
+
+    if (showPasswordForm) {
+      if (newPassword.length < 8) {
+        setError("비밀번호는 8자 이상이어야 합니다.");
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        setError("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+    }
+
+    setSaving(true);
 
     const formData = new FormData();
     formData.append("nickname", nickname);
     if (selectedFile) formData.append("image", selectedFile);
+    if (showPasswordForm && newPassword) formData.append("password", newPassword);
 
     const res = await fetch("/api/profile/update", {
       method: "POST",
@@ -76,6 +93,9 @@ export default function ProfileForm({
       setImageUrl(data.imageUrl);
       setSelectedFile(null);
       setPreviewUrl(null);
+      setShowPasswordForm(false);
+      setNewPassword("");
+      setConfirmPassword("");
       setSuccess("프로필이 저장되었습니다.");
       router.refresh();
     } else {
@@ -163,6 +183,42 @@ export default function ProfileForm({
               required
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
+          </div>
+
+          {/* 비밀번호 변경 */}
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                setShowPasswordForm((v) => !v);
+                setNewPassword("");
+                setConfirmPassword("");
+              }}
+              className="rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary cursor-pointer"
+            >
+              {showPasswordForm ? "비밀번호 변경 취소" : "비밀번호 변경"}
+            </button>
+
+            {showPasswordForm && (
+              <div className="mt-3 space-y-3">
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="새 비밀번호 (8자 이상)"
+                  autoComplete="new-password"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
+                />
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="비밀번호 확인"
+                  autoComplete="new-password"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
+                />
+              </div>
+            )}
           </div>
 
           {error && (
