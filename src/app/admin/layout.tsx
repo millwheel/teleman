@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 
 const ADMIN_NAV = [
+  { label: "관리자 관리", href: "/admin/members" },
   { label: "링크모음 관리", href: "/admin/text-banner" },
   { label: "보증업체 관리", href: "/admin/image-banner" },
   { label: "광고배너 관리", href: "/admin/common-banner" },
