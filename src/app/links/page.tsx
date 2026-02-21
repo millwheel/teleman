@@ -93,7 +93,7 @@ export default async function LinksPage() {
                 className="overflow-hidden rounded-lg border border-secondary"
               >
                 {/* 카테고리 헤더 */}
-                <div className="bg-primary px-2 py-2 text-center text-xs font-bold text-white">
+                <div className="bg-primary px-2 py-2 text-center text-sm font-bold text-white">
                   {category.name}
                 </div>
                 {/* 배너 목록: 항상 10행 표시 */}
@@ -106,7 +106,7 @@ export default async function LinksPage() {
                         href={banner.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-2 py-1.5 text-center text-xs text-white hover:bg-white/10 transition-colors"
+                        className="block px-2 py-1.5 text-center 로text-sm text-white hover:bg-white/10 transition-colors"
                       >
                         [ {banner.name} ]
                       </a>

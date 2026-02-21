@@ -12,6 +12,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (password.length < 8) {
+    return NextResponse.json(
+      { message: "비밀번호는 8자 이상이어야 합니다." },
+      { status: 400 }
+    );
+  }
+
   // username 중복 확인
   const { data: existingUser } = await supabase
     .from("users")

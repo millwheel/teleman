@@ -60,7 +60,7 @@ export default function RegisterPage() {
   const canSubmit =
     usernameStatus === "ok" &&
     nicknameStatus === "ok" &&
-    password.length >= 4 &&
+    password.length >= 8 &&
     !loading;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -178,7 +178,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="4자 이상"
+              placeholder="8자 이상"
               required
               autoComplete="new-password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
