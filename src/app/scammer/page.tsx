@@ -57,11 +57,16 @@ export default async function ScammerPage() {
       {/* 소개 섹션 */}
       <section className="py-14">
 
-          <div className="mb-10 text-center">
-            <h2 className="text-2xl font-extrabold text-primary md:text-3xl">텔레맨의</h2>
-            <p className="mt-1 text-lg font-semibold text-gray-700 md:text-xl">
-              안전검증 시스템이 궁금 하신가요?
-            </p>
+          {/* 중인사 섹션 */}
+          <div className="mb-10 flex items-center gap-6">
+            <hr className="flex-1 border-secondary" />
+            <div className="text-center shrink-0">
+              <h2 className="text-2xl font-extrabold text-primary md:text-3xl">텔레맨의</h2>
+              <p className="mt-1 text-lg font-semibold text-primary md:text-xl">
+                안전검증 시스템이 궁금 하신가요?
+              </p>
+            </div>
+            <hr className="flex-1 border-secondary" />
           </div>
           
           {/* 카드들 */}

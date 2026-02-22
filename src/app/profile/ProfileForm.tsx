@@ -109,9 +109,6 @@ export default function ProfileForm({
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-8 text-center text-2xl font-bold text-foreground">
-          프로필 수정
-        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* 프로필 사진 */}
