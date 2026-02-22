@@ -28,7 +28,7 @@ export default function ComingSoon({
           </svg>
         </div>
         <h1 className="text-3xl font-extrabold text-secondary mb-2">{title}</h1>
-        <p className="text-gray-400 text-sm max-w-xs mx-auto leading-relaxed">
+        <p className="text-gray-400 text-sm max-w-2xl mx-auto leading-relaxed">
           {description}
         </p>
         <Link
