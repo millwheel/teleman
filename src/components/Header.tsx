@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import HeaderNav from "./HeaderNav";
 import HamburgerMenu from "./HamburgerMenu";
+import LogoBrand from "./LogoBrand";
 
 const STORAGE_BASE = `${process.env.SUPABASE_URL}/storage/v1/object/public/public-media`;
 
@@ -18,24 +19,7 @@ export default async function Header() {
       {/* 상단 레이어: 로고 + 고객센터 버튼 */}
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         {/* 로고 */}
-        <Link href="/links" className="flex items-center gap-3">
-          <Image
-            src="/images/logo.png"
-            alt="텔레맨 로고"
-            width={48}
-            height={48}
-            className="rounded-lg"
-            priority
-          />
-          <div className="flex flex-col">
-            <span className="text-2xl font-extrabold tracking-tight text-primary">
-              텔레맨
-            </span>
-            <span className="text-xs text-primary leading-tight">
-              텔레그램 홍보방&nbsp;안전거래
-            </span>
-          </div>
-        </Link>
+        <LogoBrand />
 
         {/* 고객센터 버튼 — 데스크탑만 표시 */}
         <a
