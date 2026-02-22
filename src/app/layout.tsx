@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "텔레맨 - 텔레그램 홍보방 안전거래",
@@ -17,6 +18,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground">
         <Header />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
