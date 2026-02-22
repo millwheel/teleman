@@ -39,8 +39,8 @@ export default async function LinksPage() {
       {/* 상단 Static 이미지 */}
         <div className="w-full pt-4">
             <Image
-                src="/images/link-page-top.jpg"
-                alt="텔레맨 링크모음"
+                src="/images/link-banner.jpg"
+                alt="텔레맨 링크모음 배너"
                 width={1920}
                 height={400}
                 className="w-full h-auto"
@@ -126,15 +126,6 @@ export default async function LinksPage() {
         </div>
       </section>
 
-        <div className="w-full mt-4 pb-4">
-            <Image
-                src="/images/link-page-bottom.jpg"
-                alt="텔레맨 링크모음 - 복잡한 검색은 끝, 안전한 접속만 남다"
-                width={1920}
-                height={500}
-                className="w-full h-auto"
-            />
-        </div>
       </div>
     </div>
   );

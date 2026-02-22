@@ -21,6 +21,17 @@ export default async function GuaranteePage() {
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4">
+          {/* 상단 Static 이미지 */}
+          <div className="w-full pt-4">
+              <Image
+                  src="/images/guarantee-banner.jpg"
+                  alt="텔레맨 보증업체 배너"
+                  width={1920}
+                  height={400}
+                  className="w-full h-auto"
+                  priority
+              />
+          </div>
       {/* 이미지 배너 4열 그리드 */}
       <section className="py-4">
         {banners.length > 0 ? (
@@ -60,17 +71,6 @@ export default async function GuaranteePage() {
           </div>
         )}
       </section>
-      </div>
-
-      {/* 하단 보증 이미지 */}
-      <div className="mx-auto max-w-7xl px-4 mt-4">
-        <Image
-          src="/images/guarantee-bottom.jpg"
-          alt="텔레맨 보증업체"
-          className="w-full"
-          width={1920}
-          height={500}
-        />
       </div>
     </div>
   );

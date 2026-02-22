@@ -151,7 +151,7 @@ export default function ProfileForm({
               <button
                 type="button"
                 onClick={handleDeleteImage}
-                className="text-xs text-eliminate hover:underline"
+                className="text-xs text-eliminate hover:underline cursor-pointer"
               >
                 사진 삭제
               </button>
