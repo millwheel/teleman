@@ -19,7 +19,6 @@ export default async function GuaranteePage() {
   const banners = shuffle(allBanners ?? []);
 
   return (
-    <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4">
           {/* 상단 Static 이미지 */}
           <div className="w-full pt-4">
@@ -72,6 +71,5 @@ export default async function GuaranteePage() {
         )}
       </section>
       </div>
-    </div>
   );
 }

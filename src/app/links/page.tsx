@@ -34,7 +34,6 @@ export default async function LinksPage() {
   }, {});
 
   return (
-    <div className="bg-white">
       <div className="mx-auto max-w-7xl px-4">
       {/* 상단 Static 이미지 */}
         <div className="w-full pt-4">
@@ -127,6 +126,5 @@ export default async function LinksPage() {
       </section>
 
       </div>
-    </div>
   );
 }

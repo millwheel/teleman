@@ -142,6 +142,7 @@ function TextBannerContent() {
   // ── Detail mode ──────────────────────────────────────────────
   if (!category) return <div className="text-center py-16 text-gray-400">카테고리를 찾을 수 없습니다.</div>;
 
+  const cat = category;
   const atLimit = banners.length >= 10;
 
   function openAdd() { setForm({ name: "", link: "" }); setFormError(""); setModal("add"); }
@@ -164,7 +165,7 @@ function TextBannerContent() {
     setLoading("add");
     const res = await fetch("/api/admin/text-banners", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category_id: category.id, name: form.name, link: form.link }),
+      body: JSON.stringify({ category_id: cat.id, name: form.name, link: form.link }),
     });
     const data = await res.json();
     setLoading(null);
@@ -207,7 +208,7 @@ function TextBannerContent() {
             링크모음 관리
           </Link>
           <span className="text-gray-300">/</span>
-          <h1 className="text-xl font-bold text-foreground">{category.name}</h1>
+          <h1 className="text-xl font-bold text-foreground">{cat.name}</h1>
           <span className="text-sm text-gray-400">({banners.length}/10)</span>
         </div>
         <button onClick={openAdd} disabled={atLimit} title={atLimit ? "최대 10개까지 등록 가능합니다." : ""}

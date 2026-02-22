@@ -53,7 +53,7 @@ function SearchBarContent({
 
   return (
     <section className="bg-secondary py-10 text-white">
-      <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 text-center">
+      <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 px-4 text-center">
         <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">사기꾼 조회</h1>
         <p className="text-sm text-white/80">한눈에 확인되는, 믿을 수 있는 검증조건</p>
         <div className="flex w-full max-w-2xl overflow-hidden rounded-lg bg-white shadow-lg">
@@ -105,7 +105,7 @@ function SearchBarContent({
             </svg>
           </button>
         </div>
-        <p className="text-xs text-white/70">
+        <p className="text-sm text-white/80">
           텔레맨은 고객의 안전을 위해 자체 검증 시스템을 활용하여 실시간 검증 시스템으로
           누구보다 정확한 정보와 안정적인 서비스를 제공합니다.
         </p>
