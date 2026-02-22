@@ -10,7 +10,7 @@ const MENU = [
 export default function AdminPage() {
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-2xl font-bold text-foreground mb-8">관리자 메뉴</h1>
+      <h1 className="text-2xl font-bold text-foreground mt-10 mb-16">관리자 메뉴</h1>
       <div className="flex flex-col gap-3 w-full max-w-md">
         {MENU.map(({ label, href, desc }) => (
           <Link
