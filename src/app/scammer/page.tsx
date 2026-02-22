@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { getSession } from "@/lib/auth";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 
@@ -30,26 +29,7 @@ export default async function ScammerPage() {
 
   return (
     <div>
-      {/* Hero 섹션 */}
-      <section className="bg-secondary py-16 text-white">
-        <div className="mx-auto max-w-3xl px-4 text-center">
-          <h1 className="mb-2 text-3xl font-extrabold tracking-tight md:text-4xl">
-            사기꾼 조회
-          </h1>
-          <p className="mb-8 text-sm text-white/80">
-            한눈에 확인되는, 믿을 수 있는 검증조건
-          </p>
-          <div className="flex justify-center">
-            <Suspense fallback={<div className="h-12 w-full max-w-2xl rounded-lg bg-white/20" />}>
-              <ScammerSearchBar isLoggedIn={!!session} />
-            </Suspense>
-          </div>
-          <p className="mt-5 text-xs text-white/70">
-            텔레맨은 고객의 안전을 위해 자체 검증 시스템을 활용하여 실시간 검증 시스템으로
-            누구보다 정확한 정보와 안정적인 서비스를 제공합니다.
-          </p>
-        </div>
-      </section>
+      <ScammerSearchBar isLoggedIn={!!session} />
 
       {/* 소개 섹션 */}
       <section className="py-14">

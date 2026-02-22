@@ -166,18 +166,18 @@ export default function ImageBannerManager({ banners, apiPath, title }: Props) {
               <div className="flex border-t border-gray-100">
                 <button
                   onClick={() => openEdit(b)}
-                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-primary hover:bg-primary/10 transition-colors cursor-pointer"
+                  title="수정"
+                  className="flex-1 flex items-center justify-center py-2 text-primary hover:bg-primary/10 transition-colors cursor-pointer"
                 >
                   <Pencil className="h-3.5 w-3.5" />
-                  수정
                 </button>
                 <div className="w-px bg-gray-100" />
                 <button
                   onClick={() => openDelete(b)}
-                  className="flex-1 flex items-center justify-center gap-1 py-2 text-xs text-eliminate hover:bg-red-50 transition-colors cursor-pointer"
+                  title="삭제"
+                  className="flex-1 flex items-center justify-center py-2 text-eliminate hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  삭제
                 </button>
               </div>
             </div>

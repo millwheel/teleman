@@ -1,10 +1,282 @@
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import AdminManager from "@/components/admin/AdminManager";
+"use client";
 
-export default async function AdminsPage() {
-  const session = await getSession();
-  if (!session || session.role !== "admin") redirect("/");
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { Pencil, Trash2, Plus } from "lucide-react";
+import Modal from "@/components/admin/Modal";
 
-  return <AdminManager currentUserId={session.userId} />;
+interface Admin {
+  id: number;
+  username: string;
+  nickname: string;
+  created_at: string;
+}
+
+export default function AdminsPage() {
+  const router = useRouter();
+  const [admins, setAdmins] = useState<Admin[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [modal, setModal] = useState<"add" | "edit" | null>(null);
+  const [selected, setSelected] = useState<Admin | null>(null);
+  const [toast, setToast] = useState("");
+
+  const [addUsername, setAddUsername] = useState("");
+  const [addNickname, setAddNickname] = useState("");
+  const [addPassword, setAddPassword] = useState("");
+  const [addConfirmPassword, setAddConfirmPassword] = useState("");
+  const [addError, setAddError] = useState("");
+
+  const [editNickname, setEditNickname] = useState("");
+  const [editError, setEditError] = useState("");
+
+  function showToast(message: string) {
+    setToast(message);
+    setTimeout(() => setToast(""), 3000);
+  }
+
+  const fetchAdmins = useCallback(async () => {
+    const [meRes, adminsRes] = await Promise.all([
+      fetch("/api/auth/me"),
+      fetch("/api/admin/admins"),
+    ]);
+    if (meRes.ok) {
+      const me = await meRes.json();
+      setCurrentUserId(me.id);
+    }
+    if (adminsRes.ok) setAdmins(await adminsRes.json());
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchAdmins(); }, [fetchAdmins]);
+
+  function openAdd() {
+    setAddUsername(""); setAddNickname(""); setAddPassword(""); setAddConfirmPassword(""); setAddError("");
+    setModal("add");
+  }
+
+  function openEdit(admin: Admin) {
+    setSelected(admin);
+    setEditNickname(admin.nickname);
+    setEditError("");
+    setModal("edit");
+  }
+
+  async function handleDelete(admin: Admin) {
+    if (admin.id === currentUserId) {
+      showToast("자기 자신은 삭제할 수 없습니다.");
+      return;
+    }
+    if (!confirm("관리자를 삭제하시겠습니까?")) return;
+
+    setActionLoading(true);
+    const res = await fetch(`/api/admin/admins/${admin.id}`, { method: "DELETE" });
+    setActionLoading(false);
+
+    if (res.ok) {
+      setAdmins((prev) => prev.filter((a) => a.id !== admin.id));
+      router.refresh();
+    } else {
+      const data = await res.json();
+      showToast(data.message ?? "삭제 중 오류가 발생했습니다.");
+    }
+  }
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setAddError("");
+
+    if (addPassword !== addConfirmPassword) {
+      setAddError("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    setActionLoading(true);
+    const res = await fetch("/api/admin/admins", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: addUsername, nickname: addNickname, password: addPassword }),
+    });
+    setActionLoading(false);
+
+    if (res.ok) {
+      const newAdmin = await res.json();
+      setAdmins((prev) => [...prev, newAdmin]);
+      setModal(null);
+      router.refresh();
+    } else {
+      const data = await res.json();
+      setAddError(data.message ?? "생성 중 오류가 발생했습니다.");
+    }
+  }
+
+  async function handleEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!selected) return;
+    setEditError("");
+    setActionLoading(true);
+
+    const res = await fetch(`/api/admin/admins/${selected.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nickname: editNickname }),
+    });
+    setActionLoading(false);
+
+    if (res.ok) {
+      const updated = await res.json();
+      setAdmins((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+      setModal(null);
+      router.refresh();
+    } else {
+      const data = await res.json();
+      setEditError(data.message ?? "수정 중 오류가 발생했습니다.");
+    }
+  }
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">관리자 관리</h1>
+        <button
+          onClick={openAdd}
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 transition-opacity cursor-pointer"
+        >
+          <Plus className="h-4 w-4" />
+          추가
+        </button>
+      </div>
+
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+        <table className="w-full table-fixed text-sm">
+          <thead className="bg-gray-50 text-gray-500">
+            <tr>
+              <th className="w-[30%] px-5 py-3 text-left font-medium">아이디</th>
+              <th className="w-[30%] px-5 py-3 text-left font-medium">닉네임</th>
+              <th className="w-[25%] px-5 py-3 text-left font-medium">가입일</th>
+              <th className="w-[15%] px-5 py-3 text-right font-medium">관리</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {loading ? (
+              <tr>
+                <td colSpan={4} className="px-5 py-10 text-center text-sm text-gray-400">
+                  불러오는 중...
+                </td>
+              </tr>
+            ) : admins.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="px-5 py-10 text-center text-sm text-gray-400">
+                  등록된 관리자가 없습니다.
+                </td>
+              </tr>
+            ) : (
+              admins.map((admin) => (
+                <tr key={admin.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-5 py-3 text-foreground font-medium">
+                    {admin.username}
+                    {admin.id === currentUserId && (
+                      <span className="ml-2 text-xs text-gray-400">(나)</span>
+                    )}
+                  </td>
+                  <td className="px-5 py-3 text-gray-600">{admin.nickname}</td>
+                  <td className="px-5 py-3 text-gray-400">
+                    {new Date(admin.created_at).toLocaleDateString("ko-KR")}
+                  </td>
+                  <td className="px-5 py-3 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <button
+                        onClick={() => openEdit(admin)}
+                        title="수정"
+                        className="rounded border border-gray-200 p-1.5 text-gray-600 hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(admin)}
+                        disabled={actionLoading}
+                        title="삭제"
+                        className="rounded border border-gray-200 p-1.5 text-gray-600 hover:border-eliminate hover:text-eliminate transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {modal === "add" && (
+        <Modal title="관리자 추가" onClose={() => setModal(null)}>
+          <form onSubmit={handleAdd} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">아이디</label>
+              <input type="text" value={addUsername} onChange={(e) => setAddUsername(e.target.value)} required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">닉네임</label>
+              <input type="text" value={addNickname} onChange={(e) => setAddNickname(e.target.value)} required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">비밀번호</label>
+              <input type="password" value={addPassword} onChange={(e) => setAddPassword(e.target.value)} placeholder="8자 이상" required autoComplete="new-password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">비밀번호 확인</label>
+              <input type="password" value={addConfirmPassword} onChange={(e) => setAddConfirmPassword(e.target.value)} placeholder="비밀번호 확인" required autoComplete="new-password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition" />
+            </div>
+            {addError && <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-eliminate">{addError}</p>}
+            <div className="flex justify-end gap-2 pt-1">
+              <button type="button" onClick={() => setModal(null)}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">취소</button>
+              <button type="submit" disabled={actionLoading}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-opacity cursor-pointer">
+                {actionLoading ? "생성 중..." : "생성"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {modal === "edit" && selected && (
+        <Modal title="관리자 수정" onClose={() => setModal(null)}>
+          <form onSubmit={handleEdit} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">아이디</label>
+              <input type="text" value={selected.username} disabled
+                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-400 cursor-not-allowed" />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">닉네임</label>
+              <input type="text" value={editNickname} onChange={(e) => setEditNickname(e.target.value)} required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition" />
+            </div>
+            {editError && <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-eliminate">{editError}</p>}
+            <div className="flex justify-end gap-2 pt-1">
+              <button type="button" onClick={() => setModal(null)}
+                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer">취소</button>
+              <button type="submit" disabled={actionLoading}
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-opacity cursor-pointer">
+                {actionLoading ? "저장 중..." : "저장"}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 rounded-lg bg-gray-800 px-5 py-3 text-sm text-white shadow-lg">
+          {toast}
+        </div>
+      )}
+    </div>
+  );
 }
