@@ -7,6 +7,7 @@ const ADMIN_NAV = [
   { label: "링크모음 관리", href: "/admin/text-banner" },
   { label: "보증업체 관리", href: "/admin/image-banner" },
   { label: "광고배너 관리", href: "/admin/common-banner" },
+  { label: "사기꾼 관리", href: "/admin/scammer" },
 ];
 
 export default async function AdminLayout({

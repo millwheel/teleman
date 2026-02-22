@@ -1,97 +1,131 @@
-# 프로필 기능 구현 Task
+# 사기꾼 조회 기능 구현 Task
 
-## 목표
-- users 테이블에 `image_path` 컬럼 추가
-- 프로필 수정 페이지 (`/profile`) 구현
-- 헤더에 프로필 사진 표시 (DB 조회 없이 JWT 쿠키에서 읽음)
+> 참고 문서: `reference/scammer.md`
 
 ---
 
-## Task 목록
+## Task 1. 공통 컴포넌트 — 사기꾼 검색 바
 
-### ~~Task 1. DB 스키마 준비~~ ✅ 완료
-- Supabase `users` 테이블 `image_path text` 컬럼 추가 완료
-- Storage 버킷: 기존 `public-media` 버킷 사용 (신규 버킷 생성 없음)
-- 파일은 버킷 내 폴더로 구분 (예: `avatars/{userId}/profile.webp`)
+**파일 위치 예시:** `src/components/ScammerSearchBar.tsx`
+
+- [x] 검색 바 UI 구현 (`reference/scammer-search-bar.png` 참고)
+  - 왼쪽: 검색 타입 드롭다운 (이름 / 전화번호 / 계좌번호)
+  - 오른쪽: 텍스트 입력 + 검색 버튼(돋보기)
+- [x] 검색 최소 길이 유효성 검사
+  - 이름: 2자 이상
+  - 전화번호 / 계좌번호: 4자 이상
+- [x] 검색 실행 시 로그인 여부 확인
+  - 미로그인: `'로그인이 필요한 기능입니다.'` alert → `/login` 리다이렉션
+  - 로그인 후 원래 페이지로 복귀
+- [x] 검색 실행 시 `/scammer/result?type=<타입>&q=<검색어>&page=1` 로 이동
 
 ---
 
-### Task 2. `JwtPayload` 확장 — `src/lib/auth.ts`
-- `nickname: string` 필드 추가
-- `imagePath: string | null` 필드 추가
+## Task 2. 공통 컴포넌트 — 페이지네이션 바
 
-```ts
-export interface JwtPayload {
-  userId: number;
-  role: "admin" | "member";
-  nickname: string;
-  imagePath: string | null;
-}
+**파일 위치 예시:** `src/components/Pagination.tsx`
+
+- [x] 번호형 페이지네이션 UI 구현
+- [x] props: `totalCount`, `currentPage`, `pageSize`, `onPageChange`
+- [x] 현재 페이지 하이라이트
+- [x] 이전 / 다음 버튼 및 첫 페이지 / 마지막 페이지 버튼 포함
+
+---
+
+## Task 3. 사기꾼 조회 메인 페이지 `/scammer`
+
+**파일 위치 예시:** `src/app/scammer/page.tsx`
+
+- [x] 상단 Hero 섹션 (`reference/scammer-search-bar.png` 참고)
+  - 제목: "사기꾼 조회"
+  - 부제목 문구
+  - 사기꾼 검색 바 컴포넌트 배치
+- [x] 하단 소개 섹션 (`reference/scammer-page-bottom.png` 참고)
+  - 4개 항목: 실시간 빅데이터 검증 시스템 / 히스토리 리포트&위험도 필터링 / 전문팀의 직접 모니터링 / 최대 1억원 보증금 예치제도
+  - 각 항목에 아이콘, 제목, 설명 텍스트 배치
+
+---
+
+## Task 4. 사기꾼 검색 결과 페이지 `/scammer/result`
+
+**파일 위치 예시:** `src/app/scammer/result/page.tsx`
+
+- [x] 상단: 사기꾼 검색 바 컴포넌트 (현재 검색어 / 타입 유지)
+- [x] 검색 결과 목록 테이블
+  - 컬럼 순서: 이름 / 전화번호 / 계좌번호 / 설명(description)
+  - 정렬: `order by id desc`
+- [x] 목록 하단: 페이지네이션 바 컴포넌트
+
+---
+
+## Task 5. 사기꾼 검색 API
+
+**파일 위치 예시:** `src/app/api/scammer/search/route.ts`
+
+- [x] Query params: `type` (`name` | `phone` | `account`), `q`, `page`, `limit`
+- [x] 타입별 쿼리 분기 (LIKE 검색)
+  - `name`: `name like '%' || :q || '%'`
+  - `phone`: `phone_number like '%' || :q || '%'`
+  - `account`: `bank_account_number like '%' || :q || '%'`
+- [x] total count와 page items 동시 반환
+- [x] `page=1` 일 때만 `scammer_search` 카운트 +1 (upsert)
+  ```sql
+  insert into public.scammer_search (stat_date, count)
+  values ((now() at time zone 'Asia/Seoul')::date, 1)
+  on conflict (stat_date)
+  do update set count = public.scammer_search.count + 1;
+  ```
+- [x] 미로그인 요청 시 401 반환
+
+---
+
+## Task 6. 사기꾼 관리 페이지 `/admin/scammer`
+
+**파일 위치 예시:** `src/app/admin/scammer/page.tsx`
+
+- [x] 사기꾼 목록 테이블 (이름 / 전화번호 / 계좌번호 / 설명)
+  - 각 행 오른쪽: 수정 버튼 / 삭제 버튼
+- [x] 목록 우측 상단: 추가 버튼
+- [x] 추가 / 수정 클릭 시 모달 열림
+
+---
+
+## Task 7. 사기꾼 등록/수정/삭제 API
+
+**파일 위치 예시:** `src/app/api/admin/scammer/route.ts`
+
+- [x] 모든 엔드포인트: `admin` role 검증, 아닌 경우 403 반환
+- [x] **등록 (POST)**
+  - 이름 / 전화번호 / 계좌번호 중 최소 하나 필수
+  - 전화번호, 계좌번호 저장 전 하이픈(`-`) 제거
+  - `created_by`: 로그인한 사용자 id
+- [x] **수정 (PATCH / PUT)**
+  - 이름 / 전화번호 / 계좌번호 중 최소 하나 필수
+  - 전화번호, 계좌번호 저장 전 하이픈 제거
+- [x] **삭제 (DELETE)**
+  - id 기반 즉시 삭제
+
+---
+
+## Task 8. 관리 모달 컴포넌트
+
+**파일 위치 예시:** `src/components/ScammerFormModal.tsx`
+
+- [x] 모드: 추가 / 수정 공통 컴포넌트
+- [x] 입력 필드: 이름, 전화번호, 계좌번호, 설명
+- [x] 유효성 검사: 이름 / 전화번호 / 계좌번호 중 최소 하나 입력
+- [x] 저장 성공 시 목록 갱신 후 모달 닫기
+
+---
+
+## 구현 순서 권장
+
 ```
-
----
-
-### Task 3. 로그인 API 수정 — `src/app/api/auth/login/route.ts`
-- DB select에 `nickname`, `image_path` 추가
-- `signJwt()` 호출 시 `nickname`, `imagePath` 포함
-
-```ts
-.select("id, password_hash, role, is_active, nickname, image_path")
-
-signJwt({ userId, role, nickname: user.nickname, imagePath: user.image_path ?? null })
+Task 2 (페이지네이션) → Task 1 (검색 바)
+    ↓
+Task 5 (검색 API) → Task 4 (결과 페이지)
+    ↓
+Task 3 (메인 페이지)
+    ↓
+Task 7 (관리 API) → Task 8 (모달) → Task 6 (관리 페이지)
 ```
-
----
-
-### Task 4. `Header.tsx` 수정 — `src/components/Header.tsx`
-- Supabase DB 조회 제거 (현재 nickname을 DB에서 읽는 코드 삭제)
-- `session.nickname`, `session.imagePath`를 직접 사용
-- `HeaderNav`, `HamburgerMenu`에 `imagePath` prop 추가 전달
-
----
-
-### Task 5. `HeaderNav.tsx` / `HamburgerMenu.tsx` 수정
-- `imagePath` prop 추가
-- 닉네임 왼쪽에 프로필 사진 표시
-  - 이미지 있음: Supabase Storage URL 조립 후 `<Image>` 표시
-  - 이미지 없음: 기본 아이콘(placeholder) 표시
-- 프로필 사진 클릭 시 `/profile`로 이동
-
----
-
-### Task 6. 프로필 페이지 구현 — `src/app/profile/page.tsx`
-- 로그인 상태 확인 (미로그인 시 `/login` redirect)
-- DB에서 현재 유저 정보 조회 (`username`, `nickname`, `image_path`)
-- UI 구성:
-  - 프로필 사진 영역 (등록 / 수정 / 삭제)
-  - 아이디 표시 (수정 불가)
-  - 닉네임 수정 입력란
-  - 저장 버튼
-
----
-
-### Task 7. 프로필 수정 API — `src/app/api/profile/update/route.ts`
-- 인증된 사용자만 접근 가능
-- 처리 흐름:
-  1. 이미지가 있으면 `public-media` 버킷의 `avatars/{userId}/` 폴더에 업로드
-  2. 기존 이미지 삭제 (교체 시, 동일 경로 upsert 또는 기존 파일 remove)
-  3. `users` 테이블 업데이트 (`nickname`, `image_path`)
-     - `image_path` 값 예시: `avatars/{userId}/profile.webp`
-  4. 변경된 정보로 JWT 재발급 → 쿠키 갱신
-
----
-
-### Task 8. 프로필 이미지 삭제 API — `src/app/api/profile/delete-image/route.ts`
-- `public-media` 버킷의 `avatars/{userId}/` 경로에서 파일 삭제
-- DB의 `image_path`를 `null`로 업데이트
-- JWT 재발급 (`imagePath: null`) → 쿠키 갱신
-
----
-
-## 구현 순서
-
-```
-Task 1 ✅ → Task 2 ✅ → Task 3 ✅ → Task 4 ✅ → Task 5 ✅ → Task 6 ✅ → Task 7 ✅ → Task 8 ✅
-```
-
-모든 Task 완료.
