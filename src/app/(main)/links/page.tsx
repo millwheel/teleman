@@ -1,6 +1,26 @@
+import { headers } from "next/headers";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
-import { getPublicImageUrl } from "@/lib/storage";
+
+interface CommonBanner {
+  id: number;
+  name: string;
+  link: string;
+  public_url: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  sort_order: number;
+}
+
+interface TextBanner {
+  id: number;
+  name: string;
+  link: string;
+  category_id: number;
+  sort_order: number;
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const result = [...arr];
@@ -12,71 +32,68 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default async function LinksPage() {
-  const [
-    { data: allCommonBanners },
-    { data: categories },
-    { data: allTextBanners },
-  ] = await Promise.all([
-    supabase.from("common_banner").select("*"),
-    supabase.from("text_banner_categories").select("*").order("sort_order"),
-    supabase.from("text_banners").select("*").order("sort_order"),
-  ]);
+  const headersList = await headers();
+  const host = headersList.get("host")!;
+  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const commonBanners = shuffle(allCommonBanners ?? []).slice(0, 4);
+  const res = await fetch(`${proto}://${host}/api/banners/links`);
+  const { commonBanners, categories, textBanners }: {
+    commonBanners: CommonBanner[];
+    categories: Category[];
+    textBanners: TextBanner[];
+  } = await res.json();
 
-  type TextBanner = NonNullable<typeof allTextBanners>[number];
-  const bannersByCategory = (allTextBanners ?? []).reduce<
-    Record<number, TextBanner[]>
-  >((acc, banner) => {
+  const displayBanners = shuffle(commonBanners).slice(0, 4);
+
+  const bannersByCategory = textBanners.reduce<Record<number, TextBanner[]>>((acc, banner) => {
     if (!acc[banner.category_id]) acc[banner.category_id] = [];
     acc[banner.category_id].push(banner);
     return acc;
   }, {});
 
   return (
-      <div className="mx-auto max-w-7xl px-4">
+    <div className="mx-auto max-w-7xl px-4">
       {/* 상단 Static 이미지 */}
-        <div className="w-full pt-4">
-            <Image
-                src="/images/link-banner.jpg"
-                alt="텔레맨 링크모음 배너"
-                width={1920}
-                height={400}
-                className="w-full h-auto"
-                priority
-            />
-        </div>
+      <div className="w-full pt-4">
+        <Image
+          src="/images/link-banner.jpg"
+          alt="텔레맨 링크모음 배너"
+          width={1920}
+          height={400}
+          className="w-full h-auto"
+          priority
+        />
+      </div>
 
       {/* 공통 배너 2×2 */}
       <section className="py-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-          {Array.from({ length: 4 }, (_, i) => commonBanners[i] ?? null).map(
-            (banner, i) =>
-              banner ? (
-                <a
-                  key={banner.id}
-                  href={banner.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative block overflow-hidden"
-                  style={{ aspectRatio: "3 / 1" }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={getPublicImageUrl(banner.image_url)}
-                    alt={banner.name}
-                    className="h-full w-full object-cover"
-                  />
-                </a>
-              ) : (
-                <div
-                  key={i}
-                  className="flex items-center justify-center bg-primary text-white text-sm font-medium"
-                  style={{ aspectRatio: "3 / 1" }}
-                >
-                  [ 빈 배너 ]
-                </div>
-              )
+          {Array.from({ length: 4 }, (_, i) => displayBanners[i] ?? null).map((banner, i) =>
+            banner ? (
+              <a
+                key={`banner-${banner.id}`}
+                href={banner.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block overflow-hidden"
+                style={{ aspectRatio: "3 / 1" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={banner.public_url}
+                  alt={banner.name}
+                  className="h-full w-full object-cover"
+                />
+              </a>
+            ) : (
+              <div
+                key={`empty-${i}`}
+                className="flex items-center justify-center bg-primary text-white text-sm font-medium"
+                style={{ aspectRatio: "3 / 1" }}
+              >
+                [ 빈 배너 ]
+              </div>
+            )
           )}
         </div>
       </section>
@@ -84,18 +101,16 @@ export default async function LinksPage() {
       {/* 텍스트 배너 카테고리 4열 그리드 */}
       <section className="pb-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {(categories ?? []).map((category) => {
+          {categories.map((category) => {
             const banners = (bannersByCategory[category.id] ?? []).slice(0, 10);
             return (
               <div
                 key={category.id}
                 className="overflow-hidden rounded-lg border border-secondary"
               >
-                {/* 카테고리 헤더 */}
                 <div className="bg-primary px-2 py-2 text-center text-sm font-bold text-white">
                   {category.name}
                 </div>
-                {/* 배너 목록: 항상 10행 표시 */}
                 <div className="bg-primary/90 divide-y divide-white/10">
                   {Array.from({ length: 10 }, (_, i) => {
                     const banner = banners[i];
@@ -124,7 +139,6 @@ export default async function LinksPage() {
           })}
         </div>
       </section>
-
-      </div>
+    </div>
   );
 }

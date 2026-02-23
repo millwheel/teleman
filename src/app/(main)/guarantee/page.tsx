@@ -1,6 +1,12 @@
-import { supabase } from "@/lib/supabase";
-import { getPublicImageUrl } from "@/lib/storage";
+import { headers } from "next/headers";
 import Image from "next/image";
+
+interface Banner {
+  id: number;
+  name: string;
+  link: string;
+  public_url: string;
+}
 
 function shuffle<T>(arr: T[]): T[] {
   const result = [...arr];
@@ -12,25 +18,28 @@ function shuffle<T>(arr: T[]): T[] {
 }
 
 export default async function GuaranteePage() {
-  const { data: allBanners } = await supabase
-    .from("image_banner")
-    .select("*");
+  const headersList = await headers();
+  const host = headersList.get("host")!;
+  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const banners = shuffle(allBanners ?? []);
+  const res = await fetch(`${proto}://${host}/api/banners/guarantee`);
+  const allBanners: Banner[] = await res.json();
+  const banners = shuffle(allBanners);
 
   return (
-      <div className="mx-auto max-w-7xl px-4">
-          {/* 상단 Static 이미지 */}
-          <div className="w-full pt-4">
-              <Image
-                  src="/images/guarantee-banner.jpg"
-                  alt="텔레맨 보증업체 배너"
-                  width={1920}
-                  height={400}
-                  className="w-full h-auto"
-                  priority
-              />
-          </div>
+    <div className="mx-auto max-w-7xl px-4">
+      {/* 상단 Static 이미지 */}
+      <div className="w-full pt-4">
+        <Image
+          src="/images/guarantee-banner.jpg"
+          alt="텔레맨 보증업체 배너"
+          width={1920}
+          height={400}
+          className="w-full h-auto"
+          priority
+        />
+      </div>
+
       {/* 이미지 배너 4열 그리드 */}
       <section className="py-4">
         {banners.length > 0 ? (
@@ -46,17 +55,15 @@ export default async function GuaranteePage() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={getPublicImageUrl(banner.image_url)}
+                  src={banner.public_url}
                   alt={banner.name}
                   className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
                 />
-                {/* hover overlay */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
               </a>
             ))}
           </div>
         ) : (
-          /* 데이터 없을 때 placeholder 그리드 */
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
@@ -70,6 +77,6 @@ export default async function GuaranteePage() {
           </div>
         )}
       </section>
-      </div>
+    </div>
   );
 }

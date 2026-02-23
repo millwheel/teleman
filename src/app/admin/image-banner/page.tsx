@@ -1,25 +1,115 @@
-import { supabase } from "@/lib/supabase";
-import { getPublicImageUrl } from "@/lib/storage";
-import ImageBannerManager from "@/components/admin/ImageBannerManager";
+"use client";
 
-export default async function ImageBannerPage() {
-  const { data: banners } = await supabase
-    .from("image_banner")
-    .select("*")
-    .order("created_at");
+import { useState, useEffect } from "react";
+import { Trash2, Plus } from "lucide-react";
+import Image from "next/image";
+import AddBannerModal from "@/components/admin/AddBannerModal";
+import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
 
-  const mapped = (banners ?? []).map((b) => ({
-    id: b.id,
-    name: b.name,
-    link: b.link,
-    public_url: getPublicImageUrl(b.image_url),
-  }));
+interface Banner {
+  id: number;
+  name: string;
+  link: string;
+  public_url: string;
+}
+
+const API_PATH = "/api/admin/image-banners";
+
+export default function ImageBannerPage() {
+  const [loading, setLoading] = useState(true);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [modal, setModal] = useState<"add" | "delete" | null>(null);
+  const [selected, setSelected] = useState<Banner | null>(null);
+
+  useEffect(() => {
+    fetch(API_PATH)
+      .then((res) => res.json())
+      .then((data: Banner[]) => {
+        setBanners(data);
+        setLoading(false);
+      });
+  }, []);
+
+  function openDelete(b: Banner) {
+    setSelected(b);
+    setModal("delete");
+  }
+
+  async function handleSuccess() {
+    setModal(null);
+    setLoading(true);
+    const res = await fetch(API_PATH);
+    setBanners(await res.json());
+    setLoading(false);
+  }
 
   return (
-    <ImageBannerManager
-      banners={mapped}
-      apiPath="/api/admin/image-banners"
-      title="보증업체 관리"
-    />
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">보증업체 관리</h1>
+        <button
+          onClick={() => setModal("add")}
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 transition-colors cursor-pointer"
+        >
+          <Plus className="h-4 w-4" />
+          배너 추가
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-16 text-gray-400">로딩 중...</div>
+      ) : banners.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">등록된 배너가 없습니다.</div>
+      ) : (
+        <div className="grid grid-cols-4 gap-3">
+          {banners.map((b) => (
+            <div key={b.id} className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white">
+              <div className="relative" style={{ aspectRatio: "1 / 1" }}>
+                <Image
+                  src={b.public_url}
+                  alt={b.name}
+                  fill
+                  className="object-cover"
+                />
+                <button
+                  onClick={() => openDelete(b)}
+                  className="absolute top-1.5 right-1.5 rounded bg-red-500 p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="px-2 py-1.5">
+                <p className="text-sm font-medium truncate">{b.name}</p>
+                <a
+                  href={b.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="truncate block text-xs text-primary hover:underline"
+                >
+                  {b.link}
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {modal === "add" && (
+        <AddBannerModal
+          apiPath={API_PATH}
+          onClose={() => setModal(null)}
+          onSuccess={handleSuccess}
+        />
+      )}
+
+      {modal === "delete" && selected && (
+        <DeleteBannerModal
+          banner={selected}
+          apiPath={API_PATH}
+          onClose={() => setModal(null)}
+          onSuccess={handleSuccess}
+        />
+      )}
+    </div>
   );
 }

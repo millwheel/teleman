@@ -1,91 +1,50 @@
-# TextBanner 관리 페이지 — query param → path variable 리팩토링
+# ImageBannerManager 리팩토링
 
 ## 목표
-
-`/admin/text-banner?categoryId=X` (query param) 방식을
-`/admin/text-banner/[categoryId]` (path variable) 방식으로 변경.
-
-- `useSearchParams()` 제거 → `Suspense` 불필요
-- 개요 페이지 / 상세 페이지를 파일 시스템 라우팅으로 명확히 분리
+`src/components/admin/ImageBannerManager.tsx` 를 아래 3가지 요구사항에 맞게 리팩토링한다.
 
 ---
 
-## 현재 구조
-
-```
-/admin/text-banner?categoryId=X   ← 하나의 파일이 두 모드를 처리
-```
-
-```
-src/app/admin/text-banner/
-  page.tsx                        ← overview + detail 모드가 if문으로 혼재
-                                     useSearchParams() → Suspense 필요
-```
+## Task 1: 헤더 항상 표시
+- 현재: 배너가 없으면 `banners.length === 0` 조건으로 전체 목록 UI(헤더 포함)가 숨겨짐
+- 변경: 이미지/이름/링크 컬럼 헤더는 loading, empty, data 상태 모두에서 항상 렌더링
 
 ---
 
-## 변경 후 구조
+## Task 2: 모달 컴포넌트 분리
+- 현재: 추가/삭제 모달 JSX가 `ImageBannerManager` 내부에 인라인으로 작성되어 있음
+- 변경: 별도 컴포넌트로 분리
 
-```
-/admin/text-banner                ← 개요 전용
-/admin/text-banner/[categoryId]   ← 상세 전용 (path variable)
-```
+| 컴포넌트 | 위치 | Props |
+|---|---|---|
+| `AddBannerModal` | 같은 파일 또는 별도 파일 | `apiPath`, `onClose`, `onSuccess` |
+| `DeleteBannerModal` | 같은 파일 또는 별도 파일 | `banner`, `apiPath`, `onClose`, `onSuccess` |
 
-```
-src/app/admin/text-banner/
-  page.tsx                        ← 개요 모드만, useSearchParams 없음, Suspense 제거
-  [categoryId]/
-    page.tsx                      ← 상세 모드만, params.categoryId 사용, Suspense 없음
-```
+- `onSuccess` 콜백에서 `router.refresh()` 호출
+- `loading` state는 각 모달 컴포넌트가 자체적으로 관리
 
 ---
 
-## 작업 목록
+## Task 3: 렌더링 조건 삼항 연산자
+- 현재: `banners.length === 0` 분기가 별도 JSX로 나뉘어 있고 loading 상태가 없음
+- 변경: 삼항 연산자 중첩으로 3가지 상태 처리
 
-### 1. `page.tsx` — 개요 전용으로 정리
+```tsx
+// 목록 영역 (헤더 아래)
+{loading
+  ? <로딩 중 표시>  // (1) loading
+  : banners.length === 0
+    ? <빈 상태 메시지>  // (2) 데이터 없음
+    : banners.map(...)  // (3) 목록 렌더링
+}
+```
 
-- `useSearchParams`, `useRouter` import 제거
-- `Suspense` import 및 wrapper 제거
-- `TextBannerContent` 컴포넌트를 분리 없이 페이지에 직접 작성
-- detail 모드 코드 (`if (categoryId)` 분기 이하) 전부 제거
-- 카테고리 링크 변경:
-  ```diff
-  - href={`/admin/text-banner?categoryId=${cat.id}`}
-  + href={`/admin/text-banner/${cat.id}`}
-  ```
-- API 호출: 개요는 전체 배너를 가져오는 로직 유지
-
-### 2. `[categoryId]/page.tsx` — 신규 생성
-
-- Next.js App Router의 `params` 사용:
-  ```ts
-  export default function TextBannerDetailPage({
-    params,
-  }: {
-    params: { categoryId: string };
-  }) {
-    const categoryId = Number(params.categoryId);
-    ...
-  }
-  ```
-- `useSearchParams()` 없음 → `Suspense` 불필요
-- 현재 `TextBannerContent`의 detail 모드 코드를 이관
-- 뒤로가기 링크: `/admin/text-banner` (고정값, 동적 파라미터 불필요)
-
-### 3. API 변경 없음
-
-기존 API 경로는 query param을 사용하지 않고 path variable을 쓰는 구조이므로 수정 불필요:
-- `GET /api/admin/text-banners?categoryId=X` — 개요 fetch에 그대로 사용
-- `GET /api/admin/text-banners?categoryId=X` — 상세 fetch에도 그대로 사용 (categoryId는 params에서 읽으면 됨)
+- `loading` state: `ImageBannerManager` 상위에서 관리하거나, 초기 fetch 없이 SSR props로 받으므로 기본값 `false`
+- 빈 상태: 현재와 동일하게 "등록된 배너가 없습니다." 메시지
 
 ---
 
-## 변경 전/후 비교
-
-| 항목 | Before | After |
-|------|--------|-------|
-| 상세 URL | `/admin/text-banner?categoryId=3` | `/admin/text-banner/3` |
-| categoryId 읽는 방법 | `useSearchParams().get("categoryId")` | `params.categoryId` |
-| Suspense 필요 여부 | 필요 | 불필요 |
-| 파일 수 | 1개 (개요+상세 혼재) | 2개 (개요 / 상세 분리) |
-| 코드 복잡도 | if문 분기로 두 모드 혼재 | 각 파일이 단일 책임 |
+## 구현 순서
+1. Task 2: `AddBannerModal`, `DeleteBannerModal` 컴포넌트 추출
+2. Task 1 + 3: 헤더 항상 표시 + 삼항 연산자 구조 적용
+3. 검증: 빌드 오류 없음, 기능 정상 동작 확인

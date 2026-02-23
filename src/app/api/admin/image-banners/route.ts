@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
-import { uploadImage } from "@/lib/storage";
+import { uploadImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
 
 export async function GET() {
@@ -14,7 +14,8 @@ export async function GET() {
     .order("created_at");
 
   if (dbError) return NextResponse.json({ message: dbError.message }, { status: 500 });
-  return NextResponse.json(data);
+  const mapped = (data ?? []).map((b) => ({ ...b, public_url: getPublicImageUrl(b.image_path) }));
+  return NextResponse.json(mapped);
 }
 
 export async function POST(request: NextRequest) {
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error: dbError } = await supabase
     .from("image_banner")
-    .insert({ name, link, image_url: imagePath, created_by: session.userId })
+    .insert({ name, link, image_path: imagePath, created_by: session.userId })
     .select()
     .single();
 
