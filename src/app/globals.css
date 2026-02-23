@@ -12,6 +12,7 @@
   --eliminate-light: #ef4444;
 
   --active: #ef4444;
+  --warning: #ff7575;
 }
 
 @theme inline {
@@ -22,6 +23,7 @@
   --color-eliminate: var(--eliminate);
   --color-eliminate-light: var(--eliminate-light);
   --color-active: var(--active);
+  --color-warning: var(--warning);
 }
 
 body {
