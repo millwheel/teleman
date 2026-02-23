@@ -137,7 +137,7 @@ function ResultCount() {
   if (!data?.items?.length) return null;
 
   return (
-    <div className="mt-8 bg-warning py-4">
+    <div className="mt-8 bg-warning py-4 rounded-lg">
       <p className="text-base text-gray-500 text-center">
         총{" "}
         <span className="font-semibold text-foreground">{totalCount.toLocaleString()}</span>

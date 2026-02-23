@@ -57,7 +57,7 @@ export default async function GuaranteePage() {
                 <img
                   src={banner.public_url}
                   alt={banner.name}
-                  className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-105"
+                  className="h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
               </a>
