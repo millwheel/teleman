@@ -59,7 +59,7 @@ export default async function GuaranteePage() {
                   alt={banner.name}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200" />
+                <div className="absolute inset-0 bg-black/0" />
               </a>
             ))}
           </div>
