@@ -1,21 +1,7 @@
 import { headers } from "next/headers";
 import Image from "next/image";
-
-interface Banner {
-  id: number;
-  name: string;
-  link: string;
-  public_url: string;
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const result = [...arr];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
+import type { GuaranteeBanner } from "@/data/type";
+import { shuffle } from "@/util/shuffle";
 
 export default async function GuaranteePage() {
   const headersList = await headers();
@@ -23,7 +9,7 @@ export default async function GuaranteePage() {
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
   const res = await fetch(`${proto}://${host}/api/banners/guarantee`);
-  const allBanners: Banner[] = await res.json();
+  const allBanners: GuaranteeBanner[] = await res.json();
   const banners = shuffle(allBanners);
 
   return (

@@ -20,7 +20,7 @@ export async function PUT(
   }
 
   const { data, error: dbError } = await supabase
-    .from("text_banner_categories")
+    .from("link_category")
     .update({ code, name })
     .eq("id", id)
     .select()
@@ -43,7 +43,7 @@ export async function DELETE(
   const { id } = await params;
 
   const { error: dbError } = await supabase
-    .from("text_banner_categories")
+    .from("link_category")
     .delete()
     .eq("id", id);
 

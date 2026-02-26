@@ -9,8 +9,8 @@ export async function GET() {
     { data: allTextBanners, error: e3 },
   ] = await Promise.all([
     supabase.from("common_banner").select("*"),
-    supabase.from("text_banner_categories").select("*").order("sort_order"),
-    supabase.from("text_banners").select("*").order("sort_order"),
+    supabase.from("link_category").select("*").order("sort_order"),
+    supabase.from("link").select("*").order("sort_order"),
   ]);
 
   if (e1 || e2 || e3) {

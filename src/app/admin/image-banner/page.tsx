@@ -3,34 +3,28 @@
 import { useState, useEffect } from "react";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
-import AddBannerModal from "@/components/admin/AddBannerModal";
-import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
-
-interface Banner {
-  id: number;
-  name: string;
-  link: string;
-  public_url: string;
-}
+import AddGuaranteeBannerModal from "@/components/admin/AddGuaranteeBannerModal";
+import DeleteGuaranteeBannerModal from "@/components/admin/DeleteGuaranteeBannerModal";
+import type { GuaranteeGuaranteeBanner } from "@/data/type";
 
 const API_PATH = "/api/admin/image-banners";
 
-export default function ImageBannerPage() {
+export default function ImageGuaranteeBannerPage() {
   const [loading, setLoading] = useState(true);
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setGuaranteeBanners] = useState<GuaranteeBanner[]>([]);
   const [modal, setModal] = useState<"add" | "delete" | null>(null);
-  const [selected, setSelected] = useState<Banner | null>(null);
+  const [selected, setSelected] = useState<GuaranteeBanner | null>(null);
 
   useEffect(() => {
     fetch(API_PATH)
       .then((res) => res.json())
-      .then((data: Banner[]) => {
-        setBanners(data);
+      .then((data: GuaranteeBanner[]) => {
+        setGuaranteeBanners(data);
         setLoading(false);
       });
   }, []);
 
-  function openDelete(b: Banner) {
+  function openDelete(b: GuaranteeBanner) {
     setSelected(b);
     setModal("delete");
   }
@@ -39,7 +33,7 @@ export default function ImageBannerPage() {
     setModal(null);
     setLoading(true);
     const res = await fetch(API_PATH);
-    setBanners(await res.json());
+    setGuaranteeBanners(await res.json());
     setLoading(false);
   }
 
@@ -95,7 +89,7 @@ export default function ImageBannerPage() {
       )}
 
       {modal === "add" && (
-        <AddBannerModal
+        <AddGuaranteeBannerModal
           apiPath={API_PATH}
           onClose={() => setModal(null)}
           onSuccess={handleSuccess}
@@ -103,7 +97,7 @@ export default function ImageBannerPage() {
       )}
 
       {modal === "delete" && selected && (
-        <DeleteBannerModal
+        <DeleteGuaranteeBannerModal
           banner={selected}
           apiPath={API_PATH}
           onClose={() => setModal(null)}

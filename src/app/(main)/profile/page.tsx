@@ -1,29 +1,24 @@
-import { getSession } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import ProfileForm from "./ProfileForm";
 
-const STORAGE_BASE = `${process.env.SUPABASE_URL}/storage/v1/object/public/public-media`;
-
 export default async function ProfilePage() {
-  const session = await getSession();
-  if (!session) redirect("/login?redirect=/profile");
+  const headersList = await headers();
+  const host = headersList.get("host")!;
+  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const { data: user } = await supabase
-    .from("users")
-    .select("username, nickname, image_path")
-    .eq("id", session.userId)
-    .single();
+  const res = await fetch(`${proto}://${host}/api/profile`);
 
-  if (!user) redirect("/login");
+  if (res.status === 401) redirect("/login?redirect=/profile");
+  if (!res.ok) redirect("/login");
 
-  const imageUrl = user.image_path ? `${STORAGE_BASE}/${user.image_path}` : null;
+  const user: { username: string; nickname: string; imageUrl: string | null } = await res.json();
 
   return (
     <ProfileForm
       username={user.username}
       initialNickname={user.nickname}
-      initialImageUrl={imageUrl}
+      initialImageUrl={user.imageUrl}
     />
   );
 }

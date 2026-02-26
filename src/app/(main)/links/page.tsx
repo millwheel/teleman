@@ -1,38 +1,7 @@
 import { headers } from "next/headers";
 import Image from "next/image";
-
-type BannerType = "long" | "short";
-
-interface CommonBanner {
-  id: number;
-  name: string;
-  link: string;
-  type: BannerType;
-  public_url: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  sort_order: number;
-}
-
-interface TextBanner {
-  id: number;
-  name: string;
-  link: string;
-  category_id: number;
-  sort_order: number;
-}
-
-function shuffle<T>(arr: T[]): T[] {
-  const result = [...arr];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
+import type { CommonBanner, LinkCategory, LinkItem } from "@/data/type";
+import { shuffle } from "@/util/shuffle";
 
 export default async function LinksPage() {
   const headersList = await headers();
@@ -43,13 +12,13 @@ export default async function LinksPage() {
   const { longBanners, shortBanners, categories, textBanners }: {
     longBanners: CommonBanner[];
     shortBanners: CommonBanner[];
-    categories: Category[];
-    textBanners: TextBanner[];
+    categories: LinkCategory[];
+    textBanners: LinkItem[];
   } = await res.json();
 
   const displayBanners = shuffle([...longBanners, ...shortBanners]);
 
-  const bannersByCategory = textBanners.reduce<Record<number, TextBanner[]>>((acc, banner) => {
+  const bannersByCategory = textBanners.reduce<Record<number, LinkItem[]>>((acc, banner) => {
     if (!acc[banner.category_id]) acc[banner.category_id] = [];
     acc[banner.category_id].push(banner);
     return acc;

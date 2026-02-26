@@ -4,29 +4,18 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown, Pencil, Trash2, Plus } from "lucide-react";
 import Modal from "@/components/admin/Modal";
-
-interface Category {
-  id: number;
-  code: string;
-  name: string;
-  sort_order: number;
-}
-
-interface FormState {
-  code: string;
-  name: string;
-}
+import type { LinkCategory, CategoryFormState } from "@/data/type";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
 export default function TextBannerCategoriesPage() {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<LinkCategory[]>([]);
   const [loading, setLoading] = useState<number | string | null>(null);
   const [modal, setModal] = useState<"add" | "edit" | "delete" | null>(null);
-  const [selected, setSelected] = useState<Category | null>(null);
-  const [form, setForm] = useState<FormState>({ code: "", name: "" });
+  const [selected, setSelected] = useState<LinkCategory | null>(null);
+  const [form, setForm] = useState<CategoryFormState>({ code: "", name: "" });
   const [formError, setFormError] = useState("");
   const [deleteError, setDeleteError] = useState("");
 
@@ -44,14 +33,14 @@ export default function TextBannerCategoriesPage() {
     setModal("add");
   }
 
-  function openEdit(cat: Category) {
+  function openEdit(cat: LinkCategory) {
     setSelected(cat);
     setForm({ code: cat.code, name: cat.name });
     setFormError("");
     setModal("edit");
   }
 
-  function openDelete(cat: Category) {
+  function openDelete(cat: LinkCategory) {
     setSelected(cat);
     setDeleteError("");
     setModal("delete");

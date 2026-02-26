@@ -3,17 +3,12 @@
 import { useState } from "react";
 import Modal from "./Modal";
 
-interface Banner {
-  id: number;
-  name: string;
-}
-
-interface Props {
-  banner: Banner;
+type Props = {
+  banner: { id: number; name: string };
   apiPath: string;
   onClose: () => void;
   onSuccess: () => void;
-}
+};
 
 export default function DeleteBannerModal({ banner, apiPath, onClose, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);

@@ -9,7 +9,7 @@ export async function GET() {
   if (error) return error;
 
   const { data, error: dbError } = await supabase
-    .from("image_banner")
+    .from("guarantee")
     .select("*")
     .order("created_at");
 
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   await uploadImage(imagePath, buffer, file.type);
 
   const { data, error: dbError } = await supabase
-    .from("image_banner")
+    .from("guarantee")
     .insert({ name, link, image_path: imagePath, created_by: session.userId })
     .select()
     .single();

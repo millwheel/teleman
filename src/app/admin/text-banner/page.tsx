@@ -3,25 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Settings } from "lucide-react";
+import type { LinkCategory, LinkItem } from "@/data/type";
 
-interface Category {
-  id: number;
-  code: string;
-  name: string;
-  sort_order: number;
-}
-
-interface TextBanner {
-  id: number;
-  name: string;
-  link: string;
-  sort_order: number;
-  category_id: number;
-}
-
-export default function TextBannerPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [banners, setBanners] = useState<TextBanner[]>([]);
+export default function LinkItemPage() {
+  const [categories, setCategories] = useState<LinkCategory[]>([]);
+  const [banners, setBanners] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,7 +17,7 @@ export default function TextBannerPage() {
         const cats_ = Array.isArray(cats) ? cats : [];
         setCategories(cats_);
         Promise.all(
-          cats_.map((c: Category) =>
+          cats_.map((c: LinkCategory) =>
             fetch(`/api/admin/text-banners?categoryId=${c.id}`).then((r) => r.json()),
           ),
         ).then((results) => {
@@ -41,7 +27,7 @@ export default function TextBannerPage() {
       });
   }, []);
 
-  const bannersByCategory = banners.reduce<Record<number, TextBanner[]>>((acc, b) => {
+  const bannersByLinkCategory = banners.reduce<Record<number, LinkItem[]>>((acc, b) => {
     if (!acc[b.category_id]) acc[b.category_id] = [];
     acc[b.category_id].push(b);
     return acc;
@@ -74,7 +60,7 @@ export default function TextBannerPage() {
       ) : (
         <div className="grid grid-cols-4 gap-3">
           {categories.map((cat) => {
-            const catBanners = bannersByCategory[cat.id] ?? [];
+            const catBanners = bannersByLinkCategory[cat.id] ?? [];
             return (
               <div key={cat.id} className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div className="flex items-center justify-between bg-primary px-3 py-2">

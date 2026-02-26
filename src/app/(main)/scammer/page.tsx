@@ -1,36 +1,26 @@
+import { headers } from "next/headers";
 import { getSession } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Image from "next/image";
 
-async function fetchStats() {
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Seoul" });
-  const todayStart = new Date(`${today}T00:00:00+09:00`).toISOString();
-  const tomorrowStart = new Date(new Date(`${today}T00:00:00+09:00`).getTime() + 86400000).toISOString();
-
-  const [
-    { count: totalScammers },
-    { count: todayScammers },
-    { data: searchStat },
-    { count: totalUsers },
-  ] = await Promise.all([
-    supabase.from("scammer").select("id", { count: "exact", head: true }),
-    supabase.from("scammer").select("id", { count: "exact", head: true })
-      .gte("created_at", todayStart).lt("created_at", tomorrowStart),
-    supabase.from("scammer_search").select("count").eq("stat_date", today).maybeSingle(),
-    supabase.from("users").select("id", { count: "exact", head: true }),
-  ]);
-
-  return {
-    totalScammers: totalScammers ?? 0,
-    todayScammers: todayScammers ?? 0,
-    todaySearches: searchStat?.count ?? 0,
-    totalUsers: totalUsers ?? 0,
-  };
-}
+type ScammerStats = {
+  totalScammers: number;
+  todayScammers: number;
+  todaySearches: number;
+  totalUsers: number;
+};
 
 export default async function ScammerPage() {
-  const [session, stats] = await Promise.all([getSession(), fetchStats()]);
+  const headersList = await headers();
+  const host = headersList.get("host")!;
+  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+
+  const [session, res] = await Promise.all([
+    getSession(),
+    fetch(`${proto}://${host}/api/scammer/stats`),
+  ]);
+
+  const stats: ScammerStats = await res.json();
 
   const STATS = [
     { label: "총 등록 업체수", value: stats.totalScammers },

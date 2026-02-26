@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const categoryId = searchParams.get("categoryId");
 
-  let query = supabase.from("text_banners").select("*").order("sort_order");
+  let query = supabase.from("link").select("*").order("sort_order");
   if (categoryId) query = query.eq("category_id", categoryId);
 
   const { data, error: dbError } = await query;
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
   // 카테고리당 최대 10개 제한
   const { count } = await supabase
-    .from("text_banners")
+    .from("link")
     .select("*", { count: "exact", head: true })
     .eq("category_id", category_id);
 
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { data: maxRow } = await supabase
-    .from("text_banners")
+    .from("link")
     .select("sort_order")
     .eq("category_id", category_id)
     .order("sort_order", { ascending: false })
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   const sort_order = (maxRow?.sort_order ?? -1) + 1;
 
   const { data, error: dbError } = await supabase
-    .from("text_banners")
+    .from("link")
     .insert({ category_id, name, link, sort_order, created_by: session.userId })
     .select()
     .single();

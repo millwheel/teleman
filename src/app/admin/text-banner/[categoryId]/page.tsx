@@ -5,31 +5,12 @@ import { useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown, Pencil, Trash2, Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/admin/Modal";
-
-interface Category {
-  id: number;
-  code: string;
-  name: string;
-  sort_order: number;
-}
-
-interface TextBanner {
-  id: number;
-  name: string;
-  link: string;
-  sort_order: number;
-  category_id: number;
-}
-
-interface BannerFormState {
-  name: string;
-  link: string;
-}
+import type {LinkItem, BannerFormState, LinkCategory} from "@/data/type";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
-export default function TextBannerDetailPage({
+export default function LinkItemDetailPage({
   params,
 }: {
   params: { categoryId: string };
@@ -37,11 +18,11 @@ export default function TextBannerDetailPage({
   const categoryId = Number(params.categoryId);
   const router = useRouter();
 
-  const [category, setCategory] = useState<Category | null>(null);
-  const [banners, setBanners] = useState<TextBanner[]>([]);
+  const [category, setLinkCategory] = useState<LinkCategory | null>(null);
+  const [banners, setBanners] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState<number | string | null>(null);
   const [modal, setModal] = useState<"add" | "edit" | "delete" | null>(null);
-  const [selected, setSelected] = useState<TextBanner | null>(null);
+  const [selected, setSelected] = useState<LinkItem | null>(null);
   const [form, setForm] = useState<BannerFormState>({ name: "", link: "" });
   const [formError, setFormError] = useState("");
 
@@ -51,7 +32,7 @@ export default function TextBannerDetailPage({
       fetch(`/api/admin/text-banners?categoryId=${categoryId}`).then((r) => r.json()),
     ]).then(([cats, bans]) => {
       const cats_ = Array.isArray(cats) ? cats : [];
-      setCategory(cats_.find((c: Category) => c.id === categoryId) ?? null);
+      setLinkCategory(cats_.find((c: LinkCategory) => c.id === categoryId) ?? null);
       setBanners(Array.isArray(bans) ? bans : []);
     });
   }, [categoryId]);
@@ -67,12 +48,12 @@ export default function TextBannerDetailPage({
     return <div className="text-center py-16 text-gray-400">카테고리를 찾을 수 없습니다.</div>;
   }
 
-  const cat = category; // null 가드 이후 타입 고정 (클로저 내부에서도 Category로 추론)
+  const cat = category; // null 가드 이후 타입 고정 (클로저 내부에서도 LinkCategory로 추론)
   const atLimit = banners.length >= 10;
 
   function openAdd() { setForm({ name: "", link: "" }); setFormError(""); setModal("add"); }
-  function openEdit(b: TextBanner) { setSelected(b); setForm({ name: b.name, link: b.link }); setFormError(""); setModal("edit"); }
-  function openDelete(b: TextBanner) { setSelected(b); setModal("delete"); }
+  function openEdit(b: LinkItem) { setSelected(b); setForm({ name: b.name, link: b.link }); setFormError(""); setModal("edit"); }
+  function openDelete(b: LinkItem) { setSelected(b); setModal("delete"); }
 
   async function handleReorder(id: number, direction: "up" | "down") {
     setLoading(`reorder-${id}`);

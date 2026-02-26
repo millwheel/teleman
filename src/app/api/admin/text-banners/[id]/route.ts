@@ -17,7 +17,7 @@ export async function PUT(
   }
 
   const { data, error: dbError } = await supabase
-    .from("text_banners")
+    .from("link")
     .update({ name, link })
     .eq("id", id)
     .select()
@@ -37,7 +37,7 @@ export async function DELETE(
   const { id } = await params;
 
   const { error: dbError } = await supabase
-    .from("text_banners")
+    .from("link")
     .delete()
     .eq("id", id);
 

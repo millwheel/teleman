@@ -7,7 +7,7 @@ export async function GET() {
   if (error) return error;
 
   const { data, error: dbError } = await supabase
-    .from("text_banner_categories")
+    .from("link_category")
     .select("*")
     .order("sort_order");
 
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { data: maxRow } = await supabase
-    .from("text_banner_categories")
+    .from("link_category")
     .select("sort_order")
     .order("sort_order", { ascending: false })
     .limit(1)
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
   const sort_order = (maxRow?.sort_order ?? -1) + 1;
 
   const { data, error: dbError } = await supabase
-    .from("text_banner_categories")
+    .from("link_category")
     .insert({ code, name, sort_order })
     .select()
     .single();

@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { getPublicImageUrl } from "@/lib/storage";
 
 export async function GET() {
-  const { data, error } = await supabase.from("image_banner").select("*");
+  const { data, error } = await supabase.from("guarantee").select("*");
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
 
   const mapped = (data ?? []).map((b) => ({

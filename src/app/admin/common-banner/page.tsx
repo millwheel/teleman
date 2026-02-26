@@ -3,18 +3,9 @@
 import { useState, useEffect } from "react";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
-import AddBannerModal from "@/components/admin/AddBannerModal";
-import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
-
-type BannerType = "long" | "short";
-
-interface Banner {
-  id: number;
-  name: string;
-  link: string;
-  type: BannerType;
-  public_url: string;
-}
+import AddCommonBannerModal from "@/components/admin/AddCommonBannerModal";
+import DeleteCommonBannerModal from "@/components/admin/DeleteCommonBannerModal";
+import type { CommonCommonBanner } from "@/data/type";
 
 const API_PATH = "/api/admin/common-banners";
 
@@ -25,7 +16,7 @@ const cols = {
   action: "basis-[3%]",
 } as const;
 
-function BannerSection({
+function CommonBannerSection({
   title,
   hint,
   banners,
@@ -35,10 +26,10 @@ function BannerSection({
 }: {
   title: string;
   hint: string;
-  banners: Banner[];
+  banners: CommonBanner[];
   loading: boolean;
   onAdd: () => void;
-  onDelete: (b: Banner) => void;
+  onDelete: (b: CommonBanner) => void;
 }) {
   return (
     <div>
@@ -103,22 +94,22 @@ function BannerSection({
   );
 }
 
-export default function CommonBannerPage() {
+export default function CommonCommonBannerPage() {
   const [loading, setLoading] = useState(true);
-  const [banners, setBanners] = useState<Banner[]>([]);
+  const [banners, setCommonBanners] = useState<CommonBanner[]>([]);
   const [modal, setModal] = useState<"add-long" | "add-short" | "delete" | null>(null);
-  const [selected, setSelected] = useState<Banner | null>(null);
+  const [selected, setSelected] = useState<CommonBanner | null>(null);
 
   useEffect(() => {
     fetch(API_PATH)
       .then((res) => res.json())
-      .then((data: Banner[]) => {
-        setBanners(data);
+      .then((data: CommonBanner[]) => {
+        setCommonBanners(data);
         setLoading(false);
       });
   }, []);
 
-  function openDelete(b: Banner) {
+  function openDelete(b: CommonBanner) {
     setSelected(b);
     setModal("delete");
   }
@@ -127,37 +118,37 @@ export default function CommonBannerPage() {
     setModal(null);
     setLoading(true);
     const res = await fetch(API_PATH);
-    setBanners(await res.json());
+    setCommonBanners(await res.json());
     setLoading(false);
   }
 
-  const longBanners = banners.filter((b) => b.type === "long");
-  const shortBanners = banners.filter((b) => b.type === "short");
+  const longCommonBanners = banners.filter((b) => b.type === "long");
+  const shortCommonBanners = banners.filter((b) => b.type === "short");
 
   return (
     <div className="space-y-10">
       <h1 className="text-2xl font-bold">광고배너 관리</h1>
 
-      <BannerSection
+      <CommonBannerSection
         title="긴 배너"
         hint="비율 6:1 · 권장 해상도 1260×210px"
-        banners={longBanners}
+        banners={longCommonBanners}
         loading={loading}
         onAdd={() => setModal("add-long")}
         onDelete={openDelete}
       />
 
-      <BannerSection
+      <CommonBannerSection
         title="짧은 배너"
         hint="비율 3:1 · 권장 해상도 630×210px"
-        banners={shortBanners}
+        banners={shortCommonBanners}
         loading={loading}
         onAdd={() => setModal("add-short")}
         onDelete={openDelete}
       />
 
       {modal === "add-long" && (
-        <AddBannerModal
+        <AddCommonBannerModal
           apiPath={API_PATH}
           bannerType="long"
           onClose={() => setModal(null)}
@@ -166,7 +157,7 @@ export default function CommonBannerPage() {
       )}
 
       {modal === "add-short" && (
-        <AddBannerModal
+        <AddCommonBannerModal
           apiPath={API_PATH}
           bannerType="short"
           onClose={() => setModal(null)}
@@ -175,7 +166,7 @@ export default function CommonBannerPage() {
       )}
 
       {modal === "delete" && selected && (
-        <DeleteBannerModal
+        <DeleteCommonBannerModal
           banner={selected}
           apiPath={API_PATH}
           onClose={() => setModal(null)}

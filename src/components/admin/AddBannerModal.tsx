@@ -2,15 +2,14 @@
 
 import { useState, useRef } from "react";
 import Modal from "./Modal";
+import type { BannerType } from "@/data/type";
 
-type BannerType = "long" | "short";
-
-interface Props {
+type Props = {
   apiPath: string;
   bannerType?: BannerType;
   onClose: () => void;
   onSuccess: () => void;
-}
+};
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
