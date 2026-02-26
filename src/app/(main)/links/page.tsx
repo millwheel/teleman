@@ -1,10 +1,13 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 
+type BannerType = "long" | "short";
+
 interface CommonBanner {
   id: number;
   name: string;
   link: string;
+  type: BannerType;
   public_url: string;
 }
 
@@ -37,13 +40,14 @@ export default async function LinksPage() {
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
   const res = await fetch(`${proto}://${host}/api/banners/links`);
-  const { commonBanners, categories, textBanners }: {
-    commonBanners: CommonBanner[];
+  const { longBanners, shortBanners, categories, textBanners }: {
+    longBanners: CommonBanner[];
+    shortBanners: CommonBanner[];
     categories: Category[];
     textBanners: TextBanner[];
   } = await res.json();
 
-  const displayBanners = shuffle(commonBanners);
+  const displayBanners = shuffle([...longBanners, ...shortBanners]);
 
   const bannersByCategory = textBanners.reduce<Record<number, TextBanner[]>>((acc, banner) => {
     if (!acc[banner.category_id]) acc[banner.category_id] = [];
@@ -54,28 +58,30 @@ export default async function LinksPage() {
   return (
     <div className="mx-auto max-w-7xl px-4">
 
-      {/* 공통 배너 2열 */}
-      <section className="py-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-          {displayBanners.map((banner) => (
-            <a
-              key={`banner-${banner.id}`}
-              href={banner.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative block overflow-hidden w-full"
-              style={{ height: "104px" }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={banner.public_url}
-                alt={banner.name}
-                className="h-full w-full object-cover"
-              />
-            </a>
-          ))}
-        </div>
-      </section>
+      {/* 광고 배너 - 긴(col-span-2) + 짧은(col-span-1) 혼합 4열 그리드 */}
+      {displayBanners.length > 0 && (
+        <section className="py-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
+            {displayBanners.map((banner) => (
+              <a
+                key={`${banner.type}-${banner.id}`}
+                href={banner.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`relative block overflow-hidden w-full ${banner.type === "long" ? "col-span-2" : "col-span-1"}`}
+                style={{ height: "104px" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={banner.public_url}
+                  alt={banner.name}
+                  className="h-full w-full object-cover"
+                />
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* 텍스트 배너 카테고리 4열 그리드 */}
       <section className="pb-4">

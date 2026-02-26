@@ -17,15 +17,20 @@ export async function GET() {
     return NextResponse.json({ message: "데이터 조회 실패" }, { status: 500 });
   }
 
-  const commonBanners = (allCommonBanners ?? []).map((b) => ({
+  const mapped = (allCommonBanners ?? []).map((b) => ({
     id: b.id,
     name: b.name,
     link: b.link,
+    type: b.type as "long" | "short",
     public_url: getPublicImageUrl(b.image_path),
   }));
 
+  const longBanners = mapped.filter((b) => b.type === "long");
+  const shortBanners = mapped.filter((b) => b.type === "short");
+
   return NextResponse.json({
-    commonBanners,
+    longBanners,
+    shortBanners,
     categories: categories ?? [],
     textBanners: allTextBanners ?? [],
   });

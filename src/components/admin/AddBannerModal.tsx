@@ -3,8 +3,11 @@
 import { useState, useRef } from "react";
 import Modal from "./Modal";
 
+type BannerType = "long" | "short";
+
 interface Props {
   apiPath: string;
+  bannerType: BannerType;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -12,7 +15,7 @@ interface Props {
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
-export default function AddBannerModal({ apiPath, onClose, onSuccess }: Props) {
+export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess }: Props) {
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -37,6 +40,7 @@ export default function AddBannerModal({ apiPath, onClose, onSuccess }: Props) {
     const fd = new FormData();
     fd.append("name", name);
     fd.append("link", link);
+    fd.append("type", bannerType);
     fd.append("file", file);
     const res = await fetch(apiPath, { method: "POST", body: fd });
     const data = await res.json();
@@ -48,6 +52,11 @@ export default function AddBannerModal({ apiPath, onClose, onSuccess }: Props) {
   return (
     <Modal title="배너 추가" onClose={onClose}>
       <div className="space-y-4">
+        <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">
+          배너 종류: <span className="font-semibold text-primary">
+            {bannerType === "long" ? "긴 배너 (6:1)" : "짧은 배너 (3:1)"}
+          </span>
+        </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">이름</label>
           <input

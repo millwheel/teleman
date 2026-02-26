@@ -25,10 +25,15 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const name = formData.get("name") as string;
   const link = formData.get("link") as string;
+  const type = formData.get("type") as string;
   const file = formData.get("file") as File | null;
 
-  if (!name || !link || !file) {
+  if (!name || !link || !type || !file) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
+  }
+
+  if (type !== "long" && type !== "short") {
+    return NextResponse.json({ message: "type은 long 또는 short이어야 합니다." }, { status: 400 });
   }
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
@@ -39,7 +44,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error: dbError } = await supabase
     .from("common_banner")
-    .insert({ name, link, image_path: imagePath, created_by: session.userId })
+    .insert({ name, link, type, image_path: imagePath, created_by: session.userId })
     .select()
     .single();
 
