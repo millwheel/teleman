@@ -119,7 +119,7 @@ export default async function LinksPage() {
         </div>
       </section>
 
-      {/* 상단 Static 이미지 */}
+      {/* Static 이미지 */}
       <section className="w-full pt-4">
         <Image
             src="/images/link-banner.jpg"
