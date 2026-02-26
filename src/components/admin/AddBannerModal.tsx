@@ -7,7 +7,7 @@ type BannerType = "long" | "short";
 
 interface Props {
   apiPath: string;
-  bannerType: BannerType;
+  bannerType?: BannerType;
   onClose: () => void;
   onSuccess: () => void;
 }
@@ -40,7 +40,7 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
     const fd = new FormData();
     fd.append("name", name);
     fd.append("link", link);
-    fd.append("type", bannerType);
+    if (bannerType) fd.append("type", bannerType);
     fd.append("file", file);
     const res = await fetch(apiPath, { method: "POST", body: fd });
     const data = await res.json();
@@ -52,11 +52,13 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
   return (
     <Modal title="배너 추가" onClose={onClose}>
       <div className="space-y-4">
-        <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">
-          배너 종류: <span className="font-semibold text-primary">
-            {bannerType === "long" ? "긴 배너 (6:1)" : "짧은 배너 (3:1)"}
-          </span>
-        </div>
+        {bannerType && (
+          <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">
+            배너 종류: <span className="font-semibold text-primary">
+              {bannerType === "long" ? "긴 배너 (6:1)" : "짧은 배너 (3:1)"}
+            </span>
+          </div>
+        )}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">이름</label>
           <input
