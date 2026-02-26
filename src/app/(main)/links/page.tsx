@@ -43,7 +43,7 @@ export default async function LinksPage() {
     textBanners: TextBanner[];
   } = await res.json();
 
-  const displayBanners = shuffle(commonBanners).slice(0, 4);
+  const displayBanners = shuffle(commonBanners);
 
   const bannersByCategory = textBanners.reduce<Record<number, TextBanner[]>>((acc, banner) => {
     if (!acc[banner.category_id]) acc[banner.category_id] = [];
@@ -54,36 +54,26 @@ export default async function LinksPage() {
   return (
     <div className="mx-auto max-w-7xl px-4">
 
-      {/* 공통 배너 2×2 */}
+      {/* 공통 배너 2열 */}
       <section className="py-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
-          {Array.from({ length: 4 }, (_, i) => displayBanners[i] ?? null).map((banner, i) =>
-            banner ? (
-              <a
-                key={`banner-${banner.id}`}
-                href={banner.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative block overflow-hidden w-full"
-                style={{ height: "124px" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={banner.public_url}
-                  alt={banner.name}
-                  className="h-full w-full object-cover"
-                />
-              </a>
-            ) : (
-              <div
-                key={`empty-${i}`}
-                className="flex items-center justify-center bg-primary text-white text-sm font-medium w-full"
-                style={{ height: "124px" }}
-              >
-                [ 빈 배너 ]
-              </div>
-            )
-          )}
+          {displayBanners.map((banner) => (
+            <a
+              key={`banner-${banner.id}`}
+              href={banner.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative block overflow-hidden w-full"
+              style={{ height: "104px" }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={banner.public_url}
+                alt={banner.name}
+                className="h-full w-full object-cover"
+              />
+            </a>
+          ))}
         </div>
       </section>
 
