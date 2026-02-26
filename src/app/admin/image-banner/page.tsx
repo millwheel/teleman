@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
-import AddGuaranteeBannerModal from "@/components/admin/AddGuaranteeBannerModal";
-import DeleteGuaranteeBannerModal from "@/components/admin/DeleteGuaranteeBannerModal";
-import type { GuaranteeGuaranteeBanner } from "@/data/type";
+import AddGuaranteeBannerModal from "@/components/admin/AddBannerModal";
+import DeleteGuaranteeBannerModal from "@/components/admin/DeleteBannerModal";
+import type { GuaranteeBanner } from "@/data/type";
 
 const API_PATH = "/api/admin/image-banners";
 
