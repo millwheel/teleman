@@ -53,17 +53,6 @@ export default async function LinksPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4">
-      {/* 상단 Static 이미지 */}
-      <div className="w-full pt-4">
-        <Image
-          src="/images/link-banner.jpg"
-          alt="텔레맨 링크모음 배너"
-          width={1920}
-          height={400}
-          className="w-full h-auto"
-          priority
-        />
-      </div>
 
       {/* 공통 배너 2×2 */}
       <section className="py-4">
@@ -75,8 +64,8 @@ export default async function LinksPage() {
                 href={banner.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative block overflow-hidden"
-                style={{ aspectRatio: "3 / 1" }}
+                className="relative block overflow-hidden w-full"
+                style={{ height: "124px" }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -88,8 +77,8 @@ export default async function LinksPage() {
             ) : (
               <div
                 key={`empty-${i}`}
-                className="flex items-center justify-center bg-primary text-white text-sm font-medium"
-                style={{ aspectRatio: "3 / 1" }}
+                className="flex items-center justify-center bg-primary text-white text-sm font-medium w-full"
+                style={{ height: "124px" }}
               >
                 [ 빈 배너 ]
               </div>
@@ -139,6 +128,19 @@ export default async function LinksPage() {
           })}
         </div>
       </section>
+
+      {/* 상단 Static 이미지 */}
+      <section className="w-full pt-4">
+        <Image
+            src="/images/link-banner.jpg"
+            alt="텔레맨 링크모음 배너"
+            width={1920}
+            height={400}
+            className="w-full h-auto"
+            priority
+        />
+      </section>
+
     </div>
   );
 }
