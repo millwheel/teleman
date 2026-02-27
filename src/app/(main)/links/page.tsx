@@ -1,9 +1,24 @@
 import { headers } from "next/headers";
 import Image from "next/image";
+import { ChevronRight } from "lucide-react";
 import type { CommonBanner, LinkCategory, LinkItem } from "@/data/type";
 import { shuffle } from "@/util/shuffle";
 import Link from "next/link";
 import AdBannerGrid from "@/components/AdBannerGrid";
+
+const MEDALS = ["🥇", "🥈", "🥉"];
+const RANK_COLORS = [
+  "text-blue-600",
+  "text-cyan-500",
+  "text-orange-500",
+  "text-pink-500",
+  "text-blue-600",
+  "text-green-600",
+  "text-orange-400",
+  "text-pink-500",
+  "text-blue-600",
+  "text-pink-400",
+];
 
 export default async function LinksPage() {
   const headersList = await headers();
@@ -31,60 +46,70 @@ export default async function LinksPage() {
 
       <AdBannerGrid banners={displayBanners} />
 
-      {/* 텍스트 배너 카테고리 4열 그리드 */}
       <section className="pb-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {categories.map((category) => {
-            const banners = (bannersByCategory[category.sort_order + 1] ?? []).slice(0, 10);
+            const items = (bannersByCategory[category.sort_order + 1] ?? []).slice(0, 10);
             return (
-              <div
-                key={category.code}
-                className="overflow-hidden rounded-lg border border-secondary"
-              >
+              <div key={category.code} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+
                 <Link
                   href={`/links/${category.code}`}
-                  className="block bg-primary px-2 py-2 text-center text-sm font-bold text-white hover:opacity-80 transition-opacity"
+                  className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"
                 >
-                  {category.name} TOP 10
+                  {category.icon && <span className="text-xl shrink-0">{category.icon}</span>}
+                  <span className="flex-1 text-sm font-bold text-gray-900 truncate">
+                    {category.name} Top10
+                  </span>
+                  <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
                 </Link>
-                <div className="bg-primary/90 divide-y divide-white/10">
-                  {Array.from({ length: 10 }, (_, i) => {
-                    const banner = banners[i];
-                    return banner ? (
-                      <a
-                        key={banner.id}
-                        href={banner.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block px-2 py-1.5 text-center text-sm text-white hover:bg-white/10 transition-colors"
-                      >
-                        [ {banner.name} ]
-                      </a>
+
+                <ul>
+                  {Array.from({ length: 10 }, (_, idx) => {
+                    const item = items[idx];
+                    return item ? (
+                      <li key={item.id}>
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          {idx < 3 ? (
+                            <span className="text-lg leading-none shrink-0">{MEDALS[idx]}</span>
+                          ) : (
+                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-orange-400 text-orange-400 text-xs font-bold shrink-0">
+                              {idx + 1}
+                            </span>
+                          )}
+                          <span className={`text-sm font-medium truncate ${RANK_COLORS[idx]}`}>
+                            {item.name}
+                          </span>
+                        </a>
+                      </li>
                     ) : (
-                      <div
-                        key={`empty-${i}`}
-                        className="px-2 py-1.5 text-center text-xs text-white/25"
-                      >
-                        [ 빈 칸 ]
-                      </div>
+                      <li key={`empty-${idx}`} className="flex items-center gap-3 px-4 py-2">
+                        <span className="w-5 shrink-0" />
+                        <span className="text-sm text-gray-300">빈 칸</span>
+                      </li>
                     );
                   })}
-                </div>
+                </ul>
+
               </div>
             );
           })}
         </div>
       </section>
 
-      {/* Static 이미지 */}
       <section className="w-full pt-4">
         <Image
-            src="/images/link-banner.jpg"
-            alt="텔레맨 링크모음 배너"
-            width={1920}
-            height={400}
-            className="w-full h-auto"
-            priority
+          src="/images/link-banner.jpg"
+          alt="텔레맨 링크모음 배너"
+          width={1920}
+          height={400}
+          className="w-full h-auto"
+          priority
         />
       </section>
 

@@ -19,6 +19,7 @@ export type LinkCategory = {
   code: string;
   name: string;
   sort_order: number;
+  icon?: string;
 };
 
 export type LinkItem = {
