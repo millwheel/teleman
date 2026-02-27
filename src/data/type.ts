@@ -34,8 +34,3 @@ export type BannerFormState = {
   name: string;
   link: string;
 };
-
-export type CategoryFormState = {
-  code: string;
-  name: string;
-};

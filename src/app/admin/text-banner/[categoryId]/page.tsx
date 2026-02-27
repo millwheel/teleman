@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown, Pencil, Trash2, Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Modal from "@/components/admin/Modal";
-import type {LinkItem, BannerFormState, LinkCategory} from "@/data/type";
+import type { LinkItem, BannerFormState } from "@/data/type";
+import { LINK_CATEGORIES } from "@/data/linkCategories";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
@@ -18,7 +19,7 @@ export default function LinkItemDetailPage({
   const categoryId = Number(params.categoryId);
   const router = useRouter();
 
-  const [category, setLinkCategory] = useState<LinkCategory | null>(null);
+  const category = LINK_CATEGORIES.find((c) => c.id === categoryId) ?? null;
   const [banners, setBanners] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState<number | string | null>(null);
   const [modal, setModal] = useState<"add" | "edit" | "delete" | null>(null);
@@ -27,14 +28,9 @@ export default function LinkItemDetailPage({
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/admin/text-banner-categories").then((r) => r.json()),
-      fetch(`/api/admin/text-banners?categoryId=${categoryId}`).then((r) => r.json()),
-    ]).then(([cats, bans]) => {
-      const cats_ = Array.isArray(cats) ? cats : [];
-      setLinkCategory(cats_.find((c: LinkCategory) => c.id === categoryId) ?? null);
-      setBanners(Array.isArray(bans) ? bans : []);
-    });
+    fetch(`/api/admin/text-banners?categoryId=${categoryId}`)
+      .then((r) => r.json())
+      .then((d) => setBanners(Array.isArray(d) ? d : []));
   }, [categoryId]);
 
   function refetch() {
@@ -48,7 +44,7 @@ export default function LinkItemDetailPage({
     return <div className="text-center py-16 text-gray-400">카테고리를 찾을 수 없습니다.</div>;
   }
 
-  const cat = category; // null 가드 이후 타입 고정 (클로저 내부에서도 LinkCategory로 추론)
+  const cat = category;
   const atLimit = banners.length >= 10;
 
   function openAdd() { setForm({ name: "", link: "" }); setFormError(""); setModal("add"); }

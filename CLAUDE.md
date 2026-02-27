@@ -31,7 +31,7 @@ npm run lint     # ESLint 실행
 - `common_banner` — 광고 배너 (type: `'long'` | `'short'`)
 - `guarantee` — 보증업체 배너
 - `link` — 링크모음 항목 (구 text_banners)
-- `link_category` — 링크모음 카테고리 (구 text_banner_categories)
+- `link_category` — 링크모음 카테고리. **DB가 아닌 `src/data/linkCategories.ts`의 `LINK_CATEGORIES` 상수로 static 관리.**
 - `scammer` / `scammer_search` — 사기꾼 조회
 - `users` — 회원
 

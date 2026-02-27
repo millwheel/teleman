@@ -3,31 +3,25 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Settings } from "lucide-react";
-import type { LinkCategory, LinkItem } from "@/data/type";
+import type { LinkItem } from "@/data/type";
+import { LINK_CATEGORIES } from "@/data/linkCategories";
 
 export default function LinkItemPage() {
-  const [categories, setCategories] = useState<LinkCategory[]>([]);
   const [banners, setBanners] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/admin/text-banner-categories")
-      .then((r) => r.json())
-      .then((cats) => {
-        const cats_ = Array.isArray(cats) ? cats : [];
-        setCategories(cats_);
-        Promise.all(
-          cats_.map((c: LinkCategory) =>
-            fetch(`/api/admin/text-banners?categoryId=${c.id}`).then((r) => r.json()),
-          ),
-        ).then((results) => {
-          setBanners(results.flatMap((r) => (Array.isArray(r) ? r : [])));
-          setLoading(false);
-        });
-      });
+    Promise.all(
+      LINK_CATEGORIES.map((c) =>
+        fetch(`/api/admin/text-banners?categoryId=${c.id}`).then((r) => r.json()),
+      ),
+    ).then((results) => {
+      setBanners(results.flatMap((r) => (Array.isArray(r) ? r : [])));
+      setLoading(false);
+    });
   }, []);
 
-  const bannersByLinkCategory = banners.reduce<Record<number, LinkItem[]>>((acc, b) => {
+  const bannersByCategory = banners.reduce<Record<number, LinkItem[]>>((acc, b) => {
     if (!acc[b.category_id]) acc[b.category_id] = [];
     acc[b.category_id].push(b);
     return acc;
@@ -37,30 +31,14 @@ export default function LinkItemPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">링크모음 관리</h1>
-        <Link
-          href="/admin/text-banner-categories"
-          className="rounded-lg border border-primary px-4 py-2 text-sm font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
-        >
-          카테고리 관리
-        </Link>
       </div>
 
       {loading ? (
         <div className="mt-10 text-center text-gray-400">로딩중...</div>
-      ) : categories.length === 0 ? (
-        <div className="mt-10 text-center text-gray-400">
-          <p>카테고리가 없습니다.</p>
-          <Link
-            href="/admin/text-banner-categories"
-            className="mt-2 inline-block text-sm text-primary hover:underline"
-          >
-            카테고리 관리에서 추가하기
-          </Link>
-        </div>
       ) : (
         <div className="grid grid-cols-4 gap-3">
-          {categories.map((cat) => {
-            const catBanners = bannersByLinkCategory[cat.id] ?? [];
+          {LINK_CATEGORIES.map((cat) => {
+            const catBanners = bannersByCategory[cat.id] ?? [];
             return (
               <div key={cat.id} className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div className="flex items-center justify-between bg-primary px-3 py-2">
