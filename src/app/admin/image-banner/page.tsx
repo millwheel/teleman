@@ -7,8 +7,12 @@ export default async function ImageBannerPage() {
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${proto}://${host}/api/admin/image-banners`);
-  const banners: GuaranteeBanner[] = await res.json();
+  const cookie = headersList.get("cookie") ?? "";
+  const res = await fetch(`${proto}://${host}/api/admin/image-banners`, {
+    headers: { cookie },
+  });
+  const data = await res.json();
+  const banners: GuaranteeBanner[] = Array.isArray(data) ? data : [];
 
   return <ImageBannerClient initialBanners={banners} />;
 }

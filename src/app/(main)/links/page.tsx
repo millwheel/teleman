@@ -2,6 +2,8 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import type { CommonBanner, LinkCategory, LinkItem } from "@/data/type";
 import { shuffle } from "@/util/shuffle";
+import Link from "next/link";
+import AdBannerGrid from "@/components/AdBannerGrid";
 
 export default async function LinksPage() {
   const headersList = await headers();
@@ -9,7 +11,7 @@ export default async function LinksPage() {
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
   const res = await fetch(`${proto}://${host}/api/banners/links`);
-  const { longBanners, shortBanners, categories, textBanners }: {
+  const { longBanners = [], shortBanners = [], categories = [], textBanners = [] }: {
     longBanners: CommonBanner[];
     shortBanners: CommonBanner[];
     categories: LinkCategory[];
@@ -27,44 +29,24 @@ export default async function LinksPage() {
   return (
     <div className="mx-auto max-w-7xl px-4">
 
-      {/* 광고 배너 - 긴(col-span-2) + 짧은(col-span-1) 혼합 4열 그리드 */}
-      {displayBanners.length > 0 && (
-        <section className="py-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-1">
-            {displayBanners.map((banner) => (
-              <a
-                key={`${banner.type}-${banner.id}`}
-                href={banner.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`relative block overflow-hidden w-full ${banner.type === "long" ? "col-span-2" : "col-span-1"}`}
-                style={{ height: "104px" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={banner.public_url}
-                  alt={banner.name}
-                  className="h-full w-full object-cover"
-                />
-              </a>
-            ))}
-          </div>
-        </section>
-      )}
+      <AdBannerGrid banners={displayBanners} />
 
       {/* 텍스트 배너 카테고리 4열 그리드 */}
       <section className="pb-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {categories.map((category) => {
-            const banners = (bannersByCategory[category.id] ?? []).slice(0, 10);
+            const banners = (bannersByCategory[category.sort_order + 1] ?? []).slice(0, 10);
             return (
               <div
-                key={category.id}
+                key={category.code}
                 className="overflow-hidden rounded-lg border border-secondary"
               >
-                <div className="bg-primary px-2 py-2 text-center text-sm font-bold text-white">
-                  {category.name}
-                </div>
+                <Link
+                  href={`/links/${category.code}`}
+                  className="block bg-primary px-2 py-2 text-center text-sm font-bold text-white hover:opacity-80 transition-opacity"
+                >
+                  {category.name} TOP 10
+                </Link>
                 <div className="bg-primary/90 divide-y divide-white/10">
                   {Array.from({ length: 10 }, (_, i) => {
                     const banner = banners[i];
@@ -74,7 +56,7 @@ export default async function LinksPage() {
                         href={banner.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block px-2 py-1.5 text-center 로text-sm text-white hover:bg-white/10 transition-colors"
+                        className="block px-2 py-1.5 text-center text-sm text-white hover:bg-white/10 transition-colors"
                       >
                         [ {banner.name} ]
                       </a>

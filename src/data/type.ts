@@ -16,7 +16,6 @@ export type GuaranteeBanner = {
 };
 
 export type LinkCategory = {
-  id: number;
   code: string;
   name: string;
   sort_order: number;
@@ -28,6 +27,8 @@ export type LinkItem = {
   link: string;
   sort_order: number;
   category_id: number;
+  image_path: string | null;
+  likes: number;
 };
 
 export type BannerFormState = {

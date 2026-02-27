@@ -98,7 +98,7 @@ type Props = {
   initialBanners: CommonBanner[];
 };
 
-export default function CommonBannerClient({ initialBanners }: Props) {
+export default function CommonBannerManager({ initialBanners }: Props) {
   const [loading, setLoading] = useState(false);
   const [banners, setBanners] = useState<CommonBanner[]>(initialBanners);
   const [modal, setModal] = useState<"add-long" | "add-short" | "delete" | null>(null);
@@ -113,7 +113,8 @@ export default function CommonBannerClient({ initialBanners }: Props) {
     setModal(null);
     setLoading(true);
     const res = await fetch(API_PATH);
-    setBanners(await res.json());
+    const data = await res.json();
+    setBanners(Array.isArray(data) ? data : []);
     setLoading(false);
   }
 

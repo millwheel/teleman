@@ -28,7 +28,8 @@ export default function ImageBannerClient({ initialBanners }: Props) {
     setModal(null);
     setLoading(true);
     const res = await fetch(API_PATH);
-    setGuaranteeBanners(await res.json());
+    const data = await res.json();
+    setGuaranteeBanners(Array.isArray(data) ? data : []);
     setLoading(false);
   }
 

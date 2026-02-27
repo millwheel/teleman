@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import ProfileForm from "./ProfileForm";
+import ProfileForm from "../../../components/ProfileForm";
 
 export default async function ProfilePage() {
   const headersList = await headers();

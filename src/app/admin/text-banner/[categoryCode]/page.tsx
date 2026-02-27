@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronUp, ChevronDown, Pencil, Trash2, Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -14,12 +14,12 @@ const inputClass =
 export default function LinkItemDetailPage({
   params,
 }: {
-  params: { categoryId: string };
+  params: Promise<{ categoryCode: string }>;
 }) {
-  const categoryId = Number(params.categoryId);
+  const { categoryCode } = use(params);
   const router = useRouter();
 
-  const category = LINK_CATEGORIES.find((c) => c.id === categoryId) ?? null;
+  const category = LINK_CATEGORIES.find((c) => c.code === categoryCode) ?? null;
   const [banners, setBanners] = useState<LinkItem[]>([]);
   const [loading, setLoading] = useState<number | string | null>(null);
   const [modal, setModal] = useState<"add" | "edit" | "delete" | null>(null);
@@ -28,13 +28,13 @@ export default function LinkItemDetailPage({
   const [formError, setFormError] = useState("");
 
   useEffect(() => {
-    fetch(`/api/admin/text-banners?categoryId=${categoryId}`)
+    fetch(`/api/admin/text-banners?categoryCode=${categoryCode}`)
       .then((r) => r.json())
       .then((d) => setBanners(Array.isArray(d) ? d : []));
-  }, [categoryId]);
+  }, [categoryCode]);
 
   function refetch() {
-    fetch(`/api/admin/text-banners?categoryId=${categoryId}`)
+    fetch(`/api/admin/text-banners?categoryCode=${categoryCode}`)
       .then((r) => r.json())
       .then((d) => setBanners(Array.isArray(d) ? d : []));
     router.refresh();
@@ -69,7 +69,7 @@ export default function LinkItemDetailPage({
     const res = await fetch("/api/admin/text-banners", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ category_id: cat.id, name: form.name, link: form.link }),
+      body: JSON.stringify({ category_code: cat.code, name: form.name, link: form.link }),
     });
     const data = await res.json();
     setLoading(null);
