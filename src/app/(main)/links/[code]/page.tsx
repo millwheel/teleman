@@ -67,13 +67,24 @@ export default async function LinkCategoryPage({
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${proto}://${host}/api/links/${code}`);
-  const { banners = [], links = [] }: { banners: CommonBanner[]; links: LinkItem[] } = await res.json();
+  const [bannersRes, linksRes] = await Promise.all([
+    fetch(`${proto}://${host}/api/banners/links`),
+    fetch(`${proto}://${host}/api/links/${code}`),
+  ]);
+
+  const { longBanners = [], shortBanners = [] }: {
+    longBanners: CommonBanner[];
+    shortBanners: CommonBanner[];
+  } = await bannersRes.json();
+
+  const { links = [] }: { links: LinkItem[] } = await linksRes.json();
+
+  const displayBanners = shuffle([...longBanners, ...shortBanners]);
 
   return (
     <div className="mx-auto max-w-7xl px-4">
       <LinkCategoryTabs currentCode={code} />
-      <AdBannerGrid banners={shuffle(banners)} />
+      <AdBannerGrid banners={displayBanners} />
 
       <div className="mt-6 mb-4">
         <h2 className="text-xl font-bold">{category.name}</h2>
