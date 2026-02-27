@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import type { GuaranteeBanner } from "@/data/type";
-import ImageBannerClient from "./ImageBannerClient";
+import ImageBannerManager from "../../../components/admin/ImageBannerManager";
 
 export default async function ImageBannerPage() {
   const headersList = await headers();
@@ -14,5 +14,5 @@ export default async function ImageBannerPage() {
   const data = await res.json();
   const banners: GuaranteeBanner[] = Array.isArray(data) ? data : [];
 
-  return <ImageBannerClient initialBanners={banners} />;
+  return <ImageBannerManager initialBanners={banners} />;
 }

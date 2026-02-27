@@ -13,7 +13,7 @@ type Props = {
   initialBanners: GuaranteeBanner[];
 };
 
-export default function ImageBannerClient({ initialBanners }: Props) {
+export default function ImageBannerManager({ initialBanners }: Props) {
   const [loading, setLoading] = useState(false);
   const [banners, setGuaranteeBanners] = useState<GuaranteeBanner[]>(initialBanners);
   const [modal, setModal] = useState<"add" | "delete" | null>(null);
