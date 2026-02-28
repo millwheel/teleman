@@ -2,9 +2,9 @@ import Link from "next/link";
 
 const MENU = [
   { label: "관리자 관리", href: "/admin/members", desc: "관리자 계정 추가 및 삭제" },
-  { label: "링크모음 관리", href: "/admin/text-banner", desc: "텍스트 배너 관리" },
-  { label: "보증업체 관리", href: "/admin/image-banner", desc: "보증업체 이미지 배너 관리" },
-  { label: "광고배너 관리", href: "/admin/common-banner", desc: "공통 광고 배너 관리" },
+  { label: "링크모음 관리", href: "/admin/link", desc: "링크 관리" },
+  { label: "보증업체 관리", href: "/admin/guarantee", desc: "보증업체 관리" },
+  { label: "광고배너 관리", href: "/admin/ad", desc: "광고 배너 관리" },
     { label: "사기꾼 관리", href: "/admin/scammer", desc: "사기꾼 목록 관리" },
 ];
 

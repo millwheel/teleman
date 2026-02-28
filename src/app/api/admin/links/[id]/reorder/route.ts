@@ -14,7 +14,7 @@ export async function PUT(
 
   const { data: current } = await supabase
     .from("link")
-    .select("id, sort_order, category_id")
+    .select("id, sort_order, category_code")
     .eq("id", id)
     .single();
 
@@ -26,7 +26,7 @@ export async function PUT(
   const { data: adjacent } = await supabase
     .from("link")
     .select("id, sort_order")
-    .eq("category_id", current.category_id)
+    .eq("category_code", current.category_code)
     .eq("sort_order", targetOrder)
     .maybeSingle();
 

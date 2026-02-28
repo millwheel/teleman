@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import type { CommonBanner, LinkItem } from "@/data/type";
+import type { AdBanner, LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import { shuffle } from "@/util/shuffle";
 import AdBannerGrid from "@/components/AdBannerGrid";
@@ -17,10 +17,10 @@ function LinkCard({ link, rank }: { link: LinkItem; rank: number }) {
       className="block rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow bg-white"
     >
       <div className="relative">
-        {link.image_path ? (
+        {link.public_url ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={link.image_path}
+            src={link.public_url}
             alt={link.name}
             className="w-full object-cover"
             style={{ height: "120px" }}
@@ -73,8 +73,8 @@ export default async function LinkCategoryPage({
   ]);
 
   const { longBanners = [], shortBanners = [] }: {
-    longBanners: CommonBanner[];
-    shortBanners: CommonBanner[];
+    longBanners: AdBanner[];
+    shortBanners: AdBanner[];
   } = await bannersRes.json();
 
   const { links = [] }: { links: LinkItem[] } = await linksRes.json();

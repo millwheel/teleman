@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const imagePath = `image-banners/${uuidv4()}.${ext}`;
+  const imagePath = `guarantees/${uuidv4()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
   await uploadImage(imagePath, buffer, file.type);

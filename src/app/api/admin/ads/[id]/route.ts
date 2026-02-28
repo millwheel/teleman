@@ -10,15 +10,22 @@ export async function PUT(
   if (error) return error;
 
   const { id } = await params;
-  const { name, link } = await request.json();
+  const { name, link, type } = await request.json();
 
   if (!name || !link) {
     return NextResponse.json({ message: "name과 link를 입력하세요." }, { status: 400 });
   }
 
+  if (type !== undefined && type !== "long" && type !== "short") {
+    return NextResponse.json({ message: "type은 long 또는 short이어야 합니다." }, { status: 400 });
+  }
+
+  const updatePayload: Record<string, string> = { name, link };
+  if (type !== undefined) updatePayload.type = type;
+
   const { data, error: dbError } = await supabase
-    .from("link")
-    .update({ name, link })
+    .from("ad")
+    .update(updatePayload)
     .eq("id", id)
     .select()
     .single();
@@ -37,7 +44,7 @@ export async function DELETE(
   const { id } = await params;
 
   const { error: dbError } = await supabase
-    .from("link")
+    .from("ad")
     .delete()
     .eq("id", id);
 

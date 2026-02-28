@@ -49,7 +49,7 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
   }
 
   return (
-    <Modal title="배너 추가" onClose={onClose}>
+    <Modal title="항목 추가" onClose={onClose}>
       <div className="space-y-4">
         {bannerType && (
           <div className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-600">
@@ -64,7 +64,7 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="배너 이름"
+            placeholder="이름"
             className={inputClass}
           />
         </div>

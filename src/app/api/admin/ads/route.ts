@@ -9,7 +9,7 @@ export async function GET() {
   if (error) return error;
 
   const { data, error: dbError } = await supabase
-    .from("common_banner")
+    .from("ad")
     .select("*")
     .order("created_at");
 
@@ -37,13 +37,13 @@ export async function POST(request: NextRequest) {
   }
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-  const imagePath = `common-banners/${uuidv4()}.${ext}`;
+  const imagePath = `ads/${uuidv4()}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
   await uploadImage(imagePath, buffer, file.type);
 
   const { data, error: dbError } = await supabase
-    .from("common_banner")
+    .from("ad")
     .insert({ name, link, type, image_path: imagePath, created_by: session.userId })
     .select()
     .single();

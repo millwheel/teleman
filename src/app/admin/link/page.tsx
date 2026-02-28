@@ -13,7 +13,7 @@ export default function LinkItemPage() {
   useEffect(() => {
     Promise.all(
       LINK_CATEGORIES.map((c) =>
-        fetch(`/api/admin/text-banners?categoryCode=${c.code}`).then((r) => r.json()),
+        fetch(`/api/admin/links?categoryCode=${c.code}`).then((r) => r.json()),
       ),
     ).then((results) => {
       const byCode: Record<string, LinkItem[]> = {};
@@ -39,7 +39,7 @@ export default function LinkItemPage() {
               <div className="flex items-center justify-between bg-primary px-3 py-2">
                 <span className="text-xs font-bold text-white truncate">{cat.name}</span>
                 <Link
-                  href={`/admin/text-banner/${cat.code}`}
+                  href={`/admin/link/${cat.code}`}
                   className="ml-2 shrink-0 rounded p-1 hover:bg-white/20 transition-colors"
                   title="세부 관리"
                 >

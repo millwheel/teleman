@@ -1,6 +1,6 @@
-import type { CommonBanner } from "@/data/type";
+import type { AdBanner } from "@/data/type";
 
-export default function AdBannerGrid({ banners }: { banners: CommonBanner[] }) {
+export default function AdBannerGrid({ banners }: { banners: AdBanner[] }) {
   if (!Array.isArray(banners) || banners.length === 0) return null;
 
   return (

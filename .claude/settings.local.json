@@ -12,7 +12,11 @@
       "Bash(echo \"\" > \"C:/D/SI/teleman/teleman-project/src/components/AdminHeader.tsx\" && echo \"\" > \"C:/D/SI/teleman/teleman-project/src/components/AdminHeaderNav.tsx\" && echo \"\" > \"C:/D/SI/teleman/teleman-project/src/app/\\(auth\\)/layout.tsx\")",
       "Bash(git diff:*)",
       "Bash(git commit:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git status:*)",
+      "Bash(git:*)",
+      "Bash(mkdir:*)",
+      "Bash(git mv:*)"
     ]
   }
 }

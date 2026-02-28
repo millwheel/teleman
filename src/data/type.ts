@@ -1,6 +1,6 @@
 export type BannerType = "long" | "short";
 
-export type CommonBanner = {
+export type AdBanner = {
   id: number;
   name: string;
   link: string;
@@ -26,13 +26,16 @@ export type LinkItem = {
   id: number;
   name: string;
   link: string;
-  sort_order: number;
-  category_id: number;
+  description: string | null;
+  category_code: string;
   image_path: string | null;
+  public_url: string | null;
   likes: number;
 };
 
 export type BannerFormState = {
   name: string;
   link: string;
+  description: string;
+  likes: number;
 };

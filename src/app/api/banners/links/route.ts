@@ -5,18 +5,18 @@ import { LINK_CATEGORIES } from "@/data/linkCategories";
 
 export async function GET() {
   const [
-    { data: allCommonBanners, error: e1 },
-    { data: allTextBanners, error: e2 },
+    { data: allAds, error: e1 },
+    { data: allLinks, error: e2 },
   ] = await Promise.all([
-    supabase.from("common_banner").select("*"),
-    supabase.from("link").select("*").order("sort_order"),
+    supabase.from("ad").select("*"),
+    supabase.from("link").select("*").order("likes", { ascending: false }),
   ]);
 
   if (e1 || e2) {
     return NextResponse.json({ message: "데이터 조회 실패" }, { status: 500 });
   }
 
-  const mapped = (allCommonBanners ?? []).map((b) => ({
+  const mapped = (allAds ?? []).map((b) => ({
     id: b.id,
     name: b.name,
     link: b.link,
@@ -27,10 +27,15 @@ export async function GET() {
   const longBanners = mapped.filter((b) => b.type === "long");
   const shortBanners = mapped.filter((b) => b.type === "short");
 
+  const links = (allLinks ?? []).map((b) => ({
+    ...b,
+    public_url: b.image_path ? getPublicImageUrl(b.image_path) : null,
+  }));
+
   return NextResponse.json({
     longBanners,
     shortBanners,
     categories: LINK_CATEGORIES,
-    textBanners: allTextBanners ?? [],
+    links,
   });
 }

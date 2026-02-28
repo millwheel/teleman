@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
-import type { CommonBanner, LinkCategory, LinkItem } from "@/data/type";
+import type { AdBanner, LinkCategory, LinkItem } from "@/data/type";
 import { shuffle } from "@/util/shuffle";
 import Link from "next/link";
 import AdBannerGrid from "@/components/AdBannerGrid";
@@ -26,30 +26,30 @@ export default async function LinksPage() {
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
   const res = await fetch(`${proto}://${host}/api/banners/links`);
-  const { longBanners = [], shortBanners = [], categories = [], textBanners = [] }: {
-    longBanners: CommonBanner[];
-    shortBanners: CommonBanner[];
+  const { longBanners = [], shortBanners = [], categories = [], links = [] }: {
+    longBanners: AdBanner[];
+    shortBanners: AdBanner[];
     categories: LinkCategory[];
-    textBanners: LinkItem[];
+    links: LinkItem[];
   } = await res.json();
 
   const displayBanners = shuffle([...longBanners, ...shortBanners]);
 
-  const bannersByCategory = textBanners.reduce<Record<number, LinkItem[]>>((acc, banner) => {
-    if (!acc[banner.category_id]) acc[banner.category_id] = [];
-    acc[banner.category_id].push(banner);
+  const bannersByCategory = links.reduce<Record<string, LinkItem[]>>((acc, banner) => {
+    if (!acc[banner.category_code]) acc[banner.category_code] = [];
+    acc[banner.category_code].push(banner);
     return acc;
   }, {});
 
   return (
-    <div className="mx-auto max-w-7xl px-4">
+    <div className="mx-auto max-w-7xl px-4 bg-gray-50">
 
       <AdBannerGrid banners={displayBanners} />
 
       <section className="pb-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {categories.map((category) => {
-            const items = (bannersByCategory[category.sort_order + 1] ?? []).slice(0, 10);
+            const items = (bannersByCategory[category.code] ?? []).slice(0, 10);
             return (
               <div key={category.code} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
 

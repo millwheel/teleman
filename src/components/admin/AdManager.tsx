@@ -5,9 +5,9 @@ import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
 import AddBannerModal from "@/components/admin/AddBannerModal";
 import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
-import type { CommonBanner } from "@/data/type";
+import type { AdBanner } from "@/data/type";
 
-const API_PATH = "/api/admin/common-banners";
+const API_PATH = "/api/admin/ads";
 
 const cols = {
   name:   "basis-[10%]",
@@ -26,10 +26,10 @@ function BannerSection({
 }: {
   title: string;
   hint: string;
-  banners: CommonBanner[];
+  banners: AdBanner[];
   loading: boolean;
   onAdd: () => void;
-  onDelete: (b: CommonBanner) => void;
+  onDelete: (b: AdBanner) => void;
 }) {
   return (
     <div>
@@ -95,16 +95,16 @@ function BannerSection({
 }
 
 type Props = {
-  initialBanners: CommonBanner[];
+  initialBanners: AdBanner[];
 };
 
-export default function CommonBannerManager({ initialBanners }: Props) {
+export default function AdManager({ initialBanners }: Props) {
   const [loading, setLoading] = useState(false);
-  const [banners, setBanners] = useState<CommonBanner[]>(initialBanners);
+  const [banners, setBanners] = useState<AdBanner[]>(initialBanners);
   const [modal, setModal] = useState<"add-long" | "add-short" | "delete" | null>(null);
-  const [selected, setSelected] = useState<CommonBanner | null>(null);
+  const [selected, setSelected] = useState<AdBanner | null>(null);
 
-  function openDelete(b: CommonBanner) {
+  function openDelete(b: AdBanner) {
     setSelected(b);
     setModal("delete");
   }

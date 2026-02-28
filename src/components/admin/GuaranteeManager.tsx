@@ -7,13 +7,13 @@ import AddGuaranteeBannerModal from "@/components/admin/AddBannerModal";
 import DeleteGuaranteeBannerModal from "@/components/admin/DeleteBannerModal";
 import type { GuaranteeBanner } from "@/data/type";
 
-const API_PATH = "/api/admin/image-banners";
+const API_PATH = "/api/admin/guarantees";
 
 type Props = {
   initialBanners: GuaranteeBanner[];
 };
 
-export default function ImageBannerManager({ initialBanners }: Props) {
+export default function GuaranteeManager({ initialBanners }: Props) {
   const [loading, setLoading] = useState(false);
   const [banners, setGuaranteeBanners] = useState<GuaranteeBanner[]>(initialBanners);
   const [modal, setModal] = useState<"add" | "delete" | null>(null);
