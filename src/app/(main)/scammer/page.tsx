@@ -1,5 +1,6 @@
-import { headers } from "next/headers";
-import { getSession } from "@/lib/auth";
+"use client";
+
+import { useState, useEffect } from "react";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Image from "next/image";
 
@@ -10,28 +11,30 @@ type ScammerStats = {
   totalUsers: number;
 };
 
-export default async function ScammerPage() {
-  const headersList = await headers();
-  const host = headersList.get("host")!;
-  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+export default function ScammerPage() {
+  const [stats, setStats] = useState<ScammerStats | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const [session, res] = await Promise.all([
-    getSession(),
-    fetch(`${proto}://${host}/api/scammer/stats`),
-  ]);
-
-  const stats: ScammerStats = await res.json();
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/me").then((r) => r.json()),
+      fetch("/api/scammer/stats").then((r) => r.json()),
+    ]).then(([meData, statsData]) => {
+      setIsLoggedIn(!!meData.user);
+      setStats(statsData);
+    });
+  }, []);
 
   const STATS = [
-    { label: "총 등록 업체수", value: stats.totalScammers },
-    { label: "오늘 등록 건수", value: stats.todayScammers },
-    { label: "오늘 검색 건수", value: stats.todaySearches },
-    { label: "총 회원수",      value: stats.totalUsers },
+    { label: "총 등록 업체수", value: stats?.totalScammers ?? 0 },
+    { label: "오늘 등록 건수", value: stats?.todayScammers ?? 0 },
+    { label: "오늘 검색 건수", value: stats?.todaySearches ?? 0 },
+    { label: "총 회원수",      value: stats?.totalUsers ?? 0 },
   ];
 
   return (
     <div className="mx-auto max-w-7xl px-4">
-      <ScammerSearchBar isLoggedIn={!!session} />
+      <ScammerSearchBar isLoggedIn={isLoggedIn} />
 
       {/* 등록 건수 섹션 */}
       <div className="grid grid-cols-4 gap-4 my-6">

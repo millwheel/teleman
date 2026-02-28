@@ -1,23 +1,37 @@
-import { headers } from "next/headers";
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import type { GuaranteeBanner } from "@/data/type";
 import { shuffle } from "@/util/shuffle";
 
-export default async function GuaranteePage() {
-  const headersList = await headers();
-  const host = headersList.get("host")!;
-  const proto = process.env.NODE_ENV === "production" ? "https" : "http";
+export default function GuaranteePage() {
+  const [banners, setBanners] = useState<GuaranteeBanner[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const res = await fetch(`${proto}://${host}/api/banners/guarantee`);
-  const allBanners: GuaranteeBanner[] = await res.json();
-  const banners = shuffle(allBanners);
+  useEffect(() => {
+    fetch("/api/banners/guarantee")
+      .then((res) => res.json())
+      .then((data: GuaranteeBanner[]) => setBanners(shuffle(data)))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="mx-auto max-w-7xl px-4">
 
       {/* 이미지 배너 4열 그리드 */}
       <section className="py-4">
-        {banners.length > 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-gray-200"
+                style={{ aspectRatio: "1 / 1" }}
+              />
+            ))}
+          </div>
+        ) : banners.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {banners.map((banner) => (
               <a

@@ -1,9 +1,8 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import type { AdBanner, LinkItem } from "@/data/type";
+import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
-import { shuffle } from "@/util/shuffle";
-import AdBannerGrid from "@/components/AdBannerGrid";
+import AdBannerSection from "@/components/AdBannerSection";
 import LinkCategoryTabs from "../../../../components/LinkCategoryTabs";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
@@ -67,24 +66,13 @@ export default async function LinkCategoryPage({
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const [bannersRes, linksRes] = await Promise.all([
-    fetch(`${proto}://${host}/api/banners/links`),
-    fetch(`${proto}://${host}/api/links/${code}`),
-  ]);
-
-  const { longBanners = [], shortBanners = [] }: {
-    longBanners: AdBanner[];
-    shortBanners: AdBanner[];
-  } = await bannersRes.json();
-
-  const { links = [] }: { links: LinkItem[] } = await linksRes.json();
-
-  const displayBanners = shuffle([...longBanners, ...shortBanners]);
+  const res = await fetch(`${proto}://${host}/api/links/${code}`);
+  const { links = [] }: { links: LinkItem[] } = await res.json();
 
   return (
     <div className="mx-auto max-w-7xl px-4">
       <LinkCategoryTabs currentCode={code} />
-      <AdBannerGrid banners={displayBanners} />
+      <AdBannerSection />
 
       <div className="mt-6 mb-4">
         <h2 className="text-xl font-bold">{category.name}</h2>

@@ -1,10 +1,10 @@
 import { headers } from "next/headers";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
-import type { AdBanner, LinkCategory, LinkItem } from "@/data/type";
-import { shuffle } from "@/util/shuffle";
+import type { LinkItem } from "@/data/type";
+import { LINK_CATEGORIES } from "@/data/linkCategories";
 import Link from "next/link";
-import AdBannerGrid from "@/components/AdBannerGrid";
+import AdBannerSection from "@/components/AdBannerSection";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 const RANK_COLORS = [
@@ -25,15 +25,8 @@ export default async function LinksPage() {
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${proto}://${host}/api/banners/links`);
-  const { longBanners = [], shortBanners = [], categories = [], links = [] }: {
-    longBanners: AdBanner[];
-    shortBanners: AdBanner[];
-    categories: LinkCategory[];
-    links: LinkItem[];
-  } = await res.json();
-
-  const displayBanners = shuffle([...longBanners, ...shortBanners]);
+  const res = await fetch(`${proto}://${host}/api/links`);
+  const links: LinkItem[] = await res.json();
 
   const bannersByCategory = links.reduce<Record<string, LinkItem[]>>((acc, banner) => {
     if (!acc[banner.category_code]) acc[banner.category_code] = [];
@@ -44,11 +37,11 @@ export default async function LinksPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 bg-gray-50">
 
-      <AdBannerGrid banners={displayBanners} />
+      <AdBannerSection />
 
       <section className="pb-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {categories.map((category) => {
+          {LINK_CATEGORIES.map((category) => {
             const items = (bannersByCategory[category.code] ?? []).slice(0, 10);
             return (
               <div key={category.code} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
