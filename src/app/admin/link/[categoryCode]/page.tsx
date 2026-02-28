@@ -33,15 +33,18 @@ export default function LinkItemDetailPage({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch(`/api/admin/links?categoryCode=${categoryCode}`)
-      .then((r) => r.json())
-      .then((d) => setBanners(Array.isArray(d) ? d : []));
+    async function init() {
+      const res = await fetch(`/api/admin/links?categoryCode=${categoryCode}`);
+      const data = await res.json();
+      setBanners(Array.isArray(data) ? data : []);
+    }
+    init();
   }, [categoryCode]);
 
-  function refetch() {
-    fetch(`/api/admin/links?categoryCode=${categoryCode}`)
-      .then((r) => r.json())
-      .then((d) => setBanners(Array.isArray(d) ? d : []));
+  async function refetch() {
+    const res = await fetch(`/api/admin/links?categoryCode=${categoryCode}`);
+    const data = await res.json();
+    setBanners(Array.isArray(data) ? data : []);
     router.refresh();
   }
 

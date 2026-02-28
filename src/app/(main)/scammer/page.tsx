@@ -16,13 +16,15 @@ export default function ScammerPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      fetch("/api/me").then((r) => r.json()),
-      fetch("/api/scammer/stats").then((r) => r.json()),
-    ]).then(([meData, statsData]) => {
+    async function init() {
+      const [meData, statsData] = await Promise.all([
+        fetch("/api/me").then((r) => r.json()),
+        fetch("/api/scammer/stats").then((r) => r.json()),
+      ]);
       setIsLoggedIn(!!meData.user);
       setStats(statsData);
-    });
+    }
+    init();
   }, []);
 
   const STATS = [

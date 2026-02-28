@@ -11,18 +11,20 @@ export default function LinkItemPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all(
-      LINK_CATEGORIES.map((c) =>
-        fetch(`/api/admin/links?categoryCode=${c.code}`).then((r) => r.json()),
-      ),
-    ).then((results) => {
+    async function init() {
+      const results = await Promise.all(
+        LINK_CATEGORIES.map((c) =>
+          fetch(`/api/admin/links?categoryCode=${c.code}`).then((r) => r.json()),
+        ),
+      );
       const byCode: Record<string, LinkItem[]> = {};
       LINK_CATEGORIES.forEach((c, i) => {
         byCode[c.code] = Array.isArray(results[i]) ? results[i] : [];
       });
       setBannersByCode(byCode);
       setLoading(false);
-    });
+    }
+    init();
   }, []);
 
   return (

@@ -9,9 +9,12 @@ export default function AdBannerSection() {
   const [banners, setBanners] = useState<AdBanner[]>([]);
 
   useEffect(() => {
-    fetch("/api/ads")
-      .then((res) => res.json())
-      .then((data: AdBanner[]) => setBanners(shuffle(data)));
+    async function init() {
+      const res = await fetch("/api/ads");
+      const data: AdBanner[] = await res.json();
+      setBanners(shuffle(data));
+    }
+    init();
   }, []);
 
   return <AdBannerGrid banners={banners} />;

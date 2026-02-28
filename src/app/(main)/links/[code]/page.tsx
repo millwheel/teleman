@@ -4,53 +4,7 @@ import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import AdBannerSection from "@/components/AdBannerSection";
 import LinkCategoryTabs from "../../../../components/LinkCategoryTabs";
-
-const MEDALS = ["🥇", "🥈", "🥉"];
-
-function LinkCard({ link, rank }: { link: LinkItem; rank: number }) {
-  return (
-    <a
-      href={link.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="block rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow bg-white"
-    >
-      <div className="relative">
-        {link.public_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={link.public_url}
-            alt={link.name}
-            className="w-full object-cover"
-            style={{ height: "120px" }}
-          />
-        ) : (
-          <div className="w-full bg-gray-100" style={{ height: "120px" }} />
-        )}
-
-        <div className="absolute top-1.5 left-1.5">
-          {rank <= 3 ? (
-            <span className="text-2xl leading-none">{MEDALS[rank - 1]}</span>
-          ) : (
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-700/80 text-white text-xs font-bold">
-              {rank}
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="px-2 py-2 flex items-center justify-between gap-1">
-        <span className={`text-sm font-medium truncate ${rank <= 3 ? "text-primary" : "text-gray-800"}`}>
-          {link.name}
-        </span>
-        <span className="flex items-center gap-0.5 text-xs text-gray-400 shrink-0">
-          <span className="text-red-400">♥</span>
-          {link.likes}
-        </span>
-      </div>
-    </a>
-  );
-}
+import LinkCard from "@/components/LinkCard";
 
 export default async function LinkCategoryPage({
   params,

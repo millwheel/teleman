@@ -109,10 +109,16 @@ export default function AdPage() {
   }, []);
 
   useEffect(() => {
-    void fetch(API_PATH)
-      .then((res) => res.json())
-      .then((data) => setBanners(Array.isArray(data) ? data : []))
-      .finally(() => setLoading(false));
+    async function init() {
+      try {
+        const res = await fetch(API_PATH);
+        const data = await res.json();
+        setBanners(Array.isArray(data) ? data : []);
+      } finally {
+        setLoading(false);
+      }
+    }
+    init();
   }, []);
 
   function openDelete(b: AdBanner) {

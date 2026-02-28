@@ -68,9 +68,15 @@ function SearchBarWithAuth() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => setIsLoggedIn(r.ok))
-      .catch(() => setIsLoggedIn(false));
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }
+    checkAuth();
   }, []);
 
   return <ScammerSearchBar isLoggedIn={isLoggedIn} defaultType={type} defaultQ={q} />;

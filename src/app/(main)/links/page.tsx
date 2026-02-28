@@ -5,20 +5,7 @@ import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import Link from "next/link";
 import AdBannerSection from "@/components/AdBannerSection";
-
-const MEDALS = ["🥇", "🥈", "🥉"];
-const RANK_COLORS = [
-  "text-blue-600",
-  "text-cyan-500",
-  "text-orange-500",
-  "text-pink-500",
-  "text-blue-600",
-  "text-green-600",
-  "text-orange-400",
-  "text-pink-500",
-  "text-blue-600",
-  "text-pink-400",
-];
+import {MEDALS, RANK_COLORS} from "@/data/rank";
 
 export default async function LinksPage() {
   const headersList = await headers();

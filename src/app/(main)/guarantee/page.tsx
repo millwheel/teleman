@@ -10,10 +10,16 @@ export default function GuaranteePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/banners/guarantee")
-      .then((res) => res.json())
-      .then((data: GuaranteeBanner[]) => setBanners(shuffle(data)))
-      .finally(() => setLoading(false));
+    async function init() {
+      try {
+        const res = await fetch("/api/banners/guarantee");
+        const data: GuaranteeBanner[] = await res.json();
+        setBanners(shuffle(data));
+      } finally {
+        setLoading(false);
+      }
+    }
+    init();
   }, []);
 
   return (
