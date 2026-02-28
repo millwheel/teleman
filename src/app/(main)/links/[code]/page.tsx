@@ -6,7 +6,7 @@ import AdBannerSection from "@/components/AdBannerSection";
 import LinkCategoryTabs from "../../../../components/LinkCategoryTabs";
 import LinkCard from "@/components/LinkCard";
 
-export default async function LinkCategoryPage({
+export default async function LinkPage({
   params,
 }: {
   params: Promise<{ code: string }>;
@@ -37,7 +37,9 @@ export default async function LinkCategoryPage({
           <LinkCard key={link.id} link={link} rank={idx + 1} />
         ))}
         {links.length === 0 && (
-          <p className="col-span-5 py-16 text-center text-gray-400">등록된 링크가 없습니다.</p>
+          <p className="col-span-5 py-16 text-center text-gray-400">
+            등록된 링크가 없습니다.
+          </p>
         )}
       </div>
     </div>

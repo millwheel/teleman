@@ -1,13 +1,11 @@
 import { headers } from "next/headers";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
 import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
-import Link from "next/link";
 import AdBannerSection from "@/components/AdBannerSection";
-import {MEDALS, RANK_COLORS} from "@/data/rank";
+import LinkCategoryCard from "@/components/LinkCategoryCard";
 
-export default async function LinksPage() {
+export default async function LinkCategoryPage() {
   const headersList = await headers();
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
@@ -15,70 +13,28 @@ export default async function LinksPage() {
   const res = await fetch(`${proto}://${host}/api/links`);
   const links: LinkItem[] = await res.json();
 
-  const bannersByCategory = links.reduce<Record<string, LinkItem[]>>((acc, banner) => {
-    if (!acc[banner.category_code]) acc[banner.category_code] = [];
-    acc[banner.category_code].push(banner);
-    return acc;
-  }, {});
+  const bannersByCategory = links.reduce<Record<string, LinkItem[]>>(
+    (acc, banner) => {
+      if (!acc[banner.category_code]) acc[banner.category_code] = [];
+      acc[banner.category_code].push(banner);
+      return acc;
+    },
+    {},
+  );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 bg-gray-50">
-
+    <div className="mx-auto max-w-7xl px-4">
       <AdBannerSection />
 
-      <section className="pb-4">
+      <section className="py-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {LINK_CATEGORIES.map((category) => {
-            const items = (bannersByCategory[category.code] ?? []).slice(0, 10);
-            return (
-              <div key={category.code} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-
-                <Link
-                  href={`/links/${category.code}`}
-                  className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                >
-                  {category.icon && <span className="text-xl shrink-0">{category.icon}</span>}
-                  <span className="flex-1 text-sm font-bold text-gray-900 truncate">
-                    {category.name} Top10
-                  </span>
-                  <ChevronRight className="h-4 w-4 text-gray-400 shrink-0" />
-                </Link>
-
-                <ul>
-                  {Array.from({ length: 10 }, (_, idx) => {
-                    const item = items[idx];
-                    return item ? (
-                      <li key={item.id}>
-                        <a
-                          href={item.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          {idx < 3 ? (
-                            <span className="text-lg leading-none shrink-0">{MEDALS[idx]}</span>
-                          ) : (
-                            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-orange-400 text-orange-400 text-xs font-bold shrink-0">
-                              {idx + 1}
-                            </span>
-                          )}
-                          <span className={`text-sm font-medium truncate ${RANK_COLORS[idx]}`}>
-                            {item.name}
-                          </span>
-                        </a>
-                      </li>
-                    ) : (
-                      <li key={`empty-${idx}`} className="flex items-center gap-3 px-4 py-2">
-                        <span className="w-5 shrink-0" />
-                        <span className="text-sm text-gray-300">빈 칸</span>
-                      </li>
-                    );
-                  })}
-                </ul>
-
-              </div>
-            );
-          })}
+          {LINK_CATEGORIES.map((category) => (
+            <LinkCategoryCard
+              key={category.code}
+              category={category}
+              items={(bannersByCategory[category.code] ?? []).slice(0, 10)}
+            />
+          ))}
         </div>
       </section>
 
@@ -92,7 +48,6 @@ export default async function LinksPage() {
           priority
         />
       </section>
-
     </div>
   );
 }
