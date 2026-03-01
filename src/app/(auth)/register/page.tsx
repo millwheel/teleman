@@ -12,7 +12,7 @@ function useDebounceCheck(value: string, field: "username" | "nickname") {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!value) {
+    if (!value || (field === "username" && value.length < 6)) {
       setStatus("idle");
       return;
     }
@@ -51,6 +51,7 @@ export default function RegisterPage() {
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +61,9 @@ export default function RegisterPage() {
   const canSubmit =
     usernameStatus === "ok" &&
     nicknameStatus === "ok" &&
+    username.length >= 6 &&
     password.length >= 8 &&
+    password === confirmPassword &&
     !loading;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -114,8 +117,8 @@ export default function RegisterPage() {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="영문, 숫자 조합"
+              onChange={(e) => setUsername(e.target.value.replace(/[^a-z0-9]/g, ""))}
+              placeholder="영문 소문자, 숫자 조합 (6자 이상)"
               required
               autoComplete="username"
               className={cn(
@@ -183,6 +186,34 @@ export default function RegisterPage() {
               autoComplete="new-password"
               className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition"
             />
+          </div>
+
+          {/* 비밀번호 확인 */}
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="mb-1.5 block text-sm font-medium text-gray-700"
+            >
+              비밀번호 확인
+            </label>
+            <input
+              id="confirmPassword"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="비밀번호 확인"
+              required
+              autoComplete="new-password"
+              className={cn(
+                "w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 transition",
+                confirmPassword && password !== confirmPassword
+                  ? "border-eliminate focus:border-eliminate focus:ring-eliminate/20"
+                  : "border-gray-300 focus:border-primary focus:ring-primary/20"
+              )}
+            />
+            {confirmPassword && password !== confirmPassword && (
+              <p className="mt-1 text-xs text-eliminate">비밀번호가 일치하지 않습니다.</p>
+            )}
           </div>
 
           {error && (

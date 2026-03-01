@@ -6,7 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const ADMIN_NAV = [
-  { label: "관리자 관리", href: "/admin/members" },
+  { label: "관리자 관리", href: "/admin/managers" },
+  { label: "회원 관리", href: "/admin/users" },
   { label: "링크모음 관리", href: "/admin/link" },
   { label: "보증업체 관리", href: "/admin/guarantee" },
   { label: "광고배너 관리", href: "/admin/ad" },

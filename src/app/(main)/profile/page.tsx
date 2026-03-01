@@ -7,7 +7,10 @@ export default async function ProfilePage() {
   const host = headersList.get("host")!;
   const proto = process.env.NODE_ENV === "production" ? "https" : "http";
 
-  const res = await fetch(`${proto}://${host}/api/profile`);
+  const cookie = headersList.get("cookie") ?? "";
+  const res = await fetch(`${proto}://${host}/api/profile`, {
+    headers: { cookie },
+  });
 
   if (res.status === 401) redirect("/login?redirect=/profile");
   if (!res.ok) redirect("/login");

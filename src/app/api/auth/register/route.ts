@@ -12,6 +12,20 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (!/^[a-z0-9]+$/.test(username)) {
+    return NextResponse.json(
+      { message: "아이디는 영문 소문자와 숫자만 사용할 수 있습니다." },
+      { status: 400 }
+    );
+  }
+
+  if (username.length < 6) {
+    return NextResponse.json(
+      { message: "아이디는 6자 이상이어야 합니다." },
+      { status: 400 }
+    );
+  }
+
   if (password.length < 8) {
     return NextResponse.json(
       { message: "비밀번호는 8자 이상이어야 합니다." },
