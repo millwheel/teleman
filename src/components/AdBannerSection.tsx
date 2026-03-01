@@ -12,7 +12,9 @@ export default function AdBannerSection() {
     async function init() {
       const res = await fetch("/api/ads");
       const data: AdBanner[] = await res.json();
-      setBanners(shuffle(data));
+      const long = shuffle(data.filter((b) => b.type === "long"));
+      const short = shuffle(data.filter((b) => b.type === "short"));
+      setBanners([...long, ...short]);
     }
     init();
   }, []);
