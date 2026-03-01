@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { LinkItem } from "@/data/type";
 import { RANK_COLORS } from "@/data/rank";
 import RankBadge from "@/components/RankBadge";
@@ -14,22 +15,20 @@ export default function LinkCard({
       href={link.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block rounded-lg border border-gray-200 overflow-hidden bg-background"
+      className="block border border-gray-200 overflow-hidden bg-background"
     >
-      <div className="relative p-5">
+      <div className="relative p-6">
         {link.public_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={link.public_url}
             alt={link.name}
-            className="w-full object-cover rounded-md"
-            style={{ height: "70px" }}
+            width={300}
+            height={70}
+            className="w-full h-[70px] object-cover"
+            unoptimized
           />
         ) : (
-          <div
-            className="w-full bg-gray-100 rounded-md"
-            style={{ height: "70px" }}
-          />
+          <div className="w-full h-[70px] bg-gray-100" />
         )}
 
         <div className="absolute top-1 left-1">
