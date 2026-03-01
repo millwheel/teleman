@@ -1,5 +1,6 @@
 import type { LinkItem } from "@/data/type";
-import { MEDALS } from "@/data/rank";
+import { RANK_COLORS } from "@/data/rank";
+import RankBadge from "@/components/RankBadge";
 
 export default function LinkCard({
   link,
@@ -32,20 +33,12 @@ export default function LinkCard({
         )}
 
         <div className="absolute top-1 left-1">
-          {rank <= 3 ? (
-            <span className="text-2xl leading-none">{MEDALS[rank - 1]}</span>
-          ) : (
-            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-700/80 text-white text-xs font-bold">
-              {rank}
-            </span>
-          )}
+          <RankBadge rank={rank} size={24} />
         </div>
       </div>
 
       <div className="px-2 py-2 flex items-center justify-between gap-1">
-        <span
-          className={`text-sm font-bold truncate ${rank <= 3 ? "text-primary" : "text-gray-800"}`}
-        >
+        <span className={`text-sm font-bold truncate ${RANK_COLORS[rank - 1]}`}>
           {link.name}
         </span>
         <span className="flex items-center gap-0.5 text-xs text-primary">

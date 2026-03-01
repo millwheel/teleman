@@ -1,7 +1,8 @@
-import { MEDALS, RANK_COLORS } from "@/data/rank";
+import { RANK_COLORS } from "@/data/rank";
 import { LinkCategory, LinkItem } from "@/data/type";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import RankBadge from "@/components/RankBadge";
 
 type Props = {
   category: LinkCategory;
@@ -35,17 +36,9 @@ export default function LinkCategoryCard({ category, items }: Props) {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
               >
-                {idx < 3 ? (
-                  <span className="text-lg leading-none shrink-0">
-                    {MEDALS[idx]}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-orange-400 text-orange-400 text-xs font-bold shrink-0">
-                    {idx + 1}
-                  </span>
-                )}
+                <RankBadge rank={idx + 1} size={16} />
                 <span
-                  className={`text-sm font-medium truncate ${RANK_COLORS[idx]}`}
+                  className={`text-sm font-bold truncate ${RANK_COLORS[idx]}`}
                 >
                   {item.name}
                 </span>
@@ -56,7 +49,7 @@ export default function LinkCategoryCard({ category, items }: Props) {
               key={`empty-${idx}`}
               className="flex items-center gap-3 px-4 py-2"
             >
-              <span className="w-5 shrink-0" />
+              <span className="w-4 shrink-0" />
               <span className="text-sm text-gray-300">빈 칸</span>
             </li>
           );

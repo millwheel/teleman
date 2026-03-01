@@ -18,7 +18,8 @@
       "Bash(mkdir:*)",
       "Bash(git mv:*)",
       "Bash(npm run lint:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "WebFetch(domain:react-icons.github.io)"
     ]
   }
 }
