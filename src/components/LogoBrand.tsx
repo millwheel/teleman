@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function LogoBrand() {
   return (
-    <Link href="/links" className="flex items-center gap-3">
+    <Link href="/link" className="flex items-center gap-3">
       <Image
         src="/images/logo.png"
         alt="텔레맨 로고"

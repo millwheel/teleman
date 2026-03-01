@@ -7,7 +7,7 @@ import Link from "next/link";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") ?? "/links";
+  const redirectTo = searchParams.get("redirect") ?? "/link";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");

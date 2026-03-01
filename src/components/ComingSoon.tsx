@@ -32,7 +32,7 @@ export default function ComingSoon({
           {description}
         </p>
         <Link
-          href="/links"
+          href="/link"
           className="mt-6 inline-block rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white hover:opacity-80 transition-colors"
         >
           링크모음으로 이동

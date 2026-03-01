@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import AdBannerSection from "@/components/AdBannerSection";
-import LinkCategoryTabs from "../../../../components/LinkCategoryTabs";
+import LinkCategoryTabs from "@/components/LinkCategoryTabs";
 import LinkCard from "@/components/LinkCard";
 
 export default async function LinkPage({

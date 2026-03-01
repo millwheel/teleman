@@ -12,7 +12,7 @@ export default function LinkCategoryCard({ category, items }: Props) {
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <Link
-        href={`/links/${category.code}`}
+        href={`/link/${category.code}`}
         className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"
       >
         {category.icon && (

@@ -12,7 +12,7 @@ interface HeaderNavProps {
 }
 
 const NAV_LINKS = [
-  { label: "링크모음", href: "/links" },
+  { label: "링크모음", href: "/link" },
   { label: "보증업체", href: "/guarantee" },
   { label: "사기꾼조회", href: "/scammer" },
   { label: "커뮤니티", href: "/community" },
