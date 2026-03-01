@@ -39,3 +39,45 @@ export type BannerFormState = {
   description: string;
   likes: number;
 };
+
+// 커뮤니티 / 공지사항
+
+export type CommunityPost = {
+  id: number;
+  category: string;
+  title: string;
+  content: string;
+  author_id: number;
+  author_nickname: string;
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type NoticePost = {
+  id: number;
+  title: string;
+  content: string;
+  author_id: number;
+  author_nickname: string;
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PostComment = {
+  id: number;
+  post_id: number;
+  author_id: number;
+  author_nickname: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PostListResponse = {
+  data: (CommunityPost | NoticePost)[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+};

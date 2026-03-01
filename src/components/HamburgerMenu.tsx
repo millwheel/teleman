@@ -16,7 +16,7 @@ const NAV_LINKS = [
   { label: "링크모음", href: "/link" },
   { label: "보증업체", href: "/guarantee" },
   { label: "사기꾼조회", href: "/scammer" },
-  { label: "커뮤니티", href: "/community" },
+  { label: "커뮤니티", href: "/community/free" },
   { label: "공지사항", href: "/notice" },
 ];
 
@@ -63,7 +63,8 @@ export default function HamburgerMenu({ isLoggedIn, userName, imageUrl }: Hambur
         <div className="sm:hidden absolute top-full left-0 right-0 border-t border-secondary bg-white z-50">
           <nav className="flex flex-col">
             {NAV_LINKS.map(({ label, href }) => {
-              const isActive = pathname === href || pathname.startsWith(href + "/");
+              const matchBase = href === "/community/free" ? "/community" : href;
+              const isActive = pathname === href || pathname.startsWith(matchBase + "/") || pathname === matchBase;
               return (
                 <Link
                   key={href}

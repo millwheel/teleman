@@ -1,5 +1,5 @@
-import ComingSoon from "@/components/ComingSoon";
+import { redirect } from "next/navigation";
 
 export default function CommunityPage() {
-  return <ComingSoon title="커뮤니티" />;
+  redirect("/community/free");
 }
