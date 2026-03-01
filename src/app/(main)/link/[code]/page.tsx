@@ -28,8 +28,11 @@ export default async function LinkPage({
       <LinkCategoryTabs currentCode={code} />
       <AdBannerSection />
 
-      <div className="mt-6 mb-4">
-        <h2 className="text-xl font-bold">{category.name}</h2>
+      <div className="mb-2 border border-gray-200 bg-background px-5 py-4">
+        <h2 className="text-lg font-bold text-primary flex items-center gap-2">
+          {category.icon && <span>{category.icon}</span>}
+          {category.name}
+        </h2>
       </div>
 
       <div className="grid grid-cols-5 gap-3 pb-8">
