@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   const { count, error: countError } = await supabase
     .from("scammer")
     .select("id", { count: "exact", head: true })
-    .like(column, `%${q}%`);
+    .ilike(column, `%${q}%`);
 
   if (countError) {
     return NextResponse.json({ message: "검색 중 오류가 발생했습니다." }, { status: 500 });
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   const { data, error } = await supabase
     .from("scammer")
     .select("id, name, phone_number, bank_account, description")
-    .like(column, `%${q}%`)
+    .ilike(column, `%${q}%`)
     .order("id", { ascending: false })
     .range(offset, offset + limit - 1);
 
