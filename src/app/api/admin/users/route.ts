@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/data/constants";
 
 export async function GET(request: NextRequest) {
   const session = await getSession();

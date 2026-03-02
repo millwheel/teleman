@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import Modal from "@/components/admin/Modal";
 import Pagination from "@/components/Pagination";
-
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/data/constants";
 
 interface Scammer {
   id: number;
@@ -83,11 +82,14 @@ export default function AdminScammerPage() {
   }
 
   async function handleDelete(item: Scammer) {
-    const label = item.name ?? item.phone_number ?? item.bank_account ?? String(item.id);
+    const label =
+      item.name ?? item.phone_number ?? item.bank_account ?? String(item.id);
     if (!confirm(`"${label}" 을(를) 삭제하시겠습니까?`)) return;
 
     setActionLoading(true);
-    const res = await fetch(`/api/admin/scammer/${item.id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/scammer/${item.id}`, {
+      method: "DELETE",
+    });
     setActionLoading(false);
 
     if (res.ok) {
@@ -113,7 +115,7 @@ export default function AdminScammerPage() {
         method: isAdd ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-      }
+      },
     );
 
     setActionLoading(false);
@@ -130,7 +132,11 @@ export default function AdminScammerPage() {
       router.refresh();
     } else {
       const data = await res.json().catch(() => ({}));
-      console.error("[AdminScammerPage] 저장 실패", { status: res.status, body: data, form });
+      console.error("[AdminScammerPage] 저장 실패", {
+        status: res.status,
+        body: data,
+        form,
+      });
       setFormError(data.message ?? "저장 중 오류가 발생했습니다.");
     }
   }
@@ -156,8 +162,12 @@ export default function AdminScammerPage() {
           <thead className="bg-gray-50 text-gray-500">
             <tr>
               <th className="w-[15%] px-5 py-3 text-left font-medium">이름</th>
-              <th className="w-[20%] px-5 py-3 text-left font-medium">전화번호</th>
-              <th className="w-[20%] px-5 py-3 text-left font-medium">계좌번호</th>
+              <th className="w-[20%] px-5 py-3 text-left font-medium">
+                전화번호
+              </th>
+              <th className="w-[20%] px-5 py-3 text-left font-medium">
+                계좌번호
+              </th>
               <th className="w-[35%] px-5 py-3 text-left font-medium">설명</th>
               <th className="w-[10%] px-5 py-3 text-right font-medium">관리</th>
             </tr>
@@ -165,23 +175,40 @@ export default function AdminScammerPage() {
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-400">
+                <td
+                  colSpan={5}
+                  className="px-5 py-10 text-center text-sm text-gray-400"
+                >
                   불러오는 중...
                 </td>
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-gray-400">
+                <td
+                  colSpan={5}
+                  className="px-5 py-10 text-center text-gray-400"
+                >
                   등록된 항목이 없습니다.
                 </td>
               </tr>
             ) : (
               items.map((item) => (
-                <tr key={item.id} className="transition-colors hover:bg-gray-50">
-                  <td className="px-5 py-3 font-medium text-foreground">{item.name ?? "-"}</td>
-                  <td className="px-5 py-3 text-gray-600">{item.phone_number ?? "-"}</td>
-                  <td className="px-5 py-3 text-gray-600">{item.bank_account ?? "-"}</td>
-                  <td className="max-w-xs truncate px-5 py-3 text-gray-600">{item.description ?? "-"}</td>
+                <tr
+                  key={item.id}
+                  className="transition-colors hover:bg-gray-50"
+                >
+                  <td className="px-5 py-3 font-medium text-foreground">
+                    {item.name ?? "-"}
+                  </td>
+                  <td className="px-5 py-3 text-gray-600">
+                    {item.phone_number ?? "-"}
+                  </td>
+                  <td className="px-5 py-3 text-gray-600">
+                    {item.bank_account ?? "-"}
+                  </td>
+                  <td className="max-w-xs truncate px-5 py-3 text-gray-600">
+                    {item.description ?? "-"}
+                  </td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button
@@ -224,7 +251,9 @@ export default function AdminScammerPage() {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">이름</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                이름
+              </label>
               <input
                 type="text"
                 value={form.name}
@@ -234,30 +263,42 @@ export default function AdminScammerPage() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">전화번호</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                전화번호
+              </label>
               <input
                 type="text"
                 value={form.phone_number}
-                onChange={(e) => setForm({ ...form, phone_number: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, phone_number: e.target.value })
+                }
                 placeholder="01012345678"
                 className={inputCls}
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">계좌번호</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                계좌번호
+              </label>
               <input
                 type="text"
                 value={form.bank_account}
-                onChange={(e) => setForm({ ...form, bank_account: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, bank_account: e.target.value })
+                }
                 placeholder="계좌번호"
                 className={inputCls}
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700">설명</label>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                설명
+              </label>
               <textarea
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 placeholder="설명 (선택)"
                 rows={3}
                 className={inputCls + " resize-none"}
@@ -284,7 +325,11 @@ export default function AdminScammerPage() {
                 disabled={actionLoading}
                 className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-80 disabled:opacity-60 transition-opacity cursor-pointer"
               >
-                {actionLoading ? "저장 중..." : modal === "add" ? "등록" : "저장"}
+                {actionLoading
+                  ? "저장 중..."
+                  : modal === "add"
+                    ? "등록"
+                    : "저장"}
               </button>
             </div>
           </form>

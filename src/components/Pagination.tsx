@@ -21,7 +21,6 @@ export default function Pagination({
   buildHref,
 }: PaginationProps) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
-  if (totalPages <= 1) return null;
 
   const delta = 2;
   const rangeStart = Math.max(1, currentPage - delta);

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-
-const DEFAULT_PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/data/constants";
 
 const COLUMN_MAP: Record<string, string> = {
   name: "name",
@@ -22,7 +21,7 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const limit = Math.min(
     100,
-    Math.max(1, parseInt(searchParams.get("limit") ?? String(DEFAULT_PAGE_SIZE), 10))
+    Math.max(1, parseInt(searchParams.get("limit") ?? String(PAGE_SIZE), 10))
   );
   const offset = (page - 1) * limit;
 

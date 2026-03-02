@@ -3,8 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { requireAuth } from "@/lib/require-auth";
 import { processContentImages } from "@/lib/post-image";
 import { COMMUNITY_CATEGORIES } from "@/data/communityCategories";
-
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/data/constants";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;

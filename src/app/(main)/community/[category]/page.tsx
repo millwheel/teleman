@@ -14,6 +14,7 @@ import PostList from "@/components/post/PostList";
 import Pagination from "@/components/Pagination";
 import CategoryTabs from "@/components/post/CategoryTabs";
 import WriteButton from "@/components/post/WriteButton";
+import { PAGE_SIZE } from "@/data/constants";
 
 export default function CommunityListPage() {
   const params = useParams<{ category: string }>();
@@ -24,7 +25,7 @@ export default function CommunityListPage() {
 
   const [posts, setPosts] = useState<CommunityPost[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [session, setSession] = useState<JwtPayload | null>(null);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
 
@@ -70,7 +71,7 @@ export default function CommunityListPage() {
         loading={loading}
       />
 
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex items-center justify-between">
         <div className="flex-1" />
         <Pagination
           totalCount={totalCount}

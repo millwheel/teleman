@@ -7,6 +7,7 @@ import type { JwtPayload } from "@/lib/auth";
 import PostList from "@/components/post/PostList";
 import Pagination from "@/components/Pagination";
 import WriteButton from "@/components/post/WriteButton";
+import { PAGE_SIZE } from "@/data/constants";
 
 export default function NoticeListPage() {
   const searchParams = useSearchParams();
@@ -15,7 +16,7 @@ export default function NoticeListPage() {
 
   const [posts, setPosts] = useState<NoticePost[]>([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [session, setSession] = useState<JwtPayload | null>(null);
   const [loadedPage, setLoadedPage] = useState<number | null>(null);
 
@@ -54,7 +55,7 @@ export default function NoticeListPage() {
         loading={loading}
       />
 
-      <div className="flex items-center justify-between mt-3">
+      <div className="flex items-center justify-between">
         <div className="flex-1" />
         <Pagination
           totalCount={totalCount}

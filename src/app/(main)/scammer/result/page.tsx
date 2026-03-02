@@ -4,8 +4,7 @@ import { use, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Pagination from "@/components/Pagination";
-
-const PAGE_SIZE = 20;
+import { PAGE_SIZE } from "@/data/constants";
 
 interface Scammer {
   id: number;
