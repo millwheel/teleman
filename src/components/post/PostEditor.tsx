@@ -2,7 +2,7 @@
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
+import ImageAlign from "@/extensions/ImageAlign";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -37,7 +37,7 @@ export default function PostEditor({ initialContent = "", onChange }: PostEditor
     extensions: [
       StarterKit,
       Underline,
-      Image,
+      ImageAlign.configure({ inline: false }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Placeholder.configure({ placeholder: "내용을 입력하세요..." }),
     ],
@@ -129,13 +129,31 @@ export default function PostEditor({ initialContent = "", onChange }: PostEditor
 
         <div className="w-px h-5 bg-gray-300 mx-1" />
 
-        <ToolButton onClick={() => editor.chain().focus().setTextAlign("left").run()} isActive={editor.isActive({ textAlign: "left" })}>
+        <ToolButton onClick={() => {
+          if (editor.isActive("image")) {
+            editor.chain().focus().setImageAlign("left").run();
+          } else {
+            editor.chain().focus().setTextAlign("left").run();
+          }
+        }} isActive={editor.isActive({ textAlign: "left" }) || editor.isActive("image", { "data-align": "left" })}>
           <AlignLeft size={iconSize} />
         </ToolButton>
-        <ToolButton onClick={() => editor.chain().focus().setTextAlign("center").run()} isActive={editor.isActive({ textAlign: "center" })}>
+        <ToolButton onClick={() => {
+          if (editor.isActive("image")) {
+            editor.chain().focus().setImageAlign("center").run();
+          } else {
+            editor.chain().focus().setTextAlign("center").run();
+          }
+        }} isActive={editor.isActive({ textAlign: "center" }) || editor.isActive("image", { "data-align": "center" })}>
           <AlignCenter size={iconSize} />
         </ToolButton>
-        <ToolButton onClick={() => editor.chain().focus().setTextAlign("right").run()} isActive={editor.isActive({ textAlign: "right" })}>
+        <ToolButton onClick={() => {
+          if (editor.isActive("image")) {
+            editor.chain().focus().setImageAlign("right").run();
+          } else {
+            editor.chain().focus().setTextAlign("right").run();
+          }
+        }} isActive={editor.isActive({ textAlign: "right" }) || editor.isActive("image", { "data-align": "right" })}>
           <AlignRight size={iconSize} />
         </ToolButton>
 
@@ -158,7 +176,7 @@ export default function PostEditor({ initialContent = "", onChange }: PostEditor
       {/* 에디터 본문 */}
       <EditorContent
         editor={editor}
-        className="prose max-w-none p-4 min-h-[300px] focus:outline-none [&_.tiptap]:outline-none [&_.tiptap]:min-h-[280px] [&_.tiptap_p.is-editor-empty:first-child::before]:text-gray-400 [&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap_p.is-editor-empty:first-child::before]:float-left [&_.tiptap_p.is-editor-empty:first-child::before]:h-0 [&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_img]:max-w-full [&_.tiptap_img]:h-auto [&_.tiptap_img]:rounded"
+        className="prose max-w-none p-4 min-h-[300px] focus:outline-none [&_.tiptap]:outline-none [&_.tiptap]:min-h-[280px] [&_.tiptap_p.is-editor-empty:first-child::before]:text-gray-400 [&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)] [&_.tiptap_p.is-editor-empty:first-child::before]:float-left [&_.tiptap_p.is-editor-empty:first-child::before]:h-0 [&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none [&_.tiptap_img]:max-w-full [&_.tiptap_img]:h-auto [&_.tiptap_img]:rounded [&_.tiptap_img.ProseMirror-selectednode]:outline-2 [&_.tiptap_img.ProseMirror-selectednode]:outline [&_.tiptap_img.ProseMirror-selectednode]:outline-secondary [&_.tiptap_img.ProseMirror-selectednode]:rounded"
       />
 
       <input
