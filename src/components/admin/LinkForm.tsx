@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import PostEditor from "@/components/post/PostEditor";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
@@ -149,12 +150,9 @@ export default function LinkForm({
           <label className="mb-1.5 block text-sm font-medium text-gray-700">
             설명 <span className="text-gray-400 font-normal">(선택)</span>
           </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="간단한 설명"
-            rows={3}
-            className={inputClass}
+          <PostEditor
+            initialContent={defaultValues?.description ?? ""}
+            onChange={setDescription}
           />
         </div>
 

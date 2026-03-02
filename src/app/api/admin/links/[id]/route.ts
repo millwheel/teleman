@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
-import { uploadImage, deleteImage } from "@/lib/storage";
+import { uploadImage, deleteImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
+import { processContentImages, cleanupRemovedImages } from "@/lib/post-image";
 
 export async function PUT(
   request: NextRequest,
@@ -24,18 +25,34 @@ export async function PUT(
     return NextResponse.json({ message: "name과 link를 입력하세요." }, { status: 400 });
   }
 
+  const { data: existing } = await supabase
+    .from("link")
+    .select("description")
+    .eq("id", Number(id))
+    .single();
+
   let image_path = existing_image_path;
   if (file && file.size > 0) {
     if (existing_image_path) await deleteImage(existing_image_path);
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-    image_path = `links/${uuidv4()}.${ext}`;
+    image_path = `links/${id}/thumbnail/${uuidv4()}.${ext}`;
     const buffer = Buffer.from(await file.arrayBuffer());
     await uploadImage(image_path, buffer, file.type);
   }
 
+  let processedDesc = description || null;
+  if (description) {
+    const { html } = await processContentImages(description, `links/${id}/content`);
+    processedDesc = html;
+    if (existing?.description) {
+      const bucketBaseUrl = getPublicImageUrl("").replace(/\/$/, "");
+      await cleanupRemovedImages(existing.description, html, bucketBaseUrl);
+    }
+  }
+
   const { data, error: dbError } = await supabase
     .from("link")
-    .update({ name, link, description: description || null, likes, image_path })
+    .update({ name, link, description: processedDesc, likes, image_path })
     .eq("id", id)
     .select()
     .single();

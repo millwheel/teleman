@@ -77,9 +77,14 @@ export default function LinkDetailPage() {
 
           {/* 중단 본문 */}
           <div className="px-6 py-5 min-h-[120px]">
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">
-              {link.description || "설명이 없습니다."}
-            </p>
+            {link.description ? (
+              <div
+                className="prose max-w-none [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img[data-align=center]]:block [&_img[data-align=center]]:mx-auto [&_img[data-align=right]]:block [&_img[data-align=right]]:ml-auto [&_img[data-align=right]]:mr-0"
+                dangerouslySetInnerHTML={{ __html: link.description }}
+              />
+            ) : (
+              <p className="text-sm text-gray-400">설명이 없습니다.</p>
+            )}
           </div>
 
           {/* 회색 구분선 */}
