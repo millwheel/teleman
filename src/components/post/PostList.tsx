@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { CommunityPost, NoticePost } from "@/data/type";
+import { formatDateTime } from "@/util/date";
 
 type PostListProps = {
   posts: (CommunityPost | NoticePost)[];
@@ -11,14 +12,6 @@ type PostListProps = {
   totalCount: number;
   loading?: boolean;
 };
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}.${mm}.${dd}`;
-}
 
 export default function PostList({
   posts,
@@ -75,7 +68,7 @@ export default function PostList({
                     {post.author_nickname}
                   </td>
                   <td className="py-3 px-2 text-gray-500">
-                    {formatDate(post.created_at)}
+                    {formatDateTime(post.created_at)}
                   </td>
                   <td className="py-3 px-2 text-gray-500">{post.view_count}</td>
                 </tr>

@@ -7,16 +7,7 @@ import type { NoticePost } from "@/data/type";
 import type { JwtPayload } from "@/lib/auth";
 import PostViewer from "@/components/post/PostViewer";
 import CommentSection from "@/components/post/CommentSection";
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const hh = String(d.getHours()).padStart(2, "0");
-  const min = String(d.getMinutes()).padStart(2, "0");
-  return `${yyyy}.${mm}.${dd} ${hh}:${min}`;
-}
+import { formatDateTime } from "@/util/date";
 
 export default function NoticeDetailPage() {
   const params = useParams<{ id: string }>();
@@ -55,7 +46,7 @@ export default function NoticeDetailPage() {
         <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
         <div className="flex items-center gap-4 text-sm text-gray-500">
           <span>{post.author_nickname}</span>
-          <span>{formatDate(post.created_at)}</span>
+          <span>{formatDateTime(post.created_at)}</span>
           <span>조회 {post.view_count}</span>
         </div>
       </div>
@@ -67,7 +58,7 @@ export default function NoticeDetailPage() {
       <div className="flex items-center justify-between border-t border-gray-200 pt-4">
         <Link
           href="/notice"
-          className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50"
+          className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
         >
           목록
         </Link>
@@ -75,13 +66,13 @@ export default function NoticeDetailPage() {
           <div className="flex gap-2">
             <Link
               href={`/notice/${post.id}/edit`}
-              className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50"
+              className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
             >
               수정
             </Link>
             <button
               onClick={handleDelete}
-              className="px-4 py-2 bg-eliminate text-white rounded text-sm hover:opacity-90"
+              className="px-4 py-2 bg-eliminate text-white rounded text-sm hover:opacity-90 cursor-pointer"
             >
               삭제
             </button>

@@ -16,7 +16,7 @@ export default function WriteButton({ href, session, adminOnly = false }: WriteB
   return (
     <Link
       href={href}
-      className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90"
+      className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 cursor-pointer"
     >
       글쓰기
     </Link>

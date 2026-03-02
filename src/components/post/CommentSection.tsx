@@ -3,23 +3,17 @@
 import { useState, useEffect, useCallback } from "react";
 import type { PostComment } from "@/data/type";
 import type { JwtPayload } from "@/lib/auth";
+import { formatDateTime } from "@/util/date";
 
 type CommentSectionProps = {
   postId: number;
   apiBase: string; // e.g. "/api/community" or "/api/notice"
 };
 
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const hh = String(d.getHours()).padStart(2, "0");
-  const min = String(d.getMinutes()).padStart(2, "0");
-  return `${yyyy}.${mm}.${dd} ${hh}:${min}`;
-}
-
-export default function CommentSection({ postId, apiBase }: CommentSectionProps) {
+export default function CommentSection({
+  postId,
+  apiBase,
+}: CommentSectionProps) {
   const [comments, setComments] = useState<PostComment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -36,11 +30,19 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
   }, [apiBase, postId]);
 
   useEffect(() => {
-    fetchComments();
+    let cancelled = false;
+    fetch(`${apiBase}/${postId}/comments`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => {
+        if (!cancelled) setComments(data);
+      });
     fetch("/api/auth/me")
       .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setSession(data));
-  }, [fetchComments]);
+      .then((data) => {
+        if (!cancelled) setSession(data);
+      });
+    return () => { cancelled = true; };
+  }, [apiBase, postId]);
 
   const handleSubmit = async () => {
     if (!newComment.trim() || submitting) return;
@@ -73,7 +75,9 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
 
   const handleDelete = async (commentId: number) => {
     if (!confirm("댓글을 삭제하시겠습니까?")) return;
-    const res = await fetch(`${apiBase}/comments/${commentId}`, { method: "DELETE" });
+    const res = await fetch(`${apiBase}/comments/${commentId}`, {
+      method: "DELETE",
+    });
     if (res.ok) {
       await fetchComments();
     }
@@ -83,11 +87,14 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
     session && comment.author_id === session.userId;
 
   const canDelete = (comment: PostComment) =>
-    session && (comment.author_id === session.userId || session.role === "admin");
+    session &&
+    (comment.author_id === session.userId || session.role === "admin");
 
   return (
     <div className="mt-8">
-      <h3 className="text-lg font-semibold mb-4">댓글 {comments.length > 0 && `(${comments.length})`}</h3>
+      <h3 className="text-lg font-semibold mb-4">
+        댓글 {comments.length > 0 && `(${comments.length})`}
+      </h3>
 
       {/* 댓글 목록 */}
       <div className="space-y-4 mb-6">
@@ -95,8 +102,12 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
           <div key={comment.id} className="border-b border-gray-200 pb-4">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-sm">{comment.author_nickname}</span>
-                <span className="text-xs text-gray-400">{formatDate(comment.created_at)}</span>
+                <span className="font-medium text-sm">
+                  {comment.author_nickname}
+                </span>
+                <span className="text-xs text-gray-400">
+                  {formatDateTime(comment.created_at)}
+                </span>
               </div>
               <div className="flex gap-2">
                 {canModify(comment) && (
@@ -105,7 +116,7 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
                       setEditingId(comment.id);
                       setEditContent(comment.content);
                     }}
-                    className="text-xs text-gray-500 hover:text-secondary"
+                    className="text-xs text-gray-500 hover:text-secondary cursor-pointer"
                   >
                     수정
                   </button>
@@ -113,7 +124,7 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
                 {canDelete(comment) && (
                   <button
                     onClick={() => handleDelete(comment.id)}
-                    className="text-xs text-gray-500 hover:text-eliminate"
+                    className="text-xs text-gray-500 hover:text-eliminate cursor-pointer"
                   >
                     삭제
                   </button>
@@ -130,13 +141,13 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
                 />
                 <button
                   onClick={() => handleUpdate(comment.id)}
-                  className="px-3 py-2 bg-primary text-white rounded text-sm hover:opacity-90"
+                  className="px-3 py-2 bg-primary text-white rounded text-sm hover:opacity-90 cursor-pointer"
                 >
                   저장
                 </button>
                 <button
                   onClick={() => setEditingId(null)}
-                  className="px-3 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50"
+                  className="px-3 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
                 >
                   취소
                 </button>
@@ -154,14 +165,16 @@ export default function CommentSection({ postId, apiBase }: CommentSectionProps)
           <input
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSubmit()}
+            onKeyDown={(e) =>
+              e.key === "Enter" && !e.shiftKey && handleSubmit()
+            }
             placeholder="댓글을 입력하세요..."
-            className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
+            className="flex-1 bg-background border border-gray-300 rounded px-3 py-2 text-sm"
           />
           <button
             onClick={handleSubmit}
             disabled={submitting || !newComment.trim()}
-            className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 disabled:opacity-50"
+            className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 disabled:opacity-50 cursor-pointer"
           >
             등록
           </button>
