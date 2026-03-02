@@ -1,84 +1,90 @@
-# PostEditor 이미지 기능 개선 작업 분석
+# Task: Link 상세 페이지 도입
 
-## 현재 상태
+## 배경
 
-- TipTap v3.20.0 사용
-- `@tiptap/extension-image`를 기본 옵션으로 사용 (커스텀 설정 없음)
-- `TextAlign`은 `["heading", "paragraph"]`만 대상 → **이미지에는 정렬이 적용되지 않음**
-- 이미지 선택/포커스 시 시각적 피드백 없음
+현재 `LinkCategoryCard`(카테고리 목록 페이지)와 `LinkCard`(카테고리 상세 페이지)에서 항목을 클릭하면 `link.link`(외부 URL)로 바로 이동한다. 이를 내부 상세 페이지로 변경한다.
 
-## 요구사항
+## 현재 동작
 
-1. 이미지에도 정렬(왼쪽/가운데/오른쪽) 기능 적용
-2. 이미지 선택 시 파란색 테두리로 표시
+| 위치 | 파일 | 클릭 시 동작 |
+|------|------|-------------|
+| `/link` 카테고리 목록 | `src/components/LinkCategoryCard.tsx` | 각 항목 `<a href={item.link} target="_blank">` → 외부 URL 직접 이동 |
+| `/link/[code]` 카테고리 상세 | `src/components/LinkCard.tsx` | 카드 전체 `<a href={link.link} target="_blank">` → 외부 URL 직접 이동 |
+
+## 목표 동작
+
+클릭 시 `/link/[code]/[id]` 상세 페이지로 이동.
 
 ---
 
 ## 작업 목록
 
-### 1. 커스텀 Image Extension 생성
+### 1. `LinkItem` 타입에 `created_at` 추가
 
-**파일:** `src/extensions/ImageAlign.ts` (신규)
+**파일:** `src/data/type.ts`
 
-- `@tiptap/extension-image`를 확장(extend)하여 `textAlign` 속성 추가
-- `addAttributes()`로 `textAlign` 어트리뷰트 정의 (기본값: `"left"`)
-- `renderHTML()`에서 `style` 또는 `data-align` 속성으로 정렬 반영
-  - `text-align`을 감싸는 `<div>` 혹은 `<figure>`로 출력하거나, `display: block; margin: 0 auto` 등 CSS로 처리
-- 이미지를 inline이 아닌 block 노드로 설정하여 정렬이 동작하도록 함
+- `LinkItem` 타입에 `created_at: string;` 필드 추가
+- DB `link` 테이블에 Supabase 기본 `created_at` 컬럼이 존재하므로, `select("*")` 시 이미 반환됨
 
-### 2. TextAlign 설정 변경
+### 2. API 엔드포인트 생성: `GET /api/links/item/[id]`
 
-**파일:** `src/components/post/PostEditor.tsx`
+**파일:** `src/app/api/links/item/[id]/route.ts` (신규)
 
-- `TextAlign.configure({ types: ["heading", "paragraph"] })` → `types`에 `"image"` 추가
-- 또는 커스텀 Image Extension 내부에서 정렬을 자체 처리 (TextAlign 의존 없이)
+- `link` 테이블에서 `id`로 단건 조회
+- `image_path`가 있으면 `getPublicImageUrl`로 `public_url` 생성
+- 404 처리 포함
+- 참고: 경로를 `/api/links/[id]`로 하면 기존 `/api/links/[code]`와 동적 세그먼트 충돌하므로 `/api/links/item/[id]` 사용
 
-### 3. 이미지 선택 시 파란색 테두리 CSS 추가
+### 3. 상세 페이지 생성: `/link/[code]/[id]`
 
-**파일:** `src/components/post/PostEditor.tsx`
+**파일:** `src/app/(main)/link/[code]/[id]/page.tsx` (신규)
 
-- TipTap은 이미지 노드가 선택되면 `ProseMirror-selectednode` 클래스를 자동으로 부여함
-- EditorContent의 className에 선택된 이미지 스타일 추가:
-  ```
-  [&_.tiptap_img.ProseMirror-selectednode]:outline-3
-  [&_.tiptap_img.ProseMirror-selectednode]:outline-secondary
-  [&_.tiptap_img.ProseMirror-selectednode]:outline
-  [&_.tiptap_img.ProseMirror-selectednode]:rounded
-  ```
+- `"use client"` 클라이언트 컴포넌트 (커뮤니티 상세 페이지 패턴 참고: `src/app/(main)/community/[category]/[id]/page.tsx`)
+- `useParams`로 `code`, `id` 추출
+- `/api/links/item/[id]`에서 데이터 fetch
 
-### 4. PostViewer에서 정렬된 이미지 표시 지원
+**레이아웃 (`reference/link-detail.md` 기준):**
 
-**파일:** `src/components/post/PostViewer.tsx`
+- 배경: `bg-background`
+- **상단 헤더**
+  - 1 layer: 제목 (링크 이름)
+  - 2 layer: 좌측에 이미지 + 링크 전체 URL 표시(클릭 시 외부 이동), 우측에 좋아요(♥) + 작성일(`created_at`)
+- 회색 구분선
+- **중단 본문**: `description` 표시
+- 회색 구분선
+- **하단**: "목록으로" 버튼 → `/link/[code]`로 이동
+- `LinkCategoryTabs` 포함
+- `AdBannerSection` 포함
 
-- 커스텀 Image Extension이 출력하는 HTML 구조에 맞춰 정렬 CSS 추가
-- 예: `data-align="center"` → `margin: 0 auto`, `data-align="right"` → `margin-left: auto`
+### 4. `LinkCard` 수정
 
-### 5. PostEditor에서 Image Extension 교체
+**파일:** `src/components/LinkCard.tsx`
 
-**파일:** `src/components/post/PostEditor.tsx`
+- props에 `categoryCode: string` 추가
+- `<a href={link.link} target="_blank">` → `<Link href={/link/${categoryCode}/${link.id}}>` 변경
+- `next/link`의 `Link` 사용
 
-- `import Image from "@tiptap/extension-image"` → 커스텀 확장으로 교체
-- 정렬 버튼이 이미지 선택 시에도 동작하는지 확인
+### 5. `LinkCategoryCard` 수정
+
+**파일:** `src/components/LinkCategoryCard.tsx`
+
+- 각 항목의 `<a href={item.link} target="_blank">` → `<Link href={/link/${category.code}/${item.id}}>` 변경
+
+### 6. `LinkCard` 호출부 수정
+
+**파일:** `src/app/(main)/link/[code]/page.tsx`
+
+- `LinkCard`에 `categoryCode={code}` prop 전달
 
 ---
 
-## 접근 방식 선택
+## 영향 범위
 
-### 방식 A: TextAlign에 image 타입 추가 (간단)
-
-- `TextAlign.configure({ types: ["heading", "paragraph", "image"] })`
-- 단, 기본 Image extension이 inline 노드이므로 `Image.configure({ inline: false })`로 block 처리 필요
-- 가장 적은 코드 변경으로 구현 가능
-
-### 방식 B: 커스텀 Image Extension (유연)
-
-- `@tiptap/extension-image`를 extend하여 `textAlign` 어트리뷰트 직접 관리
-- HTML 출력에 `data-align` 추가하여 PostViewer에서도 정렬 반영
-- 더 세밀한 제어 가능하지만 코드량 증가
-
-### 권장: 방식 A
-
-- `Image.configure({ inline: false })`로 블록 노드 전환
-- `TextAlign`의 `types`에 `"image"` 추가
-- 선택 시 파란 테두리는 CSS만으로 해결
-- PostViewer에서는 `style="text-align: center"` 등이 `<img>` 부모에 적용되므로 별도 처리 불필요
+| 파일 | 변경 유형 |
+|------|----------|
+| `src/data/type.ts` | 수정 (`LinkItem`에 `created_at` 추가) |
+| `src/app/api/links/item/[id]/route.ts` | 신규 |
+| `src/app/(main)/link/[code]/[id]/page.tsx` | 신규 |
+| `src/components/LinkCard.tsx` | 수정 |
+| `src/components/LinkCategoryCard.tsx` | 수정 |
+| `src/app/(main)/link/[code]/page.tsx` | 수정 (prop 추가) |

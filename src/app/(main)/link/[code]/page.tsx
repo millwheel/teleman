@@ -37,7 +37,7 @@ export default async function LinkPage({
 
       <div className="grid grid-cols-5 gap-3 pb-8">
         {links.map((link, idx) => (
-          <LinkCard key={link.id} link={link} rank={idx + 1} />
+          <LinkCard key={link.id} link={link} rank={idx + 1} categoryCode={code} />
         ))}
         {links.length === 0 && (
           <p className="col-span-5 py-16 text-center text-gray-400">

@@ -31,6 +31,7 @@ export type LinkItem = {
   image_path: string | null;
   public_url: string | null;
   likes: number;
+  created_at: string;
 };
 
 export type BannerFormState = {

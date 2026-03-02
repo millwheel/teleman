@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { LinkItem } from "@/data/type";
 import { RANK_COLORS } from "@/data/rank";
 import RankBadge from "@/components/RankBadge";
@@ -6,15 +7,15 @@ import RankBadge from "@/components/RankBadge";
 export default function LinkCard({
   link,
   rank,
+  categoryCode,
 }: {
   link: LinkItem;
   rank: number;
+  categoryCode: string;
 }) {
   return (
-    <a
-      href={link.link}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/link/${categoryCode}/${link.id}`}
       className="block border border-gray-200 overflow-hidden bg-background"
     >
       <div className="relative p-6">
@@ -45,6 +46,6 @@ export default function LinkCard({
           {link.likes}
         </span>
       </div>
-    </a>
+    </Link>
   );
 }

@@ -30,10 +30,8 @@ export default function LinkCategoryCard({ category, items }: Props) {
           const item = items[idx];
           return item ? (
             <li key={item.id}>
-              <a
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={`/link/${category.code}/${item.id}`}
                 className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 <RankBadge rank={idx + 1} size={16} />
@@ -42,7 +40,7 @@ export default function LinkCategoryCard({ category, items }: Props) {
                 >
                   {item.name}
                 </span>
-              </a>
+              </Link>
             </li>
           ) : (
             <li
