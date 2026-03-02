@@ -21,7 +21,7 @@ function formatDate(dateStr: string) {
 
 export default function PostList({ posts, basePath, currentPage, pageSize, totalCount }: PostListProps) {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto bg-background rounded-lg">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b-2 border-primary text-center">

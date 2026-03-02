@@ -4,5 +4,3 @@ export const COMMUNITY_CATEGORIES = [
   { key: "review", label: "후기게시판" },
   { key: "gallery", label: "섹시갤러리" },
 ] as const;
-
-export type CommunityCategoryKey = (typeof COMMUNITY_CATEGORIES)[number]["key"];

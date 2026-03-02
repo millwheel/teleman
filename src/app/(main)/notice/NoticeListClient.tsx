@@ -15,7 +15,12 @@ type Props = {
   pageSize: number;
 };
 
-export default function NoticeListClient({ posts, totalCount, page, pageSize }: Props) {
+export default function NoticeListClient({
+  posts,
+  totalCount,
+  page,
+  pageSize,
+}: Props) {
   const router = useRouter();
   const [session, setSession] = useState<JwtPayload | null>(null);
 
@@ -26,21 +31,7 @@ export default function NoticeListClient({ posts, totalCount, page, pageSize }: 
   }, []);
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">공지사항</h1>
-
-      {/* admin만 글쓰기 */}
-      {session?.role === "admin" && (
-        <div className="flex justify-end mb-4">
-          <Link
-            href="/notice/write"
-            className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90"
-          >
-            글쓰기
-          </Link>
-        </div>
-      )}
-
+    <main className="max-w-6xl mx-auto px-4 py-8">
       <PostList
         posts={posts}
         basePath="/notice"
@@ -49,12 +40,26 @@ export default function NoticeListClient({ posts, totalCount, page, pageSize }: 
         totalCount={totalCount}
       />
 
-      <Pagination
-        totalCount={totalCount}
-        currentPage={page}
-        pageSize={pageSize}
-        onPageChange={(p) => router.push(`/notice?page=${p}`)}
-      />
+      {/* 페이지네이션 + 글쓰기 */}
+      <div className="flex items-center justify-between">
+        <div className="flex-1" />
+        <Pagination
+          totalCount={totalCount}
+          currentPage={page}
+          pageSize={pageSize}
+          onPageChange={(p) => router.push(`/notice?page=${p}`)}
+        />
+        <div className="flex-1 flex justify-end">
+          {session?.role === "admin" && (
+            <Link
+              href="/notice/write"
+              className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90"
+            >
+              글쓰기
+            </Link>
+          )}
+        </div>
+      </div>
     </main>
   );
 }

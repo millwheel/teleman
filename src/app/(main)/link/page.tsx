@@ -2,7 +2,7 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import type { LinkItem } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
-import AdBannerSection from "@/components/AdBannerSection";
+import AdBannerSection from "@/components/ad/AdBannerSection";
 import LinkCategoryCard from "@/components/LinkCategoryCard";
 
 export default async function LinkCategoryPage() {

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import type { AdBanner } from "@/data/type";
 import { shuffle } from "@/util/shuffle";
-import AdBannerGrid from "@/components/AdBannerGrid";
+import AdBannerGrid from "@/components/ad/AdBannerGrid";
 
 export default function AdBannerSection() {
   const [banners, setBanners] = useState<AdBanner[]>([]);
