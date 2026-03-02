@@ -1,20 +1,24 @@
 "use client";
 
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface PaginationProps {
+type PaginationProps = {
   totalCount: number;
   currentPage: number;
   pageSize: number;
-  onPageChange: (page: number) => void;
-}
+} & (
+  | { onPageChange: (page: number) => void; buildHref?: never }
+  | { buildHref: (page: number) => string; onPageChange?: never }
+);
 
 export default function Pagination({
   totalCount,
   currentPage,
   pageSize,
   onPageChange,
+  buildHref,
 }: PaginationProps) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   if (totalPages <= 1) return null;
@@ -27,65 +31,76 @@ export default function Pagination({
   const btnBase =
     "flex h-8 min-w-8 items-center justify-center rounded px-2 text-sm transition-colors cursor-pointer";
 
+  const NavItem = ({
+    page,
+    disabled,
+    ariaCurrent,
+    ariaLabel,
+    className,
+    children,
+  }: {
+    page: number;
+    disabled?: boolean;
+    ariaCurrent?: "page";
+    ariaLabel?: string;
+    className: string;
+    children: React.ReactNode;
+  }) => {
+    if (disabled) {
+      return (
+        <span className={cn(btnBase, "text-gray-300 cursor-not-allowed")} aria-label={ariaLabel}>
+          {children}
+        </span>
+      );
+    }
+    if (buildHref) {
+      return (
+        <Link href={buildHref(page)} className={cn(btnBase, className)} aria-current={ariaCurrent} aria-label={ariaLabel}>
+          {children}
+        </Link>
+      );
+    }
+    return (
+      <button onClick={() => onPageChange!(page)} className={cn(btnBase, className)} aria-current={ariaCurrent} aria-label={ariaLabel}>
+        {children}
+      </button>
+    );
+  };
+
   return (
     <div className="flex items-center justify-center gap-1 py-6">
-      <button
-        onClick={() => onPageChange(1)}
-        disabled={currentPage === 1}
-        className={cn(btnBase, currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100")}
-        aria-label="첫 페이지"
-      >
+      <NavItem page={1} disabled={currentPage === 1} className="text-gray-600 hover:bg-gray-100" ariaLabel="첫 페이지">
         <ChevronsLeft className="h-4 w-4" />
-      </button>
-      <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={cn(btnBase, currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100")}
-        aria-label="이전 페이지"
-      >
+      </NavItem>
+      <NavItem page={currentPage - 1} disabled={currentPage === 1} className="text-gray-600 hover:bg-gray-100" ariaLabel="이전 페이지">
         <ChevronLeft className="h-4 w-4" />
-      </button>
+      </NavItem>
 
       {rangeStart > 1 && (
         <span className={cn(btnBase, "text-gray-400 cursor-default")}>…</span>
       )}
 
       {pages.map((p) => (
-        <button
+        <NavItem
           key={p}
-          onClick={() => onPageChange(p)}
-          aria-current={p === currentPage ? "page" : undefined}
-          className={cn(
-            btnBase,
-            p === currentPage
-              ? "bg-primary text-white font-semibold"
-              : "text-gray-600 hover:bg-gray-100"
-          )}
+          page={p}
+          ariaCurrent={p === currentPage ? "page" : undefined}
+          className={p === currentPage ? "bg-primary text-white font-semibold" : "text-gray-600 hover:bg-gray-100"}
         >
           {p}
-        </button>
+        </NavItem>
       ))}
 
       {rangeEnd < totalPages && (
         <span className={cn(btnBase, "text-gray-400 cursor-default")}>…</span>
       )}
 
-      <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={cn(btnBase, currentPage === totalPages ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100")}
-        aria-label="다음 페이지"
-      >
+      <NavItem page={currentPage + 1} disabled={currentPage === totalPages} className="text-gray-600 hover:bg-gray-100" ariaLabel="다음 페이지">
         <ChevronRight className="h-4 w-4" />
-      </button>
-      <button
-        onClick={() => onPageChange(totalPages)}
-        disabled={currentPage === totalPages}
-        className={cn(btnBase, currentPage === totalPages ? "text-gray-300 cursor-not-allowed" : "text-gray-600 hover:bg-gray-100")}
-        aria-label="마지막 페이지"
-      >
+      </NavItem>
+      <NavItem page={totalPages} disabled={currentPage === totalPages} className="text-gray-600 hover:bg-gray-100" ariaLabel="마지막 페이지">
         <ChevronsRight className="h-4 w-4" />
-      </button>
+      </NavItem>
     </div>
   );
 }

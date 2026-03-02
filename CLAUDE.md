@@ -66,6 +66,10 @@ const res = await fetch(`${proto}://${host}/api/...`);
   주요 타입: `CommonBanner`, `GuaranteeBanner`, `LinkCategory`, `LinkItem`, `BannerType`, `BannerFormState`, `CategoryFormState`
 - **`src/util/shuffle.ts`** — 제네릭 Fisher-Yates shuffle 유틸
 
+### 컴포넌트 분리 원칙
+
+**별도 `*Client.tsx` 래퍼 파일로 페이지 전체를 감싸지 않는다.** 인터랙션이 필요한 목록 페이지는 `page.tsx`에 `"use client"`를 선언하고 `fetch`로 데이터를 가져온다. 서버 컴포넌트가 필요한 경우(상세 페이지 등)에만 서버 컴포넌트 page + 클라이언트 컴포넌트 조합을 사용한다.
+
 ### 환경 변수
 
 ```
