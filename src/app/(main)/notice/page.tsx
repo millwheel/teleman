@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type { NoticePost, PostListResponse } from "@/data/type";
 import type { JwtPayload } from "@/lib/auth";
@@ -10,7 +10,7 @@ import WriteButton from "@/components/post/WriteButton";
 import { PAGE_SIZE } from "@/data/constants";
 import AdBannerSection from "@/components/ad/AdBannerSection";
 
-export default function NoticeListPage() {
+function NoticeListContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const page = Math.max(1, Number(searchParams.get("page") ?? 1));
@@ -73,5 +73,13 @@ export default function NoticeListPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function NoticeListPage() {
+  return (
+    <Suspense fallback={<div className="py-12 text-center text-gray-400">불러오는 중...</div>}>
+      <NoticeListContent />
+    </Suspense>
   );
 }

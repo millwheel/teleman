@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import Modal from "@/components/modal/Modal";
@@ -36,22 +36,21 @@ export default function AdminsPage() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  const fetchAdmins = useCallback(async () => {
-    const [meRes, adminsRes] = await Promise.all([
-      fetch("/api/auth/me"),
-      fetch("/api/admin/admins"),
-    ]);
-    if (meRes.ok) {
-      const me = await meRes.json();
-      setCurrentUserId(me.id);
-    }
-    if (adminsRes.ok) setAdmins(await adminsRes.json());
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
-    fetchAdmins();
-  }, [fetchAdmins]);
+    async function init() {
+      const [meRes, adminsRes] = await Promise.all([
+        fetch("/api/auth/me"),
+        fetch("/api/admin/admins"),
+      ]);
+      if (meRes.ok) {
+        const me = await meRes.json();
+        setCurrentUserId(me.id);
+      }
+      if (adminsRes.ok) setAdmins(await adminsRes.json());
+      setLoading(false);
+    }
+    init();
+  }, []);
 
   function openAdd() {
     setAddUsername("");

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   useParams,
   useSearchParams,
@@ -17,7 +17,7 @@ import WriteButton from "@/components/post/WriteButton";
 import { PAGE_SIZE } from "@/data/constants";
 import AdBannerSection from "@/components/ad/AdBannerSection";
 
-export default function CommunityListPage() {
+function CommunityListContent() {
   const params = useParams<{ category: string }>();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -94,5 +94,13 @@ export default function CommunityListPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function CommunityListPage() {
+  return (
+    <Suspense fallback={<div className="py-12 text-center text-gray-400">불러오는 중...</div>}>
+      <CommunityListContent />
+    </Suspense>
   );
 }

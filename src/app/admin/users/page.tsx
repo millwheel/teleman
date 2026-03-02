@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import Pagination from "@/components/Pagination";
@@ -29,20 +29,18 @@ export default function AdminUsersPage() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  const fetchItems = useCallback(async (p: number) => {
-    setLoading(true);
-    const res = await fetch(`/api/admin/users?page=${p}`);
-    if (res.ok) {
-      const data = await res.json();
-      setItems(data.items);
-      setTotalCount(data.totalCount);
-    }
-    setLoading(false);
-  }, []);
-
   useEffect(() => {
-    fetchItems(page);
-  }, [fetchItems, page]);
+    async function load() {
+      const res = await fetch(`/api/admin/users?page=${page}`);
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data.items);
+        setTotalCount(data.totalCount);
+      }
+      setLoading(false);
+    }
+    load();
+  }, [page]);
 
   async function handleToggleActive(user: User) {
     const action = user.is_active ? "비활성화" : "복구";
@@ -167,7 +165,7 @@ export default function AdminUsersPage() {
           totalCount={totalCount}
           currentPage={page}
           pageSize={PAGE_SIZE}
-          onPageChange={setPage}
+          onPageChange={(p) => { setLoading(true); setPage(p); }}
         />
       )}
 

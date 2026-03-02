@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getSession } from "@/lib/auth";
 import { processContentImages, cleanupRemovedImages } from "@/lib/post-image";
 import { getPublicImageUrl } from "@/lib/storage";
 

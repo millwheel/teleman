@@ -25,6 +25,29 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+function ToolButton({
+  onClick,
+  isActive,
+  children,
+}: {
+  onClick: () => void;
+  isActive?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "p-1.5 rounded hover:bg-gray-200 transition-colors",
+        isActive && "bg-gray-200 text-primary"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 type PostEditorProps = {
   initialContent?: string;
   onChange?: (html: string) => void;
@@ -68,27 +91,6 @@ export default function PostEditor({ initialContent = "", onChange }: PostEditor
     // 같은 파일 재선택 허용
     e.target.value = "";
   };
-
-  const ToolButton = ({
-    onClick,
-    isActive,
-    children,
-  }: {
-    onClick: () => void;
-    isActive?: boolean;
-    children: React.ReactNode;
-  }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "p-1.5 rounded hover:bg-gray-200 transition-colors",
-        isActive && "bg-gray-200 text-primary"
-      )}
-    >
-      {children}
-    </button>
-  );
 
   const iconSize = 18;
 

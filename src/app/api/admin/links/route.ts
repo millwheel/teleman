@@ -46,19 +46,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
   }
 
-  // 카테고리당 최대 10개 제한
-  const { count } = await supabase
-    .from("link")
-    .select("*", { count: "exact", head: true })
-    .eq("category_code", category_code);
-
-  if ((count ?? 0) >= 10) {
-    return NextResponse.json(
-      { message: "카테고리당 최대 10개까지 등록할 수 있습니다." },
-      { status: 400 }
-    );
-  }
-
   let image_path: string | null = null;
   if (file && file.size > 0) {
     const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";

@@ -12,15 +12,15 @@ function useDebounceCheck(value: string, field: "username" | "nickname") {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+
     if (!value || (field === "username" && value.length < 6)) {
-      setStatus("idle");
-      return;
+      timerRef.current = setTimeout(() => setStatus("idle"), 0);
+      return () => { if (timerRef.current) clearTimeout(timerRef.current); };
     }
 
-    setStatus("checking");
-
-    if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(async () => {
+      setStatus("checking");
       const param = field === "username" ? `username=${value}` : `nickname=${value}`;
       const res = await fetch(`/api/auth/check-username?${param}`);
       const data = await res.json();

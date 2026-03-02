@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import Modal from "@/components/modal/Modal";
@@ -48,7 +48,7 @@ export default function AdminScammerPage() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  const fetchItems = useCallback(async (p: number) => {
+  async function fetchItems(p: number) {
     setLoading(true);
     const res = await fetch(`/api/admin/scammer?page=${p}`);
     if (res.ok) {
@@ -57,11 +57,20 @@ export default function AdminScammerPage() {
       setTotalCount(data.totalCount);
     }
     setLoading(false);
-  }, []);
+  }
 
   useEffect(() => {
-    fetchItems(page);
-  }, [fetchItems, page]);
+    async function load() {
+      const res = await fetch(`/api/admin/scammer?page=${page}`);
+      if (res.ok) {
+        const data = await res.json();
+        setItems(data.items);
+        setTotalCount(data.totalCount);
+      }
+      setLoading(false);
+    }
+    load();
+  }, [page]);
 
   function openAdd() {
     setForm(EMPTY_FORM);
@@ -240,7 +249,7 @@ export default function AdminScammerPage() {
           totalCount={totalCount}
           currentPage={page}
           pageSize={PAGE_SIZE}
-          onPageChange={setPage}
+          onPageChange={(p) => { setLoading(true); setPage(p); }}
         />
       )}
 
