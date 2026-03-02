@@ -6,11 +6,18 @@ import Modal from "./Modal";
 type Props = {
   banner: { id: number; name: string };
   apiPath: string;
+  label?: string;
   onClose: () => void;
   onSuccess: () => void;
 };
 
-export default function DeleteBannerModal({ banner, apiPath, onClose, onSuccess }: Props) {
+export default function DeleteBannerModal({
+  banner,
+  apiPath,
+  label = "배너",
+  onClose,
+  onSuccess,
+}: Props) {
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
@@ -21,11 +28,11 @@ export default function DeleteBannerModal({ banner, apiPath, onClose, onSuccess 
   }
 
   return (
-    <Modal title="배너 삭제" onClose={onClose}>
+    <Modal title={`${label} 삭제`} onClose={onClose}>
       <div className="space-y-4">
         <p className="text-sm text-gray-700">
-          <span className="font-semibold">{banner.name}</span> 배너를 삭제합니다.
-          이 작업은 되돌릴 수 없습니다.
+          <span className="font-semibold">{banner.name}</span> {label}을(를)
+          삭제합니다. 이 작업은 되돌릴 수 없습니다.
         </p>
         <div className="flex gap-2 justify-end">
           <button

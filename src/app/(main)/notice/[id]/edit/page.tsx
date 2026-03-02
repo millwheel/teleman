@@ -29,7 +29,9 @@ export default function NoticeEditPage() {
   }, [id]);
 
   if (!post) {
-    return <div className="py-12 text-center text-gray-400">불러오는 중...</div>;
+    return (
+      <div className="py-12 text-center text-gray-400">불러오는 중...</div>
+    );
   }
 
   const handleSubmit = async () => {
@@ -66,7 +68,7 @@ export default function NoticeEditPage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="제목을 입력하세요"
-        className="w-full border border-gray-300 rounded px-4 py-3 mb-4 text-lg"
+        className="w-full bg-background border border-gray-300 rounded px-4 py-3 mb-4 text-lg"
       />
 
       <PostEditor initialContent={post.content} onChange={setContent} />

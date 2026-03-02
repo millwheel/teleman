@@ -7,7 +7,8 @@ import { uploadImage, deleteImage } from "./storage";
  */
 export async function processContentImages(
   html: string,
-  folder: string
+  folder: string,
+  postId?: number
 ): Promise<{ html: string; imagePaths: string[] }> {
   const base64Regex = /<img[^>]+src="data:([^;]+);base64,([^"]+)"[^>]*>/g;
   const imagePaths: string[] = [];
@@ -18,7 +19,8 @@ export async function processContentImages(
     const contentType = match[1];
     const base64Data = match[2];
     const ext = contentType.split("/")[1]?.replace("jpeg", "jpg") ?? "jpg";
-    const path = `${folder}/${uuidv4()}.${ext}`;
+    const basePath = postId ? `${folder}/${postId}` : folder;
+    const path = `${basePath}/${uuidv4()}.${ext}`;
 
     const buffer = Buffer.from(base64Data, "base64");
     await uploadImage(path, buffer, contentType);

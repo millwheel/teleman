@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
-import AddBannerModal from "@/components/admin/AddBannerModal";
-import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
+import AddBannerModal from "@/components/modal/AddBannerModal";
+import DeleteBannerModal from "@/components/modal/DeleteBannerModal";
 import type { GuaranteeBanner } from "@/data/type";
 
 const API_PATH = "/api/admin/guarantees";
@@ -62,11 +62,16 @@ export default function GuaranteePage() {
       {loading ? (
         <div className="text-center py-16 text-gray-400">로딩 중...</div>
       ) : banners.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">등록된 배너가 없습니다.</div>
+        <div className="text-center py-16 text-gray-400">
+          등록된 배너가 없습니다.
+        </div>
       ) : (
         <div className="grid grid-cols-4 gap-3">
           {banners.map((b) => (
-            <div key={b.id} className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white">
+            <div
+              key={b.id}
+              className="group relative overflow-hidden rounded-lg border border-gray-200 bg-white"
+            >
               <div className="relative" style={{ aspectRatio: "1 / 1" }}>
                 <Image
                   src={b.public_url}

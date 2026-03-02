@@ -1,5 +1,4 @@
 import { getSession } from "@/lib/auth";
-import Link from "next/link";
 import Image from "next/image";
 import HeaderNav from "./HeaderNav";
 import HamburgerMenu from "./HamburgerMenu";

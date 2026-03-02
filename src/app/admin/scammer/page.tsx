@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus } from "lucide-react";
-import Modal from "@/components/admin/Modal";
+import Modal from "@/components/modal/Modal";
 import Pagination from "@/components/Pagination";
 import { PAGE_SIZE } from "@/data/constants";
 

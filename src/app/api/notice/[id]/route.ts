@@ -69,7 +69,7 @@ export async function PUT(
     return NextResponse.json({ message: "제목과 내용을 입력하세요." }, { status: 400 });
   }
 
-  const { html: processedContent } = await processContentImages(content, "notice");
+  const { html: processedContent } = await processContentImages(content, "notice", Number(id));
 
   const bucketBaseUrl = getPublicImageUrl("").replace(/\/$/, "");
   await cleanupRemovedImages(existing.content, processedContent, bucketBaseUrl);

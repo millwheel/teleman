@@ -6,7 +6,7 @@ import Link from "next/link";
 import type { NoticePost } from "@/data/type";
 import type { JwtPayload } from "@/lib/auth";
 import PostViewer from "@/components/post/PostViewer";
-import CommentSection from "@/components/post/CommentSection";
+import DeleteBannerModal from "@/components/modal/DeleteBannerModal";
 import { formatDateTime } from "@/util/date";
 
 export default function NoticeDetailPage() {
@@ -16,6 +16,7 @@ export default function NoticeDetailPage() {
 
   const [post, setPost] = useState<NoticePost | null>(null);
   const [session, setSession] = useState<JwtPayload | null>(null);
+  const [showDelete, setShowDelete] = useState(false);
 
   useEffect(() => {
     fetch(`/api/notice/${id}`)
@@ -27,51 +28,54 @@ export default function NoticeDetailPage() {
   }, [id]);
 
   if (!post) {
-    return <div className="py-12 text-center text-gray-400">불러오는 중...</div>;
+    return (
+      <div className="py-12 text-center text-gray-400">불러오는 중...</div>
+    );
   }
 
   const isAdmin = session?.role === "admin";
 
-  const handleDelete = async () => {
-    if (!confirm("공지사항을 삭제하시겠습니까?")) return;
-    const res = await fetch(`/api/notice/${post.id}`, { method: "DELETE" });
-    if (res.ok) {
-      router.push("/notice");
-    }
+  const handleDeleteSuccess = () => {
+    setShowDelete(false);
+    router.push("/notice");
   };
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <div className="border-b-2 border-primary pb-4 mb-6">
-        <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <span>{post.author_nickname}</span>
-          <span>{formatDateTime(post.created_at)}</span>
-          <span>조회 {post.view_count}</span>
+      <div className="bg-white overflow-hidden">
+        <div className="px-6 py-5">
+          <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <span>{post.author_nickname}</span>
+            <span>{formatDateTime(post.created_at)}</span>
+            <span>조회 {post.view_count}</span>
+          </div>
+        </div>
+
+        <hr className="border-gray-200 mx-6" />
+
+        <div className="min-h-[200px]">
+          <PostViewer content={post.content} />
         </div>
       </div>
 
-      <div className="min-h-[200px] mb-6">
-        <PostViewer content={post.content} />
-      </div>
-
-      <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+      <div className="relative flex justify-center items-center pt-4">
         <Link
           href="/notice"
-          className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
+          className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 cursor-pointer"
         >
-          목록
+          목록으로
         </Link>
         {isAdmin && (
-          <div className="flex gap-2">
+          <div className="absolute right-0 flex gap-2">
             <Link
               href={`/notice/${post.id}/edit`}
-              className="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 cursor-pointer"
+              className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 cursor-pointer"
             >
               수정
             </Link>
             <button
-              onClick={handleDelete}
+              onClick={() => setShowDelete(true)}
               className="px-4 py-2 bg-eliminate text-white rounded text-sm hover:opacity-90 cursor-pointer"
             >
               삭제
@@ -80,7 +84,15 @@ export default function NoticeDetailPage() {
         )}
       </div>
 
-      <CommentSection postId={post.id} apiBase="/api/notice" />
+      {showDelete && (
+        <DeleteBannerModal
+          banner={{ id: post.id, name: post.title }}
+          apiPath="/api/notice"
+          label="공지사항"
+          onClose={() => setShowDelete(false)}
+          onSuccess={handleDeleteSuccess}
+        />
+      )}
     </main>
   );
 }

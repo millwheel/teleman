@@ -15,6 +15,7 @@ import Pagination from "@/components/Pagination";
 import CategoryTabs from "@/components/post/CategoryTabs";
 import WriteButton from "@/components/post/WriteButton";
 import { PAGE_SIZE } from "@/data/constants";
+import AdBannerSection from "@/components/ad/AdBannerSection";
 
 export default function CommunityListPage() {
   const params = useParams<{ category: string }>();
@@ -59,31 +60,37 @@ export default function CommunityListPage() {
   if (!cat) return notFound();
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
-      <CategoryTabs current={category} />
+    <main className="max-w-7xl mx-auto px-4">
+      <AdBannerSection />
 
-      <PostList
-        posts={posts}
-        basePath={`/community/${category}`}
-        currentPage={page}
-        pageSize={pageSize}
-        totalCount={totalCount}
-        loading={loading}
-      />
+      <div className="max-w-5xl mx-auto">
+        <CategoryTabs current={category} />
 
-      <div className="flex items-center justify-between">
-        <div className="flex-1" />
-        <Pagination
-          totalCount={totalCount}
+        <PostList
+          posts={posts}
+          basePath={`/community/${category}`}
           currentPage={page}
           pageSize={pageSize}
-          onPageChange={(p) => router.push(`/community/${category}?page=${p}`)}
+          totalCount={totalCount}
+          loading={loading}
         />
-        <div className="flex-1 flex justify-end">
-          <WriteButton
-            href={`/community/${category}/write`}
-            session={session}
+
+        <div className="flex items-center justify-between">
+          <div className="flex-1" />
+          <Pagination
+            totalCount={totalCount}
+            currentPage={page}
+            pageSize={pageSize}
+            onPageChange={(p) =>
+              router.push(`/community/${category}?page=${p}`)
+            }
           />
+          <div className="flex-1 flex justify-end">
+            <WriteButton
+              href={`/community/${category}/write`}
+              session={session}
+            />
+          </div>
         </div>
       </div>
     </main>

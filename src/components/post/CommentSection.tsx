@@ -41,7 +41,9 @@ export default function CommentSection({
       .then((data) => {
         if (!cancelled) setSession(data);
       });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [apiBase, postId]);
 
   const handleSubmit = async () => {
@@ -174,7 +176,7 @@ export default function CommentSection({
           <button
             onClick={handleSubmit}
             disabled={submitting || !newComment.trim()}
-            className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 disabled:opacity-50 cursor-pointer"
+            className="px-4 py-2 bg-primary text-white rounded text-sm hover:opacity-90 cursor-pointer"
           >
             등록
           </button>

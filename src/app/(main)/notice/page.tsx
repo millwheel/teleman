@@ -8,6 +8,7 @@ import PostList from "@/components/post/PostList";
 import Pagination from "@/components/Pagination";
 import WriteButton from "@/components/post/WriteButton";
 import { PAGE_SIZE } from "@/data/constants";
+import AdBannerSection from "@/components/ad/AdBannerSection";
 
 export default function NoticeListPage() {
   const searchParams = useSearchParams();
@@ -45,26 +46,30 @@ export default function NoticeListPage() {
   }, []);
 
   return (
-    <main className="max-w-5xl mx-auto px-4 py-8">
-      <PostList
-        posts={posts}
-        basePath="/notice"
-        currentPage={page}
-        pageSize={pageSize}
-        totalCount={totalCount}
-        loading={loading}
-      />
+    <main className="max-w-7xl mx-auto px-4">
+      <AdBannerSection />
 
-      <div className="flex items-center justify-between">
-        <div className="flex-1" />
-        <Pagination
-          totalCount={totalCount}
+      <div className="max-w-5xl mx-auto">
+        <PostList
+          posts={posts}
+          basePath="/notice"
           currentPage={page}
           pageSize={pageSize}
-          onPageChange={(p) => router.push(`/notice?page=${p}`)}
+          totalCount={totalCount}
+          loading={loading}
         />
-        <div className="flex-1 flex justify-end">
-          <WriteButton href="/notice/write" session={session} adminOnly />
+
+        <div className="flex items-center justify-between">
+          <div className="flex-1" />
+          <Pagination
+            totalCount={totalCount}
+            currentPage={page}
+            pageSize={pageSize}
+            onPageChange={(p) => router.push(`/notice?page=${p}`)}
+          />
+          <div className="flex-1 flex justify-end">
+            <WriteButton href="/notice/write" session={session} adminOnly />
+          </div>
         </div>
       </div>
     </main>

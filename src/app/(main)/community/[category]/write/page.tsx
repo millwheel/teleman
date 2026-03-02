@@ -42,7 +42,9 @@ export default function CommunityWritePage() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">{cat?.label ?? "커뮤니티"} 글쓰기</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        {cat?.label ?? "커뮤니티"} 글쓰기
+      </h1>
 
       {error && <p className="text-eliminate text-sm mb-4">{error}</p>}
 
@@ -51,7 +53,7 @@ export default function CommunityWritePage() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="제목을 입력하세요"
-        className="w-full border border-gray-300 rounded px-4 py-3 mb-4 text-lg"
+        className="w-full border bg-background border-gray-300 rounded px-4 py-3 mb-4 text-lg"
       />
 
       <PostEditor onChange={setContent} />

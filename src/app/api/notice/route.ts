@@ -48,15 +48,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "제목과 내용을 입력하세요." }, { status: 400 });
   }
 
-  const { html: processedContent } = await processContentImages(content, "notice");
-
-  const { data, error } = await supabase
+  // 먼저 게시글 삽입하여 PK 획득
+  const { data: inserted, error: insertError } = await supabase
     .from("notice")
     .insert({
       title: title.trim(),
-      content: processedContent,
+      content: "",
       author_id: session.userId,
     })
+    .select()
+    .single();
+
+  if (insertError || !inserted) return NextResponse.json({ message: insertError?.message ?? "삽입 실패" }, { status: 500 });
+
+  // base64 이미지 처리 (PK 기반 폴더링)
+  const { html: processedContent } = await processContentImages(content, "notice", inserted.id);
+
+  const { data, error } = await supabase
+    .from("notice")
+    .update({ content: processedContent })
+    .eq("id", inserted.id)
     .select()
     .single();
 

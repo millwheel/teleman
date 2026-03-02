@@ -3,16 +3,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { Trash2, Plus } from "lucide-react";
 import Image from "next/image";
-import AddBannerModal from "@/components/admin/AddBannerModal";
-import DeleteBannerModal from "@/components/admin/DeleteBannerModal";
+import AddBannerModal from "@/components/modal/AddBannerModal";
+import DeleteBannerModal from "@/components/modal/DeleteBannerModal";
 import type { AdBanner } from "@/data/type";
 
 const API_PATH = "/api/admin/ads";
 
 const cols = {
-  name:   "basis-[10%]",
-  image:  "basis-[40%]",
-  link:   "flex-1 min-w-0",
+  name: "basis-[10%]",
+  image: "basis-[40%]",
+  link: "flex-1 min-w-0",
   action: "basis-[3%]",
 } as const;
 
@@ -58,15 +58,28 @@ function BannerSection({
         {loading ? (
           <div className="text-center py-16 text-gray-400">로딩 중...</div>
         ) : banners.length === 0 ? (
-          <div className="text-center py-16 text-gray-400">등록된 배너가 없습니다.</div>
+          <div className="text-center py-16 text-gray-400">
+            등록된 배너가 없습니다.
+          </div>
         ) : (
           banners.map((b) => (
-            <div key={b.id} className="flex items-center gap-4 px-4 py-2 hover:bg-gray-50 transition-colors">
+            <div
+              key={b.id}
+              className="flex items-center gap-4 px-4 py-2 hover:bg-gray-50 transition-colors"
+            >
               <span className={`${cols.name} text-sm font-medium truncate`}>
                 {b.name}
               </span>
-              <div className={`${cols.image} relative overflow-hidden rounded`} style={{ height: "104px" }}>
-                <Image src={b.public_url} alt={b.name} fill className="object-cover" />
+              <div
+                className={`${cols.image} relative overflow-hidden rounded`}
+                style={{ height: "104px" }}
+              >
+                <Image
+                  src={b.public_url}
+                  alt={b.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
               <div className={cols.link}>
                 <a
@@ -97,7 +110,9 @@ function BannerSection({
 export default function AdPage() {
   const [loading, setLoading] = useState(true);
   const [banners, setBanners] = useState<AdBanner[]>([]);
-  const [modal, setModal] = useState<"add-long" | "add-short" | "delete" | null>(null);
+  const [modal, setModal] = useState<
+    "add-long" | "add-short" | "delete" | null
+  >(null);
   const [selected, setSelected] = useState<AdBanner | null>(null);
 
   const fetchBanners = useCallback(async () => {

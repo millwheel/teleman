@@ -4,14 +4,19 @@ import { useState, useEffect, useRef, use } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, ArrowLeft, Heart } from "lucide-react";
 import Link from "next/link";
-import Modal from "@/components/admin/Modal";
+import Modal from "@/components/modal/Modal";
 import type { LinkItem, BannerFormState } from "@/data/type";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
 
-const EMPTY_FORM: BannerFormState = { name: "", link: "", description: "", likes: 0 };
+const EMPTY_FORM: BannerFormState = {
+  name: "",
+  link: "",
+  description: "",
+  likes: 0,
+};
 
 export default function LinkItemDetailPage({
   params,
@@ -49,7 +54,11 @@ export default function LinkItemDetailPage({
   }
 
   if (!category) {
-    return <div className="text-center py-16 text-gray-400">카테고리를 찾을 수 없습니다.</div>;
+    return (
+      <div className="text-center py-16 text-gray-400">
+        카테고리를 찾을 수 없습니다.
+      </div>
+    );
   }
 
   const cat = category;
@@ -64,18 +73,28 @@ export default function LinkItemDetailPage({
   }
   function openEdit(b: LinkItem) {
     setSelected(b);
-    setForm({ name: b.name, link: b.link, description: b.description ?? "", likes: b.likes });
+    setForm({
+      name: b.name,
+      link: b.link,
+      description: b.description ?? "",
+      likes: b.likes,
+    });
     setImageFile(null);
     setImagePreview(b.public_url ?? null);
     setFormError("");
     setModal("edit");
   }
-  function openDelete(b: LinkItem) { setSelected(b); setModal("delete"); }
+  function openDelete(b: LinkItem) {
+    setSelected(b);
+    setModal("delete");
+  }
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
     setImageFile(file);
-    setImagePreview(file ? URL.createObjectURL(file) : (selected?.public_url ?? null));
+    setImagePreview(
+      file ? URL.createObjectURL(file) : (selected?.public_url ?? null),
+    );
   }
 
   async function handleAdd() {
@@ -95,7 +114,10 @@ export default function LinkItemDetailPage({
     const res = await fetch("/api/admin/links", { method: "POST", body: fd });
     const data = await res.json();
     setLoading(null);
-    if (!res.ok) { setFormError(data.message); return; }
+    if (!res.ok) {
+      setFormError(data.message);
+      return;
+    }
     setModal(null);
     refetch();
   }
@@ -119,10 +141,16 @@ export default function LinkItemDetailPage({
     fd.append("likes", String(form.likes));
     if (selected.image_path) fd.append("image_path", selected.image_path);
     if (imageFile) fd.append("file", imageFile);
-    const res = await fetch(`/api/admin/links/${selected.id}`, { method: "PUT", body: fd });
+    const res = await fetch(`/api/admin/links/${selected.id}`, {
+      method: "PUT",
+      body: fd,
+    });
     const data = await res.json();
     setLoading(null);
-    if (!res.ok) { setFormError(data.message); return; }
+    if (!res.ok) {
+      setFormError(data.message);
+      return;
+    }
     setModal(null);
     refetch();
   }
@@ -141,7 +169,12 @@ export default function LinkItemDetailPage({
     return (
       <div>
         <label className="mb-1.5 block text-sm font-medium text-gray-700">
-          이미지{hasExisting && <span className="ml-1 text-gray-400 font-normal">(변경 시 선택)</span>}
+          이미지
+          {hasExisting && (
+            <span className="ml-1 text-gray-400 font-normal">
+              (변경 시 선택)
+            </span>
+          )}
         </label>
         <input
           ref={fileInputRef}
@@ -160,7 +193,11 @@ export default function LinkItemDetailPage({
         {imagePreview && (
           <div className="mt-2 overflow-hidden rounded-lg border border-gray-200">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={imagePreview} alt="미리보기" className="max-h-48 w-full object-contain bg-gray-50" />
+            <img
+              src={imagePreview}
+              alt="미리보기"
+              className="max-h-48 w-full object-contain bg-gray-50"
+            />
           </div>
         )}
       </div>
@@ -170,7 +207,9 @@ export default function LinkItemDetailPage({
   const formFields = (
     <div className="space-y-4">
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">이름</label>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          이름
+        </label>
         <input
           type="text"
           value={form.name}
@@ -180,7 +219,9 @@ export default function LinkItemDetailPage({
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">링크</label>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          링크
+        </label>
         <input
           type="url"
           value={form.link}
@@ -190,12 +231,19 @@ export default function LinkItemDetailPage({
         />
       </div>
       <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">좋아요 수</label>
+        <label className="mb-1.5 block text-sm font-medium text-gray-700">
+          좋아요 수
+        </label>
         <input
           type="number"
           min={0}
           value={form.likes}
-          onChange={(e) => setForm({ ...form, likes: Math.max(0, parseInt(e.target.value) || 0) })}
+          onChange={(e) =>
+            setForm({
+              ...form,
+              likes: Math.max(0, parseInt(e.target.value) || 0),
+            })
+          }
           className={inputClass}
         />
       </div>
@@ -247,15 +295,24 @@ export default function LinkItemDetailPage({
       )}
 
       {banners.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">등록된 링크가 없습니다.</div>
+        <div className="text-center py-16 text-gray-400">
+          등록된 링크가 없습니다.
+        </div>
       ) : (
         <div className="grid grid-cols-4 gap-3">
           {banners.map((b) => (
-            <div key={b.id} className="rounded-xl border border-gray-200 bg-white overflow-hidden">
+            <div
+              key={b.id}
+              className="rounded-xl border border-gray-200 bg-white overflow-hidden"
+            >
               <div className="relative" style={{ aspectRatio: "16 / 9" }}>
                 {b.public_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={b.public_url} alt={b.name} className="w-full h-full object-cover" />
+                  <img
+                    src={b.public_url}
+                    alt={b.name}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
                   <div className="w-full h-full bg-gray-100 flex items-center justify-center text-xs text-gray-300">
                     이미지 없음
@@ -356,7 +413,9 @@ export default function LinkItemDetailPage({
         <Modal title="배너 삭제" onClose={() => setModal(null)}>
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
-              <span className="font-semibold text-foreground">{selected.name}</span>{" "}
+              <span className="font-semibold text-foreground">
+                {selected.name}
+              </span>{" "}
               배너를 삭제합니다. 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="flex gap-2 justify-end">

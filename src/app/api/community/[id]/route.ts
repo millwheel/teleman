@@ -12,15 +12,6 @@ export async function GET(
   const { id } = await params;
 
   // view_count 증가
-  await supabase.rpc("increment_community_view", { row_id: Number(id) }).catch(() => {
-    // rpc가 없으면 직접 업데이트
-    return supabase
-      .from("community")
-      .update({ view_count: supabase.rpc ? undefined : undefined })
-      .eq("id", Number(id));
-  });
-
-  // 수동 view_count 증가
   const { data: current } = await supabase
     .from("community")
     .select("view_count")
@@ -83,7 +74,7 @@ export async function PUT(
   }
 
   // base64 이미지 처리
-  const { html: processedContent } = await processContentImages(content, "community");
+  const { html: processedContent } = await processContentImages(content, "community", Number(id));
 
   // 삭제된 이미지 정리
   const bucketBaseUrl = getPublicImageUrl("").replace(/\/$/, "");
