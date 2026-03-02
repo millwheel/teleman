@@ -7,6 +7,7 @@ import type { NoticePost } from "@/data/type";
 import type { JwtPayload } from "@/lib/auth";
 import PostViewer from "@/components/post/PostViewer";
 import DeleteBannerModal from "@/components/modal/DeleteBannerModal";
+import AdBannerSection from "@/components/ad/AdBannerSection";
 import { formatDateTime } from "@/util/date";
 
 export default function NoticeDetailPage() {
@@ -41,7 +42,10 @@ export default function NoticeDetailPage() {
   };
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8">
+    <main className="max-w-7xl mx-auto px-4">
+      <AdBannerSection />
+
+      <div className="max-w-4xl mx-auto py-8">
       <div className="bg-white overflow-hidden">
         <div className="px-6 py-5">
           <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
@@ -93,6 +97,7 @@ export default function NoticeDetailPage() {
           onSuccess={handleDeleteSuccess}
         />
       )}
+      </div>
     </main>
   );
 }
