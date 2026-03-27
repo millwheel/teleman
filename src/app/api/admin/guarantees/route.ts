@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { supabase } from "@/lib/supabase";
 import { uploadImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
+import { validateFileSize } from "@/util/file";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -30,6 +31,9 @@ export async function POST(request: NextRequest) {
   if (!name || !link || !file) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
   }
+
+  const fileSizeError = validateFileSize(file);
+  if (fileSizeError) return fileSizeError;
 
   const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
   const imagePath = `guarantees/${uuidv4()}.${ext}`;

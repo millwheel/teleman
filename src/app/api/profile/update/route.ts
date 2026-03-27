@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { getSession, signJwt, setSessionCookie } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { validateFileSize } from "@/util/file";
 
 const STORAGE_BASE = `${process.env.SUPABASE_URL}/storage/v1/object/public/public-media`;
 
@@ -39,6 +40,9 @@ export async function POST(request: NextRequest) {
   }
 
   let imagePath = session.imagePath;
+
+  const fileSizeError = validateFileSize(imageFile);
+  if (fileSizeError) return fileSizeError;
 
   // 이미지 업로드
   if (imageFile && imageFile.size > 0) {

@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
 
 interface ProfileFormProps {
   username: string;
@@ -33,6 +34,12 @@ export default function ProfileForm({
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`파일 크기가 ${MAX_FILE_SIZE_LABEL}를 초과합니다.`);
+      e.target.value = "";
+      return;
+    }
+    setError("");
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
   }

@@ -6,6 +6,7 @@ import ImageAlign from "@/extensions/ImageAlign";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Placeholder from "@tiptap/extension-placeholder";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
 import { useRef } from "react";
 import {
   Bold,
@@ -80,6 +81,12 @@ export default function PostEditor({ initialContent = "", onChange }: PostEditor
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert(`파일 크기가 ${MAX_FILE_SIZE_LABEL}를 초과합니다.`);
+      e.target.value = "";
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {

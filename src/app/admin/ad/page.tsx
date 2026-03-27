@@ -79,6 +79,7 @@ function BannerSection({
                   alt={b.name}
                   fill
                   className="object-cover"
+                  unoptimized
                 />
               </div>
               <div className={cols.link}>
@@ -155,7 +156,7 @@ export default function AdPage() {
 
       <BannerSection
         title="긴 배너"
-        hint="비율 6:1 · 권장 해상도 1260×210px"
+        hint="비율 6:1 · 권장 해상도 1260×210px · 최대 4MB"
         banners={longBanners}
         loading={loading}
         onAdd={() => setModal("add-long")}
@@ -164,7 +165,7 @@ export default function AdPage() {
 
       <BannerSection
         title="짧은 배너"
-        hint="비율 3:1 · 권장 해상도 630×210px"
+        hint="비율 3:1 · 권장 해상도 630×210px · 최대 4MB"
         banners={shortBanners}
         loading={loading}
         onAdd={() => setModal("add-short")}

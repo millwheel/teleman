@@ -5,6 +5,7 @@ import { uploadImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import { processContentImages } from "@/lib/post-image";
+import { validateFileSize } from "@/util/file";
 
 export async function GET(request: NextRequest) {
   const { error } = await requireAdmin();
@@ -46,6 +47,9 @@ export async function POST(request: NextRequest) {
   if (!LINK_CATEGORIES.find((c) => c.code === category_code) || !name || !link) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
   }
+
+  const fileSizeError = validateFileSize(file);
+  if (fileSizeError) return fileSizeError;
 
   // 파일을 미리 읽어 둔다 (insert 후 ID를 얻어야 경로 생성 가능)
   const fileBuffer = file && file.size > 0 ? Buffer.from(await file.arrayBuffer()) : null;

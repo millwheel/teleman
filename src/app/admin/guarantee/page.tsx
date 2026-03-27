@@ -78,6 +78,7 @@ export default function GuaranteePage() {
                   alt={b.name}
                   fill
                   className="object-cover"
+                  unoptimized
                 />
                 <button
                   onClick={() => openDelete(b)}

@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { uploadImage, deleteImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
 import { processContentImages, cleanupRemovedImages } from "@/lib/post-image";
+import { validateFileSize } from "@/util/file";
 
 export async function PUT(
   request: NextRequest,
@@ -30,6 +31,9 @@ export async function PUT(
     .select("description")
     .eq("id", Number(id))
     .single();
+
+  const fileSizeError = validateFileSize(file);
+  if (fileSizeError) return fileSizeError;
 
   let image_path = existing_image_path;
   if (file && file.size > 0) {

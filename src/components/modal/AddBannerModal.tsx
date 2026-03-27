@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import Modal from "./Modal";
 import type { BannerType } from "@/data/type";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
 
 type Props = {
   apiPath: string;
@@ -25,6 +26,12 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0] ?? null;
+    if (f && f.size > MAX_FILE_SIZE) {
+      setError(`파일 크기가 ${MAX_FILE_SIZE_LABEL}를 초과합니다.`);
+      e.target.value = "";
+      return;
+    }
+    setError("");
     setFile(f);
     setPreview(f ? URL.createObjectURL(f) : null);
   }

@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import PostEditor from "@/components/post/PostEditor";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
@@ -49,6 +50,12 @@ export default function LinkForm({
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
+    if (file && file.size > MAX_FILE_SIZE) {
+      setFormError(`파일 크기가 ${MAX_FILE_SIZE_LABEL}를 초과합니다.`);
+      e.target.value = "";
+      return;
+    }
+    setFormError("");
     setImageFile(file);
     setImagePreview(file ? URL.createObjectURL(file) : (defaultPreview ?? null));
   }
