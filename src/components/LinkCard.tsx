@@ -38,7 +38,19 @@ export default function LinkCard({
       </div>
 
       <div className="px-2 py-2 flex items-center justify-between gap-1">
-        <span className={`text-sm font-bold truncate ${RANK_COLORS[rank - 1]}`}>
+        <span
+          className={`text-sm font-bold truncate ${
+            categoryCode === "promotion" ? "shimmer-text" : RANK_COLORS[rank - 1]
+          }`}
+          style={
+            categoryCode === "promotion"
+              ? ({
+                  animationDelay: `-${((link.id * 37) % 120) / 100}s`,
+                  "--shimmer-hue": `${(link.id * 73) % 360}deg`,
+                } as React.CSSProperties)
+              : undefined
+          }
+        >
           {link.name}
         </span>
         <span className="flex items-center gap-0.5 text-xs text-primary">

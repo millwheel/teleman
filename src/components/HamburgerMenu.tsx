@@ -60,7 +60,7 @@ export default function HamburgerMenu({ isLoggedIn, userName, imageUrl }: Hambur
 
       {/* 모바일 드롭다운 메뉴 */}
       {menuOpen && (
-        <div className="sm:hidden absolute top-full left-0 right-0 border-t border-secondary bg-white z-50">
+        <div className="sm:hidden absolute top-full left-0 right-0 border-t border-secondary bg-white shadow-md z-50">
           <nav className="flex flex-col">
             {NAV_LINKS.map(({ label, href }) => {
               const matchBase = href === "/community/free" ? "/community" : href;

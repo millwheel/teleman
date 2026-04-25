@@ -10,6 +10,8 @@ type Props = {
 };
 
 export default function LinkCategoryCard({ category, items }: Props) {
+  const isShimmer = category.code === "promotion";
+
   return (
     <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
       <Link
@@ -36,7 +38,15 @@ export default function LinkCategoryCard({ category, items }: Props) {
               >
                 <RankBadge rank={idx + 1} size={16} />
                 <span
-                  className={`text-sm font-bold truncate ${RANK_COLORS[idx]}`}
+                  className={`text-sm font-bold truncate ${isShimmer ? "shimmer-text" : RANK_COLORS[idx]}`}
+                  style={
+                    isShimmer
+                      ? ({
+                          animationDelay: `-${((item.id * 37) % 120) / 100}s`,
+                          "--shimmer-hue": `${(item.id * 73) % 360}deg`,
+                        } as React.CSSProperties)
+                      : undefined
+                  }
                 >
                   {item.name}
                 </span>
