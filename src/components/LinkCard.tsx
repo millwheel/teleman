@@ -25,11 +25,11 @@ export default function LinkCard({
             alt={link.name}
             width={300}
             height={70}
-            className="w-full h-[70px] object-cover"
+            className="w-full h-[100px] object-contain"
             unoptimized
           />
         ) : (
-          <div className="w-full h-[70px] bg-gray-100" />
+          <div className="w-full h-[100px] bg-gray-100" />
         )}
 
         <div className="absolute top-1 left-1">
