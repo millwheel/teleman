@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Pagination from "@/components/Pagination";
@@ -18,22 +18,6 @@ interface Scammer {
 interface SearchResult {
   items: Scammer[];
   totalCount: number;
-}
-
-// 동일한 params → 동일한 Promise 반환 → 중복 fetch 없음
-const searchCache = new Map<string, Promise<SearchResult | null>>();
-
-function fetchSearch(type: string, q: string, page: number): Promise<SearchResult | null> {
-  const key = `${type}:${q}:${page}`;
-  if (!searchCache.has(key)) {
-    searchCache.set(
-      key,
-      fetch(`/api/scammer/search?type=${type}&q=${encodeURIComponent(q)}&page=${page}&limit=${PAGE_SIZE}`)
-        .then((r) => (r.ok ? r.json() : null))
-        .catch(() => null),
-    );
-  }
-  return searchCache.get(key)!;
 }
 
 function TableHeaders() {
@@ -91,6 +75,29 @@ function ResultContent() {
   const q = searchParams.get("q") ?? "";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
   const [selected, setSelected] = useState<Scammer | null>(null);
+  const [data, setData] = useState<SearchResult | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!q) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    fetch(`/api/scammer/search?type=${type}&q=${encodeURIComponent(q)}&page=${page}&limit=${PAGE_SIZE}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null)
+      .then((result: SearchResult | null) => {
+        if (cancelled) return;
+        setData(result);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [type, q, page]);
 
   if (!q) {
     return (
@@ -109,49 +116,50 @@ function ResultContent() {
     );
   }
 
-  const data = use(fetchSearch(type, q, page));
   const items = data?.items ?? [];
   const totalCount = data?.totalCount ?? 0;
 
   return (
     <>
-      {items.length > 0 && (
-        <p className="mb-3 text-sm text-gray-600">
-          총{" "}
-          <span className="font-semibold text-red-600">{totalCount.toLocaleString("ko-KR")}</span>
-          건의 사기 의심 정보가 검색되었습니다.
-        </p>
-      )}
+      <p className="mb-3 text-sm text-gray-600">
+        총{" "}
+        <span className="font-semibold text-red-600">{totalCount.toLocaleString("ko-KR")}</span>
+        건의 사기꾼 정보가 조회되었습니다.
+      </p>
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
         <table className="w-full table-fixed text-sm">
           <TableHeaders />
-          <tbody className="divide-y divide-gray-100">
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="px-5 py-10 text-center text-sm text-gray-400">
-                  검색 결과가 없습니다.
-                </td>
-              </tr>
-            ) : (
-              items.map((item) => (
-                <tr
-                  key={item.id}
-                  onClick={() => setSelected(item)}
-                  className="cursor-pointer transition-colors hover:bg-gray-50"
-                >
-                  <td className="px-5 py-3 font-medium text-foreground">{item.name ?? "-"}</td>
-                  <td className="px-5 py-3 text-gray-600">{item.phone_number ?? "-"}</td>
-                  <td className="px-5 py-3 text-gray-600">{item.bank_account ?? "-"}</td>
-                  <td className="max-w-xs truncate px-5 py-3 text-gray-600">{item.description ?? "-"}</td>
+          {loading ? (
+            <SearchingTbody />
+          ) : (
+            <tbody className="divide-y divide-gray-100">
+              {items.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-5 py-10 text-center text-sm text-gray-400">
+                    검색 결과가 없습니다.
+                  </td>
                 </tr>
-              ))
-            )}
-          </tbody>
+              ) : (
+                items.map((item) => (
+                  <tr
+                    key={item.id}
+                    onClick={() => setSelected(item)}
+                    className="cursor-pointer transition-colors hover:bg-gray-50"
+                  >
+                    <td className="px-5 py-3 font-medium text-foreground">{item.name ?? "-"}</td>
+                    <td className="px-5 py-3 text-gray-600">{item.phone_number ?? "-"}</td>
+                    <td className="px-5 py-3 text-gray-600">{item.bank_account ?? "-"}</td>
+                    <td className="max-w-xs truncate px-5 py-3 text-gray-600">{item.description ?? "-"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          )}
         </table>
       </div>
 
-      {items.length > 0 && (
+      {!loading && items.length > 0 && (
         <Pagination
           totalCount={totalCount}
           currentPage={page}
@@ -200,12 +208,19 @@ export default function ScammerResultPage() {
       <div className="py-4">
         <Suspense
           fallback={
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
-              <table className="w-full table-fixed text-sm">
-                <TableHeaders />
-                <SearchingTbody />
-              </table>
-            </div>
+            <>
+              <p className="mb-3 text-sm text-gray-600">
+                총{" "}
+                <span className="font-semibold text-red-600">0</span>
+                건의 사기꾼 정보가 조회되었습니다.
+              </p>
+              <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
+                <table className="w-full table-fixed text-sm">
+                  <TableHeaders />
+                  <SearchingTbody />
+                </table>
+              </div>
+            </>
           }
         >
           <ResultContent />
