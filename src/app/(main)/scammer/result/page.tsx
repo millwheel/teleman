@@ -4,6 +4,7 @@ import { use, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Pagination from "@/components/Pagination";
+import Modal from "@/components/modal/Modal";
 import { PAGE_SIZE } from "@/data/constants";
 
 interface Scammer {
@@ -89,6 +90,7 @@ function ResultContent() {
   const type = (searchParams.get("type") ?? "name") as "name" | "phone" | "account";
   const q = searchParams.get("q") ?? "";
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
+  const [selected, setSelected] = useState<Scammer | null>(null);
 
   if (!q) {
     return (
@@ -114,13 +116,11 @@ function ResultContent() {
   return (
     <>
       {items.length > 0 && (
-        <div className="mb-4 bg-warning py-4 rounded-lg">
-          <p className="text-base text-gray-500 text-center">
-            총{" "}
-            <span className="font-semibold text-foreground">{totalCount.toLocaleString("ko-KR")}</span>
-            건의 사기꾼이 검색되었습니다.
-          </p>
-        </div>
+        <p className="mb-3 text-sm text-gray-600">
+          총{" "}
+          <span className="font-semibold text-red-600">{totalCount.toLocaleString("ko-KR")}</span>
+          건의 사기 의심 정보가 검색되었습니다.
+        </p>
       )}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -135,7 +135,11 @@ function ResultContent() {
               </tr>
             ) : (
               items.map((item) => (
-                <tr key={item.id} className="transition-colors hover:bg-gray-50">
+                <tr
+                  key={item.id}
+                  onClick={() => setSelected(item)}
+                  className="cursor-pointer transition-colors hover:bg-gray-50"
+                >
                   <td className="px-5 py-3 font-medium text-foreground">{item.name ?? "-"}</td>
                   <td className="px-5 py-3 text-gray-600">{item.phone_number ?? "-"}</td>
                   <td className="px-5 py-3 text-gray-600">{item.bank_account ?? "-"}</td>
@@ -156,6 +160,31 @@ function ResultContent() {
             router.push(`/scammer/result?type=${type}&q=${encodeURIComponent(q)}&page=${newPage}`)
           }
         />
+      )}
+
+      {selected && (
+        <Modal title="사기꾼 상세 정보" onClose={() => setSelected(null)}>
+          <dl className="space-y-4 text-sm">
+            <div>
+              <dt className="mb-1 font-medium text-gray-500">이름</dt>
+              <dd className="text-foreground">{selected.name ?? "-"}</dd>
+            </div>
+            <div>
+              <dt className="mb-1 font-medium text-gray-500">전화번호</dt>
+              <dd className="text-foreground">{selected.phone_number ?? "-"}</dd>
+            </div>
+            <div>
+              <dt className="mb-1 font-medium text-gray-500">계좌번호</dt>
+              <dd className="text-foreground">{selected.bank_account ?? "-"}</dd>
+            </div>
+            <div>
+              <dt className="mb-1 font-medium text-gray-500">설명</dt>
+              <dd className="whitespace-pre-wrap break-words text-foreground">
+                {selected.description ?? "-"}
+              </dd>
+            </div>
+          </dl>
+        </Modal>
       )}
     </>
   );
