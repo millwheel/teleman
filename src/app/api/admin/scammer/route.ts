@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 import { getSession } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { uploadImage, deleteImage, getPublicImageUrl } from "@/lib/storage";
 import { PAGE_SIZE } from "@/data/constants";
+import { validateFileSize } from "@/util/file";
+
+const SCAMMER_SELECT =
+  "id, name, phone_number, bank_account, description, image_path, public_url, created_at";
 
 function stripHyphens(value: string | null | undefined): string | null {
   if (!value?.trim()) return null;
@@ -29,7 +35,7 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await supabase
     .from("scammer")
-    .select("id, name, phone_number, bank_account, description, created_at")
+    .select(SCAMMER_SELECT)
     .order("id", { ascending: false })
     .range(offset, offset + PAGE_SIZE - 1);
 
@@ -47,17 +53,40 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "권한이 없습니다." }, { status: 403 });
   }
 
-  const body = await request.json();
-  const cleanName = body.name?.trim() || null;
-  const cleanPhone = stripHyphens(body.phone_number);
-  const cleanAccount = stripHyphens(body.bank_account);
-  const cleanDesc = body.description?.trim() || null;
+  const formData = await request.formData();
+  const cleanName = (formData.get("name") as string | null)?.trim() || null;
+  const cleanPhone = stripHyphens(formData.get("phone_number") as string | null);
+  const cleanAccount = stripHyphens(formData.get("bank_account") as string | null);
+  const cleanDesc = (formData.get("description") as string | null)?.trim() || null;
+  const file = formData.get("image") as File | null;
 
   if (!cleanName && !cleanPhone && !cleanAccount) {
     return NextResponse.json(
       { message: "이름, 전화번호, 계좌번호 중 최소 하나를 입력하세요." },
       { status: 400 }
     );
+  }
+
+  const fileSizeError = validateFileSize(file);
+  if (fileSizeError) return fileSizeError;
+
+  let image_path: string | null = null;
+  let public_url: string | null = null;
+
+  if (file && file.size > 0) {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+    image_path = `scammers/${uuidv4()}.${ext}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    try {
+      await uploadImage(image_path, buffer, file.type);
+      public_url = getPublicImageUrl(image_path);
+    } catch (e) {
+      console.error("[POST /api/admin/scammer] upload error", e);
+      return NextResponse.json(
+        { message: "이미지 업로드에 실패했습니다." },
+        { status: 500 }
+      );
+    }
   }
 
   const { data: userExists } = await supabase
@@ -73,13 +102,18 @@ export async function POST(request: NextRequest) {
       phone_number: cleanPhone,
       bank_account: cleanAccount,
       description: cleanDesc,
+      image_path,
+      public_url,
       created_by: userExists ? session.userId : null,
     })
-    .select("id, name, phone_number, bank_account, description, created_at")
+    .select(SCAMMER_SELECT)
     .single();
 
   if (error) {
     console.error("[POST /api/admin/scammer] supabase error", error);
+    if (image_path) {
+      await deleteImage(image_path).catch(() => {});
+    }
     return NextResponse.json({ message: "등록 중 오류가 발생했습니다." }, { status: 500 });
   }
 

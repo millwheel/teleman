@@ -2,18 +2,12 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import ScammerSearchBar from "@/components/ScammerSearchBar";
 import Pagination from "@/components/Pagination";
 import Modal from "@/components/modal/Modal";
 import { PAGE_SIZE } from "@/data/constants";
-
-interface Scammer {
-  id: number;
-  name: string | null;
-  phone_number: string | null;
-  bank_account: string | null;
-  description: string | null;
-}
+import { Scammer } from "@/data/type";
 
 interface SearchResult {
   items: Scammer[];
@@ -172,26 +166,37 @@ function ResultContent() {
 
       {selected && (
         <Modal title="사기꾼 상세 정보" onClose={() => setSelected(null)}>
-          <dl className="space-y-4 text-sm">
-            <div>
-              <dt className="mb-1 font-medium text-gray-500">이름</dt>
-              <dd className="text-foreground">{selected.name ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="mb-1 font-medium text-gray-500">전화번호</dt>
-              <dd className="text-foreground">{selected.phone_number ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="mb-1 font-medium text-gray-500">계좌번호</dt>
-              <dd className="text-foreground">{selected.bank_account ?? "-"}</dd>
-            </div>
-            <div>
-              <dt className="mb-1 font-medium text-gray-500">설명</dt>
-              <dd className="whitespace-pre-wrap break-words text-foreground">
-                {selected.description ?? "-"}
-              </dd>
-            </div>
-          </dl>
+          <div className="space-y-4 text-sm">
+            {selected.public_url && (
+              <Image
+                src={selected.public_url}
+                alt="증거 이미지"
+                width={800}
+                height={600}
+                className="w-full h-auto rounded-lg border border-gray-200 object-contain"
+              />
+            )}
+            <dl className="space-y-4">
+              <div>
+                <dt className="mb-1 font-medium text-gray-500">이름</dt>
+                <dd className="text-foreground">{selected.name ?? "-"}</dd>
+              </div>
+              <div>
+                <dt className="mb-1 font-medium text-gray-500">전화번호</dt>
+                <dd className="text-foreground">{selected.phone_number ?? "-"}</dd>
+              </div>
+              <div>
+                <dt className="mb-1 font-medium text-gray-500">계좌번호</dt>
+                <dd className="text-foreground">{selected.bank_account ?? "-"}</dd>
+              </div>
+              <div>
+                <dt className="mb-1 font-medium text-gray-500">설명</dt>
+                <dd className="whitespace-pre-wrap break-words text-foreground">
+                  {selected.description ?? "-"}
+                </dd>
+              </div>
+            </dl>
+          </div>
         </Modal>
       )}
     </>

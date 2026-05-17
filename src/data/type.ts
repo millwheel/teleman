@@ -41,6 +41,17 @@ export type BannerFormState = {
   likes: number;
 };
 
+export type Scammer = {
+  id: number;
+  name: string | null;
+  phone_number: string | null;
+  bank_account: string | null;
+  description: string | null;
+  image_path: string | null;
+  public_url: string | null;
+  created_at: string;
+};
+
 // 커뮤니티 / 공지사항
 
 export type CommunityPost = {

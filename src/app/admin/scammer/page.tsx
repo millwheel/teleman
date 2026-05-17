@@ -1,26 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import Image from "next/image";
+import { Pencil, Trash2, Plus, X } from "lucide-react";
 import Modal from "@/components/modal/Modal";
 import Pagination from "@/components/Pagination";
 import { PAGE_SIZE } from "@/data/constants";
-
-interface Scammer {
-  id: number;
-  name: string | null;
-  phone_number: string | null;
-  bank_account: string | null;
-  description: string | null;
-  created_at: string;
-}
+import { Scammer } from "@/data/type";
+import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
 
 interface FormState {
   name: string;
   phone_number: string;
   bank_account: string;
   description: string;
+  imageFile: File | null;
+  previewUrl: string | null;
+  existingPublicUrl: string | null;
+  removeImage: boolean;
 }
 
 const EMPTY_FORM: FormState = {
@@ -28,6 +26,10 @@ const EMPTY_FORM: FormState = {
   phone_number: "",
   bank_account: "",
   description: "",
+  imageFile: null,
+  previewUrl: null,
+  existingPublicUrl: null,
+  removeImage: false,
 };
 
 export default function AdminScammerPage() {
@@ -42,6 +44,7 @@ export default function AdminScammerPage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [formError, setFormError] = useState("");
   const [toast, setToast] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -72,6 +75,13 @@ export default function AdminScammerPage() {
     load();
   }, [page]);
 
+  // 미리보기 URL 정리
+  useEffect(() => {
+    return () => {
+      if (form.previewUrl) URL.revokeObjectURL(form.previewUrl);
+    };
+  }, [form.previewUrl]);
+
   function openAdd() {
     setForm(EMPTY_FORM);
     setFormError("");
@@ -85,9 +95,44 @@ export default function AdminScammerPage() {
       phone_number: item.phone_number ?? "",
       bank_account: item.bank_account ?? "",
       description: item.description ?? "",
+      imageFile: null,
+      previewUrl: null,
+      existingPublicUrl: item.public_url,
+      removeImage: false,
     });
     setFormError("");
     setModal("edit");
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      setFormError(`파일 크기가 ${MAX_FILE_SIZE_LABEL}를 초과합니다.`);
+      e.target.value = "";
+      return;
+    }
+
+    if (form.previewUrl) URL.revokeObjectURL(form.previewUrl);
+    setForm((prev) => ({
+      ...prev,
+      imageFile: file,
+      previewUrl: URL.createObjectURL(file),
+      removeImage: false,
+    }));
+    setFormError("");
+  }
+
+  function handleRemoveImage() {
+    if (form.previewUrl) URL.revokeObjectURL(form.previewUrl);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    setForm((prev) => ({
+      ...prev,
+      imageFile: null,
+      previewUrl: null,
+      removeImage: prev.existingPublicUrl !== null,
+    }));
   }
 
   async function handleDelete(item: Scammer) {
@@ -118,12 +163,19 @@ export default function AdminScammerPage() {
     setActionLoading(true);
 
     const isAdd = modal === "add";
+    const fd = new FormData();
+    fd.append("name", form.name);
+    fd.append("phone_number", form.phone_number);
+    fd.append("bank_account", form.bank_account);
+    fd.append("description", form.description);
+    if (form.imageFile) fd.append("image", form.imageFile);
+    if (form.removeImage) fd.append("removeImage", "true");
+
     const res = await fetch(
       isAdd ? "/api/admin/scammer" : `/api/admin/scammer/${selected!.id}`,
       {
         method: isAdd ? "POST" : "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: fd,
       },
     );
 
@@ -152,6 +204,10 @@ export default function AdminScammerPage() {
 
   const inputCls =
     "w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
+
+  // 현재 미리보기로 보여줄 이미지 (새 파일 > 기존 이미지 > 없음)
+  const currentImageUrl = form.previewUrl
+    ?? (form.removeImage ? null : form.existingPublicUrl);
 
   return (
     <div>
@@ -312,6 +368,41 @@ export default function AdminScammerPage() {
                 rows={3}
                 className={inputCls + " resize-none"}
               />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-700">
+                이미지 (선택)
+              </label>
+              {currentImageUrl ? (
+                <div className="relative inline-block">
+                  <Image
+                    src={currentImageUrl}
+                    alt="미리보기"
+                    width={400}
+                    height={300}
+                    className="h-40 w-auto rounded-lg border border-gray-200 object-contain"
+                    unoptimized={currentImageUrl.startsWith("blob:")}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    title="이미지 제거"
+                    className="absolute -top-2 -right-2 rounded-full bg-white border border-gray-300 p-1 text-gray-600 shadow-sm hover:border-eliminate hover:text-eliminate transition-colors cursor-pointer"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : null}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className={`${currentImageUrl ? "mt-2" : ""} block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-2 file:text-sm file:font-semibold file:text-white file:cursor-pointer hover:file:opacity-80`}
+              />
+              <p className="mt-1 text-xs text-gray-400">
+                최대 {MAX_FILE_SIZE_LABEL}
+              </p>
             </div>
             <p className="text-xs text-gray-400">
               * 이름, 전화번호, 계좌번호 중 최소 하나는 입력해야 합니다.

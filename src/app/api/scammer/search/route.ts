@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await supabase
     .from("scammer")
-    .select("id, name, phone_number, bank_account, description")
+    .select("id, name, phone_number, bank_account, description, image_path, public_url")
     .ilike(column, `%${q}%`)
     .order("id", { ascending: false })
     .range(offset, offset + limit - 1);
