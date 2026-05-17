@@ -145,7 +145,7 @@ function ResultContent() {
                   <tr
                     key={item.id}
                     onClick={() => setSelected(item)}
-                    className="cursor-pointer transition-colors hover:bg-gray-50"
+                    className="cursor-pointer transition-colors hover:bg-blue-50"
                   >
                     <td className="px-5 py-3 font-medium text-foreground">{item.name ?? "-"}</td>
                     <td className="px-5 py-3 text-gray-600">{item.phone_number ?? "-"}</td>
