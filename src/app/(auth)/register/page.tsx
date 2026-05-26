@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-type CheckStatus = "idle" | "checking" | "ok" | "taken";
+type CheckStatus = "idle" | "checking" | "ok" | "taken" | "invalid";
+
+const USERNAME_PATTERN = /^[a-z0-9]+$/;
 
 function useDebounceCheck(value: string, field: "username" | "nickname") {
   const [status, setStatus] = useState<CheckStatus>("idle");
@@ -13,6 +15,11 @@ function useDebounceCheck(value: string, field: "username" | "nickname") {
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
+
+    if (field === "username" && value && !USERNAME_PATTERN.test(value)) {
+      setStatus("invalid");
+      return;
+    }
 
     if (!value || (field === "username" && value.length < 6)) {
       timerRef.current = setTimeout(() => setStatus("idle"), 0);
@@ -35,14 +42,16 @@ function useDebounceCheck(value: string, field: "username" | "nickname") {
   return status;
 }
 
-function FieldHint({ status, okMsg, takenMsg }: {
+function FieldHint({ status, okMsg, takenMsg, invalidMsg }: {
   status: CheckStatus;
   okMsg: string;
   takenMsg: string;
+  invalidMsg?: string;
 }) {
   if (status === "checking") return <p className="mt-1 text-xs text-gray-400">확인 중...</p>;
   if (status === "ok") return <p className="mt-1 text-xs text-green-600">{okMsg}</p>;
   if (status === "taken") return <p className="mt-1 text-xs text-eliminate">{takenMsg}</p>;
+  if (status === "invalid" && invalidMsg) return <p className="mt-1 text-xs text-eliminate">{invalidMsg}</p>;
   return null;
 }
 
@@ -117,13 +126,13 @@ export default function RegisterPage() {
               id="username"
               type="text"
               value={username}
-              onChange={(e) => setUsername(e.target.value.replace(/[^a-z0-9]/g, ""))}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="영문 소문자, 숫자 조합 (6자 이상)"
               required
               autoComplete="username"
               className={cn(
                 "w-full rounded-lg border px-4 py-2.5 text-sm outline-none focus:ring-2 transition",
-                usernameStatus === "taken"
+                usernameStatus === "taken" || usernameStatus === "invalid"
                   ? "border-eliminate focus:border-eliminate focus:ring-eliminate/20"
                   : usernameStatus === "ok"
                   ? "border-green-500 focus:border-green-500 focus:ring-green-500/20"
@@ -134,6 +143,7 @@ export default function RegisterPage() {
               status={usernameStatus}
               okMsg="사용 가능한 아이디입니다."
               takenMsg="이미 사용 중인 아이디입니다."
+              invalidMsg="영문 소문자와 숫자만 사용할 수 있습니다."
             />
           </div>
 
