@@ -22,7 +22,7 @@ export default async function Header() {
 
         {/* 고객센터 버튼 — 데스크탑만 표시 */}
         <a
-          href="https://t.me/"
+          href="https://t.me/azt1133"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden sm:block overflow-hidden rounded-lg hover:opacity-90 transition-opacity"
