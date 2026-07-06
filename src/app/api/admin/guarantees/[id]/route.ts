@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin-auth";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 export async function PUT(
   request: NextRequest,
@@ -16,9 +17,17 @@ export async function PUT(
     return NextResponse.json({ message: "name과 link를 입력하세요." }, { status: 400 });
   }
 
+  const normalizedLink = trimUrl(link);
+  if (!isHttpUrl(normalizedLink)) {
+    return NextResponse.json(
+      { message: "링크는 http:// 또는 https://로 시작해야 합니다." },
+      { status: 400 },
+    );
+  }
+
   const { data, error: dbError } = await supabase
     .from("guarantee")
-    .update({ name, link })
+    .update({ name, link: normalizedLink })
     .eq("id", id)
     .select()
     .single();

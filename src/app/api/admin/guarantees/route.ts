@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import { uploadImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
 import { validateFileSize } from "@/util/file";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 export async function GET() {
   const { error } = await requireAdmin();
@@ -32,6 +33,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
   }
 
+  const normalizedLink = trimUrl(link);
+  if (!isHttpUrl(normalizedLink)) {
+    return NextResponse.json(
+      { message: "링크는 http:// 또는 https://로 시작해야 합니다." },
+      { status: 400 },
+    );
+  }
+
   const fileSizeError = validateFileSize(file);
   if (fileSizeError) return fileSizeError;
 
@@ -43,7 +52,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error: dbError } = await supabase
     .from("guarantee")
-    .insert({ name, link, image_path: imagePath, created_by: session.userId })
+    .insert({ name, link: normalizedLink, image_path: imagePath, created_by: session.userId })
     .select()
     .single();
 

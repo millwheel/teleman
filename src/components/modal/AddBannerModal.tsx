@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Modal from "./Modal";
 import type { BannerType } from "@/data/type";
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 type Props = {
   apiPath: string;
@@ -42,10 +43,15 @@ export default function AddBannerModal({ apiPath, bannerType, onClose, onSuccess
       setError("모든 항목을 입력하세요.");
       return;
     }
+    const normalizedLink = trimUrl(link);
+    if (!isHttpUrl(normalizedLink)) {
+      setError("링크는 http:// 또는 https://로 시작해야 합니다.");
+      return;
+    }
     setLoading(true);
     const fd = new FormData();
     fd.append("name", name);
-    fd.append("link", link);
+    fd.append("link", normalizedLink);
     if (bannerType) fd.append("type", bannerType);
     fd.append("file", file);
     const res = await fetch(apiPath, { method: "POST", body: fd });

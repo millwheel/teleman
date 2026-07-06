@@ -6,6 +6,7 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { LINK_CATEGORIES } from "@/data/linkCategories";
 import { processContentImages } from "@/lib/post-image";
 import { validateFileSize } from "@/util/file";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 export async function GET(request: NextRequest) {
   const { error } = await requireAdmin();
@@ -48,6 +49,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "모든 항목을 입력하세요." }, { status: 400 });
   }
 
+  const normalizedLink = trimUrl(link);
+  if (!isHttpUrl(normalizedLink)) {
+    return NextResponse.json(
+      { message: "링크는 http:// 또는 https://로 시작해야 합니다." },
+      { status: 400 },
+    );
+  }
+
   const fileSizeError = validateFileSize(file);
   if (fileSizeError) return fileSizeError;
 
@@ -60,7 +69,7 @@ export async function POST(request: NextRequest) {
     .insert({
       category_code,
       name,
-      link,
+      link: normalizedLink,
       description: description || null,
       likes,
       image_path: "",

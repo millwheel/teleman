@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import PostEditor from "@/components/post/PostEditor";
 import { MAX_FILE_SIZE, MAX_FILE_SIZE_LABEL } from "@/util/file";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 const inputClass =
   "w-full rounded-lg border border-gray-300 bg-background px-3 py-2 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition";
@@ -62,8 +63,13 @@ export default function LinkForm({
 
   async function handleSubmit() {
     setFormError("");
+    const normalizedLink = trimUrl(link);
+    if (!isHttpUrl(normalizedLink)) {
+      setFormError("링크는 http:// 또는 https://로 시작해야 합니다.");
+      return;
+    }
     setLoading(true);
-    const error = await onSubmit({ name, link, likes, description, imageFile });
+    const error = await onSubmit({ name, link: normalizedLink, likes, description, imageFile });
     setLoading(false);
     if (error) setFormError(error);
   }

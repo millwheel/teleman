@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { requireAdmin } from "@/lib/admin-auth";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 export async function PUT(
   request: NextRequest,
@@ -20,7 +21,15 @@ export async function PUT(
     return NextResponse.json({ message: "type은 long 또는 short이어야 합니다." }, { status: 400 });
   }
 
-  const updatePayload: Record<string, string> = { name, link };
+  const normalizedLink = trimUrl(link);
+  if (!isHttpUrl(normalizedLink)) {
+    return NextResponse.json(
+      { message: "링크는 http:// 또는 https://로 시작해야 합니다." },
+      { status: 400 },
+    );
+  }
+
+  const updatePayload: Record<string, string> = { name, link: normalizedLink };
   if (type !== undefined) updatePayload.type = type;
 
   const { data, error: dbError } = await supabase

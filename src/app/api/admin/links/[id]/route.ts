@@ -5,6 +5,7 @@ import { uploadImage, deleteImage, getPublicImageUrl } from "@/lib/storage";
 import { requireAdmin } from "@/lib/admin-auth";
 import { processContentImages, cleanupRemovedImages } from "@/lib/post-image";
 import { validateFileSize } from "@/util/file";
+import { isHttpUrl, trimUrl } from "@/util/url";
 
 export async function PUT(
   request: NextRequest,
@@ -24,6 +25,14 @@ export async function PUT(
 
   if (!name || !link) {
     return NextResponse.json({ message: "name과 link를 입력하세요." }, { status: 400 });
+  }
+
+  const normalizedLink = trimUrl(link);
+  if (!isHttpUrl(normalizedLink)) {
+    return NextResponse.json(
+      { message: "링크는 http:// 또는 https://로 시작해야 합니다." },
+      { status: 400 },
+    );
   }
 
   const { data: existing } = await supabase
@@ -56,7 +65,7 @@ export async function PUT(
 
   const { data, error: dbError } = await supabase
     .from("link")
-    .update({ name, link, description: processedDesc, likes, image_path })
+    .update({ name, link: normalizedLink, description: processedDesc, likes, image_path })
     .eq("id", id)
     .select()
     .single();
