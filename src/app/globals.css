@@ -23,6 +23,15 @@ body {
   100% { background-position: 200% 50%; }
 }
 
+@keyframes notice-marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.notice-marquee {
+  animation: notice-marquee 12s linear infinite;
+}
+
 .shimmer-text {
   background: linear-gradient(
     90deg,

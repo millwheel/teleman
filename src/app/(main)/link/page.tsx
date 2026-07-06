@@ -7,7 +7,7 @@ import AdBannerSection from "@/components/ad/AdBannerSection";
 import LinkCategoryCard from "@/components/LinkCategoryCard";
 import { formatDateTime } from "@/util/date";
 
-function NoticePreviewSection({ notices }: { notices: NoticePost[] }) {
+function NoticePreviewSection({ notice }: { notice: NoticePost | null }) {
   return (
     <section className="pt-8">
       <h2 className="mb-4 text-center text-4xl font-black tracking-wide text-[#ad9355] [text-shadow:0_1px_0_#6d5428,1px_2px_0_#6d5428,2px_4px_4px_#9b9b9b] max-md:text-3xl">
@@ -26,30 +26,27 @@ function NoticePreviewSection({ notices }: { notices: NoticePost[] }) {
             </div>
           </div>
 
-          {notices.length > 0 ? (
-            <div className="divide-y divide-gray-100">
-              {notices.map((notice, idx) => (
-                <Link
-                  key={notice.id}
-                  href={`/notice/${notice.id}`}
-                  className="grid min-h-[52px] grid-cols-[3rem_minmax(0,1fr)_7rem_7rem_4rem] items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-gray-50 max-md:grid-cols-[2.5rem_minmax(0,1fr)_4rem]"
-                >
-                  <span className="text-center text-gray-700">{idx + 1}</span>
-                  <span className="truncate font-medium text-gray-900">
-                    {notice.title}
-                  </span>
-                  <span className="text-center text-gray-700 max-md:hidden">
-                    {notice.author_nickname}
-                  </span>
-                  <span className="text-center text-gray-600 max-md:hidden">
-                    {formatDateTime(notice.created_at)}
-                  </span>
-                  <span className="text-center text-gray-700">
-                    {notice.view_count}
-                  </span>
-                </Link>
-              ))}
-            </div>
+          {notice ? (
+            <Link
+              href={`/notice/${notice.id}`}
+              className="grid min-h-[52px] grid-cols-[3rem_minmax(0,1fr)_7rem_7rem_4rem] items-center gap-3 px-4 py-3 text-sm transition-colors hover:bg-gray-50 max-md:grid-cols-[2.5rem_minmax(0,1fr)_4rem]"
+            >
+              <span className="text-center text-gray-700">1</span>
+              <span className="overflow-hidden text-base font-bold text-gray-900 max-md:text-sm">
+                <span className="notice-marquee inline-block whitespace-nowrap">
+                  {notice.title}
+                </span>
+              </span>
+              <span className="text-center text-gray-700 max-md:hidden">
+                {notice.author_nickname}
+              </span>
+              <span className="text-center text-gray-600 max-md:hidden">
+                {formatDateTime(notice.created_at)}
+              </span>
+              <span className="text-center text-gray-700">
+                {notice.view_count}
+              </span>
+            </Link>
           ) : (
             <div className="grid min-h-[104px] grid-cols-[3rem_minmax(0,1fr)_7rem_7rem_4rem] items-center gap-3 px-4 py-3 text-sm text-gray-400 max-md:grid-cols-[2.5rem_minmax(0,1fr)_4rem]">
               <span className="text-center">-</span>
@@ -87,7 +84,7 @@ export default async function LinkCategoryPage() {
   ]);
   const links: LinkItem[] = await linksRes.json();
   const noticeList: PostListResponse = await noticeRes.json();
-  const latestNotices = noticeList.data.slice(0, 2) as NoticePost[];
+  const latestNotice = (noticeList.data[0] as NoticePost | undefined) ?? null;
 
   const bannersByCategory = links.reduce<Record<string, LinkItem[]>>(
     (acc, banner) => {
@@ -101,7 +98,7 @@ export default async function LinkCategoryPage() {
   return (
     <div className="mx-auto max-w-7xl px-4">
       <AdBannerSection />
-      <NoticePreviewSection notices={latestNotices} />
+      <NoticePreviewSection notice={latestNotice} />
 
       <section className="py-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
