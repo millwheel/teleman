@@ -11,7 +11,6 @@ export default async function AdminHeader() {
   return (
       <header className="relative w-full border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        {/* 로고 */}
         <LogoBrand />
       </div>
 

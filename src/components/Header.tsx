@@ -17,7 +17,6 @@ export default async function Header() {
     <header className="relative w-full border-b border-gray-200 bg-white">
       {/* 상단 레이어: 로고 + 고객센터 버튼 */}
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        {/* 로고 */}
         <LogoBrand />
 
         {/* 고객센터 버튼 — 데스크탑만 표시 */}

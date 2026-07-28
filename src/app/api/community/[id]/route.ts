@@ -52,7 +52,6 @@ export async function PUT(
 
   const { id } = await params;
 
-  // 본인 확인
   const { data: existing } = await supabase
     .from("community")
     .select("author_id, content")
@@ -73,7 +72,6 @@ export async function PUT(
     return NextResponse.json({ message: "제목과 내용을 입력하세요." }, { status: 400 });
   }
 
-  // base64 이미지 처리
   const { html: processedContent } = await processContentImages(content, "community", Number(id));
 
   // 삭제된 이미지 정리

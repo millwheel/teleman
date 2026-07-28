@@ -12,7 +12,6 @@ export async function POST() {
     return NextResponse.json({ message: "삭제할 이미지가 없습니다." }, { status: 400 });
   }
 
-  // Storage에서 파일 삭제
   const { error: storageError } = await supabase.storage
     .from("public-media")
     .remove([session.imagePath]);
@@ -22,7 +21,6 @@ export async function POST() {
     return NextResponse.json({ message: "이미지 삭제에 실패했습니다." }, { status: 500 });
   }
 
-  // DB 업데이트
   const { error: dbError } = await supabase
     .from("users")
     .update({ image_path: null })
@@ -33,7 +31,6 @@ export async function POST() {
     return NextResponse.json({ message: "저장 중 오류가 발생했습니다." }, { status: 500 });
   }
 
-  // JWT 재발급
   const newToken = await signJwt({
     userId: session.userId,
     role: session.role,

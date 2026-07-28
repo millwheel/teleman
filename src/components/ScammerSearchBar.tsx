@@ -83,7 +83,6 @@ function SearchBarContent({
             className="flex-1 min-w-0 px-4 py-3 text-sm text-gray-700 outline-none placeholder:text-gray-400"
           />
 
-          {/* 검색 버튼 */}
           <button
             onClick={handleSearch}
             className="flex items-center justify-center bg-primary px-5 py-3 text-white transition-opacity hover:opacity-80 cursor-pointer shrink-0"

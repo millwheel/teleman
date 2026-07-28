@@ -114,7 +114,6 @@ export default function RegisterPage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* 아이디 */}
           <div>
             <label
               htmlFor="username"
@@ -147,7 +146,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 닉네임 */}
           <div>
             <label
               htmlFor="nickname"
@@ -178,7 +176,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 비밀번호 */}
           <div>
             <label
               htmlFor="password"
@@ -198,7 +195,6 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* 비밀번호 확인 */}
           <div>
             <label
               htmlFor="confirmPassword"

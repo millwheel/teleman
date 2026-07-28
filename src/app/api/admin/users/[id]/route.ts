@@ -17,7 +17,6 @@ export async function PATCH(
     return NextResponse.json({ message: "잘못된 요청입니다." }, { status: 400 });
   }
 
-  // 현재 is_active 상태 조회
   const { data: user, error: findError } = await supabase
     .from("users")
     .select("id, is_active")

@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
   const page = Math.max(1, Number(searchParams.get("page") ?? 1));
   const offset = (page - 1) * PAGE_SIZE;
 
-  // 카테고리 유효성 검사
   if (!COMMUNITY_CATEGORIES.some((c) => c.key === category)) {
     return NextResponse.json({ message: "잘못된 카테고리입니다." }, { status: 400 });
   }

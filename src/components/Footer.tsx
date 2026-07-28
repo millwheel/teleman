@@ -31,7 +31,6 @@ export default function Footer() {
   return (
     <footer className="mx-auto max-w-7xl px-4">
       <section className="py-14">
-        {/* 중인사 */}
         <div className="mb-10 flex items-center gap-6">
           <hr className="flex-1 border-secondary" />
           <div className="text-center shrink-0">

@@ -33,7 +33,6 @@ export default function LinkDetailPage() {
         <div className="bg-background overflow-hidden">
           {/* 상단 헤더 */}
           <div className="px-6 py-5">
-            {/* 1 layer: 제목 */}
             <h1 className="text-2xl font-bold mb-4">{link.name}</h1>
 
             {/* 2 layer: 좌측(이미지 + 링크 URL) / 우측(좋아요 + 작성일) */}
@@ -72,7 +71,6 @@ export default function LinkDetailPage() {
             </div>
           </div>
 
-          {/* 회색 구분선 */}
           <hr className="border-gray-200 mx-6" />
 
           {/* 중단 본문 */}
@@ -87,10 +85,8 @@ export default function LinkDetailPage() {
             )}
           </div>
 
-          {/* 회색 구분선 */}
           <hr className="border-gray-200 mx-6" />
 
-          {/* 하단 */}
           <div className="px-6 py-4 flex justify-center">
             <Link
               href={`/link/${code}`}

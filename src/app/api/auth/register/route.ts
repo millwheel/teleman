@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // username 중복 확인
   const { data: existingUser } = await supabase
     .from("users")
     .select("id")
@@ -47,7 +46,6 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // nickname 중복 확인
   const { data: existingNickname } = await supabase
     .from("users")
     .select("id")

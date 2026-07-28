@@ -118,7 +118,6 @@ export default function ProfileForm({
       <div className="w-full max-w-sm">
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 프로필 사진 */}
           <div className="flex flex-col items-center gap-3">
             <button
               type="button"
@@ -175,7 +174,6 @@ export default function ProfileForm({
             />
           </div>
 
-          {/* 닉네임 */}
           <div>
             <label className="mb-1.5 block text-sm font-medium text-gray-700">
               닉네임
@@ -189,7 +187,6 @@ export default function ProfileForm({
             />
           </div>
 
-          {/* 비밀번호 변경 */}
           <div>
             <button
               type="button"

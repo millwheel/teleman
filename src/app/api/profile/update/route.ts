@@ -44,7 +44,6 @@ export async function POST(request: NextRequest) {
   const fileSizeError = validateFileSize(imageFile);
   if (fileSizeError) return fileSizeError;
 
-  // 이미지 업로드
   if (imageFile && imageFile.size > 0) {
     const ext = imageFile.name.split(".").pop() ?? "jpg";
     const storagePath = `avatars/${session.userId}/profile.${ext}`;
@@ -65,7 +64,6 @@ export async function POST(request: NextRequest) {
     imagePath = storagePath;
   }
 
-  // DB 업데이트
   const updatePayload: Record<string, unknown> = { nickname, image_path: imagePath };
   if (newPassword) {
     updatePayload.password_hash = await bcrypt.hash(newPassword, 12);
@@ -81,7 +79,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "저장 중 오류가 발생했습니다." }, { status: 500 });
   }
 
-  // JWT 재발급
   const newToken = await signJwt({
     userId: session.userId,
     role: session.role,
